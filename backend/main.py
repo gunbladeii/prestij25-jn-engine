@@ -108,6 +108,9 @@ async def lifespan(app: FastAPI):
         print("⚠ DATABASE_URL not set — running with NO persistence (data lost on restart)")
         _pool = None
     else:
+        # Render provides postgres:// but asyncpg expects postgresql://
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
         _pool = await asyncpg.create_pool(dsn=database_url, min_size=1, max_size=5)
         async with _pool.acquire() as conn:
             await conn.execute(SCHEMA_SQL)
