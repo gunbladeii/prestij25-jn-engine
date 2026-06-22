@@ -11,3 +11,11 @@ services:
         value: 3.12.0
       - key: RENDER_SERVICE_NAME
         value: prestij25-jn-engine
+      - key: DATABASE_URL
+        fromDatabase:
+          name: prestij25-jn-db
+          property: connectionString
+
+databases:
+  - name: prestij25-jn-db
+    plan: free
