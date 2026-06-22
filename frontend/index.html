@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRESTIJ-25 — Jemaah Nazir Engine</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --ground:    #080E1A;
+  --surface:   #0D1625;
+  --surface-2: #121E33;
+  --border:    #1E2E4A;
+  --text:      #D8E3F0;
+  --text-dim:  #7A90B0;
+  --accent:    #E8A020;
+  --green:     #3CB87A;
+  --green-dim: #1A5238;
+  --red:       #E84040;
+  --red-dim:   #5A1818;
+  --orange:    #EA7020;
+  --blue:      #4080E8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 4px);pointer-events:none;z-index:999}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:rgba(8,14,26,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:24px;height:52px}
+.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;white-space:nowrap}
+.nav-links{display:flex;gap:20px;list-style:none;flex:1}
+.nav-links a{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:color .2s;cursor:pointer}
+.nav-links a:hover,.nav-links a.active{color:var(--accent)}
+.status-dot{margin-left:auto;display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);letter-spacing:.1em;text-transform:uppercase}
+.status-dot::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* LAYOUT */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 52px)}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.sidebar-section{padding:8px 20px;margin-bottom:4px}
+.sidebar-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px;padding-left:12px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:2px;cursor:pointer;transition:background .15s;margin-bottom:2px;border:1px solid transparent}
+.sidebar-item:hover{background:rgba(232,160,32,0.06);border-color:rgba(232,160,32,0.1)}
+.sidebar-item.active{background:rgba(232,160,32,0.1);border-color:rgba(232,160,32,0.2)}
+.sidebar-item .si-icon{font-size:13px;width:18px;text-align:center;flex-shrink:0}
+.sidebar-item .si-text{font-size:12px;color:var(--text-dim)}
+.sidebar-item.active .si-text{color:var(--accent)}
+.sidebar-divider{height:1px;background:var(--border);margin:16px 20px}
+
+/* MAIN */
+.main{padding:32px;overflow-y:auto;max-height:calc(100vh - 52px)}
+
+/* PAGE SECTIONS */
+.page-section{display:none}
+.page-section.active{display:block}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);padding:20px;margin-bottom:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#fff}
+.card-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;letter-spacing:.1em;text-transform:uppercase}
+.badge-green{background:rgba(60,184,122,.15);border:1px solid var(--green-dim);color:var(--green)}
+.badge-red{background:rgba(232,64,64,.15);border:1px solid var(--red-dim);color:var(--red)}
+.badge-amber{background:rgba(232,160,32,.12);border:1px solid rgba(232,160,32,.3);color:var(--accent)}
+.badge-orange{background:rgba(234,112,32,.15);border:1px solid rgba(234,112,32,.3);color:var(--orange)}
+.badge-blue{background:rgba(64,128,232,.12);border:1px solid rgba(64,128,232,.3);color:var(--blue)}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);padding:16px 20px}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:700;color:#fff;line-height:1}
+.stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+.stat-trend{font-family:'IBM Plex Mono',monospace;font-size:11px;margin-top:4px}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase}
+input,select,textarea{background:var(--surface-2,#121E33);border:1px solid var(--border);color:var(--text);padding:10px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s;width:100%;border-radius:0}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+select option{background:var(--surface)}
+textarea{resize:vertical;min-height:100px;font-family:'IBM Plex Mono',monospace;font-size:12px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:all .2s;border:none;text-transform:uppercase}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:#ffb830}
+.btn-primary:disabled{background:#7A5010;color:#5a4010;cursor:not-allowed}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-dim)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:transparent;border:1px solid var(--red-dim);color:var(--red)}
+.btn-danger:hover{background:rgba(232,64,64,.1)}
+
+/* RANGE SLIDER */
+input[type=range]{padding:0;height:6px;-webkit-appearance:none;background:var(--border);border:none;border-radius:3px;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);background:var(--surface-2,#121E33);white-space:nowrap}
+.data-table td{padding:10px 14px;border-bottom:1px solid rgba(30,46,74,.4);vertical-align:middle}
+.data-table tr{transition:background .15s;cursor:pointer}
+.data-table tr:hover td{background:rgba(13,22,37,.6)}
+.data-table tr.selected td{background:rgba(232,160,32,.06);border-bottom-color:rgba(232,160,32,.15)}
+.mono{font-family:'IBM Plex Mono',monospace}
+
+/* DI BADGE */
+.di-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px}
+.di-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ALERT BLOCK */
+.alert-block{padding:16px 20px;border-left:3px solid;margin-bottom:16px;display:flex;gap:16px;align-items:flex-start}
+.alert-block.extreme{border-color:var(--red);background:rgba(232,64,64,.06)}
+.alert-block.severe{border-color:var(--orange);background:rgba(234,112,32,.06)}
+.alert-block.moderate{border-color:#EAB308;background:rgba(234,179,8,.05)}
+.alert-block.aligned{border-color:var(--green);background:rgba(60,184,122,.05)}
+.alert-icon{font-size:22px;line-height:1;flex-shrink:0}
+.alert-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#fff}
+.alert-sub{font-size:12px;color:var(--text-dim);margin-top:2px}
+
+/* BRIEF PANEL */
+.brief-panel{background:var(--surface);border:1px solid var(--border);overflow:hidden}
+.brief-top{padding:20px 24px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+.brief-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.bf-row{display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid rgba(30,46,74,.4)}
+.bf-key{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)}
+.bf-val{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff;text-align:right}
+.enf-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.enf-item{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:12px 14px;background:var(--surface-2,#121E33);border:1px solid var(--border);align-items:start}
+.enf-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--accent);line-height:1}
+.enf-text{font-size:13px;color:var(--text);line-height:1.5}
+.policy-rec{padding:14px;background:var(--surface-2,#121E33);border:1px solid var(--border);border-left:3px solid var(--accent);margin-bottom:8px;display:grid;grid-template-columns:auto 1fr;gap:14px}
+.policy-ref{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);white-space:nowrap;line-height:1.5}
+.policy-action{font-size:12px;color:var(--text);line-height:1.6}
+
+/* DI GAUGE */
+.di-gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px}
+.gauge-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase}
+
+/* FLAGS */
+.flag-chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:4px 10px;background:rgba(232,64,64,.1);border:1px solid rgba(232,64,64,.3);color:var(--red);margin:3px}
+
+/* DIRECTIVE TEXT */
+.directive-block{background:#000;border:1px solid var(--border);padding:20px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#a0b8d0;line-height:1.8;white-space:pre-wrap;overflow-x:auto;max-height:360px;overflow-y:auto}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{padding:12px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;border:1px solid;max-width:400px;animation:slideIn .3s ease;display:flex;align-items:center;gap:10px}
+.toast.success{background:rgba(60,184,122,.12);border-color:var(--green);color:var(--green)}
+.toast.error{background:rgba(232,64,64,.12);border-color:var(--red);color:var(--red)}
+.toast.info{background:rgba(232,160,32,.10);border-color:var(--accent);color:var(--accent)}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* LOADING */
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SECTION STAMP */
+.section-stamp{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.stamp-code{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;border:1px solid rgba(232,160,32,.3);padding:3px 10px;background:rgba(232,160,32,.05);white-space:nowrap}
+.stamp-rule{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+h2{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:32px;color:#fff;line-height:1.1;margin-bottom:6px}
+h2 .dim{color:var(--text-dim);font-weight:400}
+.section-desc{color:var(--text-dim);font-size:13px;margin-bottom:24px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .brief-field-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .status-dot::before,.spinner{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">PRESTIJ-25 // JN ENGINE</span>
+  <ul class="nav-links">
+    <li><a onclick="showPage('dashboard')" class="active" id="nav-dashboard">Dashboard</a></li>
+    <li><a onclick="showPage('ingest')" id="nav-ingest">Ingest Payload</a></li>
+    <li><a onclick="showPage('cases')" id="nav-cases">Kes Log</a></li>
+    <li><a onclick="showPage('brief')" id="nav-brief">Executive Brief</a></li>
+    <li><a onclick="showPage('about')" id="nav-about">Sistem</a></li>
+  </ul>
+  <div class="status-dot" id="engine-status">Connecting...</div>
+</nav>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <div class="sidebar-item active" onclick="showPage('dashboard')" id="sb-dashboard">
+        <span class="si-icon">▦</span><span class="si-text">Dashboard</span>
+      </div>
+      <div class="sidebar-item" onclick="showPage('ingest')" id="sb-ingest">
+        <span class="si-icon">↑</span><span class="si-text">Ingest Payload</span>
+      </div>
+      <div class="sidebar-item" onclick="showPage('cases')" id="sb-cases">
+        <span class="si-icon">≡</span><span class="si-text">Kes Log</span>
+      </div>
+      <div class="sidebar-item" onclick="showPage('brief')" id="sb-brief">
+        <span class="si-icon">◧</span><span class="si-text">Executive Brief</span>
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Quick Ingest</div>
+      <div style="padding:0 12px;display:flex;flex-direction:column;gap:6px">
+        <button class="btn btn-ghost" style="font-size:12px;padding:7px 12px;width:100%;justify-content:flex-start" onclick="loadDemo('extreme')">▶ Demo: Extreme DI</button>
+        <button class="btn btn-ghost" style="font-size:12px;padding:7px 12px;width:100%;justify-content:flex-start" onclick="loadDemo('severe')">▶ Demo: Severe DI</button>
+        <button class="btn btn-ghost" style="font-size:12px;padding:7px 12px;width:100%;justify-content:flex-start" onclick="loadDemo('aligned')">▶ Demo: Aligned</button>
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Engine Stats</div>
+      <div style="padding:0 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);display:flex;flex-direction:column;gap:8px">
+        <div>Agents: <span style="color:var(--green)">3 Online</span></div>
+        <div>Cases: <span style="color:#fff" id="sb-case-count">0</span></div>
+        <div>Anomalies: <span style="color:var(--red)" id="sb-anomaly-count">0</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ══ DASHBOARD ══ -->
+    <section class="page-section active" id="page-dashboard">
+      <div class="section-stamp">
+        <span class="stamp-code">LIVE MONITORING</span>
+        <div class="stamp-rule"></div>
+      </div>
+      <h2>Engine <span class="dim">Dashboard</span></h2>
+      <p class="section-desc">Pemantauan masa nyata ekosistem matrix 25×25. Data dikemaskini apabila payload baharu diproses.</p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="stat-total">0</div>
+          <div class="stat-lbl">Jumlah Kes</div>
+          <div class="stat-trend" style="color:var(--text-dim)">Diproses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-anomaly" style="color:var(--red)">0</div>
+          <div class="stat-lbl">Anomaly Detected</div>
+          <div class="stat-trend" id="stat-anomaly-pct" style="color:var(--text-dim)">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-extreme" style="color:var(--red)">0</div>
+          <div class="stat-lbl">Extreme / Severe</div>
+          <div class="stat-trend" style="color:var(--text-dim)">Tindakan Segera</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-aligned" style="color:var(--green)">0</div>
+          <div class="stat-lbl">Data Aligned</div>
+          <div class="stat-trend" style="color:var(--text-dim)">Konsisten</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Kes Terkini</span>
+            <button class="btn btn-ghost" style="font-size:12px;padding:6px 14px" onclick="refreshDashboard()">↺ Refresh</button>
+          </div>
+          <div id="dashboard-cases">
+            <div style="text-align:center;padding:40px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px;">
+              Tiada kes diproses.<br>Gunakan <span style="color:var(--accent)">Ingest Payload</span> untuk mula.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">DI Distribution</span></div>
+          <canvas id="dist-canvas" width="280" height="220" style="display:block;margin:0 auto"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ INGEST ══ -->
+    <section class="page-section" id="page-ingest">
+      <div class="section-stamp">
+        <span class="stamp-code">MATRIX INGESTION</span>
+        <div class="stamp-rule"></div>
+      </div>
+      <h2>Ingest <span class="dim">Payload</span></h2>
+      <p class="section-desc">Hantar telemetri daripada sistem matrix luaran untuk dianalisis oleh pipeline Agent A → B → C.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 280px;gap:20px">
+        <div class="card">
+          <form id="ingest-form" onsubmit="handleIngest(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Sistem Sumber (Source System ID)</label>
+                <input type="text" id="f-source-id" placeholder="e.g. PRESTIJ-BULLY-03" value="PRESTIJ-BULLY-03" required>
+              </div>
+              <div class="form-group">
+                <label>Nama Sistem</label>
+                <input type="text" id="f-source-name" placeholder="e.g. AI Bully Detection Agent" value="AI-Powered Bully Detection Agent" required>
+              </div>
+              <div class="form-group">
+                <label>Kod Sekolah (School ID)</label>
+                <select id="f-school-id">
+                  <option value="SMK002">SMK002 — SMK Pendang, Kedah (High Risk)</option>
+                  <option value="SKB001">SKB001 — SK Bandar Baru Nilai (Low Risk)</option>
+                  <option value="SKB002">SKB002 — SK Bukit Jelutong (Medium Risk)</option>
+                  <option value="SMK001">SMK001 — SMK Tun Hussein Onn (Low Risk)</option>
+                  <option value="SBP001">SBP001 — SBP Integrasi Gombak (Very Low Risk)</option>
+                  <option value="MRSM001">MRSM001 — MRSM Kuala Klawang</option>
+                  <option value="SKK001">SKK001 — SK Kluang Utama</option>
+                  <option value="UNKNOWN99">UNKNOWN99 — (Sekolah Tidak Dikenali)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Skor Operasi: <span id="score-display" style="color:var(--accent)">92.0</span></label>
+                <input type="range" id="f-op-score" min="0" max="100" step="0.5" value="92" oninput="document.getElementById('score-display').textContent=parseFloat(this.value).toFixed(1)">
+              </div>
+              <div class="form-group full">
+                <label>Laporan Teks (Raw Text Payload)</label>
+                <textarea id="f-raw-text" required>Terdapat laporan kritikal berhubung salah guna kuasa oleh pentadbir sekolah SMK002. Rekod peruntukan kewangan didapati tidak konsisten dengan laporan rasmi. Pelajar melaporkan kejadian buli yang serius dan pergaduhan berulang di kawasan sekolah. Kantin sekolah didapati tidak memenuhi piawaian kebersihan yang ditetapkan. Laporan ini dihantar secara urgent untuk tindakan segera pihak berkuasa.</textarea>
+              </div>
+            </div>
+            <div style="margin-top:20px;display:flex;gap:12px;align-items:center">
+              <button type="submit" class="btn btn-primary" id="submit-btn">
+                ↑ Hantar ke Engine
+              </button>
+              <button type="button" class="btn btn-ghost" onclick="resetForm()">Reset</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Quick Reference -->
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><span class="card-title" style="font-size:14px">DI Formula</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text-dim);line-height:2">
+              <span style="color:var(--accent)">DI</span> = |Audit − Op| / 100<br>
+              <span style="color:var(--text-dim);font-size:10px">Range: [0.0000, 1.0000]</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title" style="font-size:14px">Klasifikasi</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:11px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span><span style="color:var(--text-dim)">≥ 0.75</span><span style="color:var(--red)">EXTREME</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--orange);display:inline-block"></span><span style="color:var(--text-dim)">≥ 0.50</span><span style="color:var(--orange)">SEVERE</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#EAB308;display:inline-block"></span><span style="color:var(--text-dim)">≥ 0.25</span><span style="color:#EAB308">MODERATE</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block"></span><span style="color:var(--text-dim)">≥ 0.10</span><span style="color:var(--blue)">MINOR</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span><span style="color:var(--text-dim)">&lt; 0.10</span><span style="color:var(--green)">ALIGNED</span></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><span class="card-title" style="font-size:14px">Audit Reference</span></div>
+            <div id="audit-preview" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);line-height:1.8">
+              Pilih sekolah untuk lihat rekod audit JN.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Panel -->
+      <div id="ingest-result" style="display:none;margin-top:20px"></div>
+    </section>
+
+    <!-- ══ CASES LOG ══ -->
+    <section class="page-section" id="page-cases">
+      <div class="section-stamp">
+        <span class="stamp-code">KES LOG</span>
+        <div class="stamp-rule"></div>
+      </div>
+      <h2>Kes <span class="dim">Log</span></h2>
+      <p class="section-desc">Semua kes yang telah diproses oleh engine. Klik kes untuk lihat brief penuh.</p>
+      <div style="display:flex;gap:12px;margin-bottom:20px">
+        <button class="btn btn-ghost" onclick="loadCases()">↺ Refresh</button>
+        <button class="btn btn-danger" onclick="clearAllCases()">✕ Clear All</button>
+      </div>
+      <div id="cases-table-wrap">
+        <div style="text-align:center;padding:60px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px">Tiada kes. Ingest payload untuk mula.</div>
+      </div>
+    </section>
+
+    <!-- ══ EXECUTIVE BRIEF ══ -->
+    <section class="page-section" id="page-brief">
+      <div class="section-stamp">
+        <span class="stamp-code">EXECUTIVE OUTPUT</span>
+        <div class="stamp-rule"></div>
+      </div>
+      <h2>Executive <span class="dim">Brief</span></h2>
+      <p class="section-desc">Paparan penuh Executive Briefing yang dijana oleh Agent C untuk kes yang dipilih.</p>
+
+      <div id="brief-content">
+        <div style="text-align:center;padding:80px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px">
+          Pilih kes daripada <span style="color:var(--accent);cursor:pointer" onclick="showPage('cases')">Kes Log</span> atau ingest payload baharu untuk lihat brief.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ ABOUT ══ -->
+    <section class="page-section" id="page-about">
+      <div class="section-stamp">
+        <span class="stamp-code">SISTEM INFO</span>
+        <div class="stamp-rule"></div>
+      </div>
+      <h2>Tentang <span class="dim">Sistem</span></h2>
+      <p class="section-desc">MoE Agentic AI — PRESTIJ Programme 2025. Supreme Truth & Audit Node dalam ekosistem matrix 25×25.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Architecture</span></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim);line-height:2">
+            <div><span style="color:var(--accent)">Agent A</span> — Semantic Ingestion & Mapping</div>
+            <div style="padding-left:20px;font-size:11px">NER + Weighted Taxonomy Scoring</div>
+            <div><span style="color:var(--accent)">Agent B</span> — Cross-Examination & Anomaly</div>
+            <div style="padding-left:20px;font-size:11px">DI Computation + 8-Flag Generator</div>
+            <div><span style="color:var(--accent)">Agent C</span> — Executive Briefing</div>
+            <div style="padding-left:20px;font-size:11px">Policy Matrix + Directive Generator</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Tech Stack</span></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim);line-height:2">
+            <div><span style="color:#fff">Backend</span> — FastAPI + Python 3.12</div>
+            <div><span style="color:#fff">Database</span> — PostgreSQL 16 (JSONB)</div>
+            <div><span style="color:#fff">Frontend</span> — Vanilla HTML/CSS/JS</div>
+            <div><span style="color:#fff">Deploy</span> — Docker Compose</div>
+          </div>
+        </div>
+        <div class="card" style="grid-column:1/-1">
+          <div class="card-header"><span class="card-title">API Endpoints</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:12px;align-items:center;padding:8px 12px;background:rgba(60,184,122,.05);border:1px solid rgba(60,184,122,.15)">
+              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--green);font-size:14px;width:40px">POST</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff">/api/v1/matrix/ingest</span>
+              <span style="font-size:12px;color:var(--text-dim)">— Ingest payload dari sistem matrix</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;padding:8px 12px;background:rgba(64,128,232,.05);border:1px solid rgba(64,128,232,.15)">
+              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--blue);font-size:14px;width:40px">GET</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff">/api/v1/matrix/executive-brief/{case_id}</span>
+              <span style="font-size:12px;color:var(--text-dim)">— Retrieve executive brief</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;padding:8px 12px;background:rgba(64,128,232,.05);border:1px solid rgba(64,128,232,.15)">
+              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--blue);font-size:14px;width:40px">GET</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff">/api/v1/matrix/cases</span>
+              <span style="font-size:12px;color:var(--text-dim)">— List all processed cases</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;padding:8px 12px;background:rgba(64,128,232,.05);border:1px solid rgba(64,128,232,.15)">
+              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--blue);font-size:14px;width:40px">GET</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff">/api/docs</span>
+              <span style="font-size:12px;color:var(--text-dim)">— Interactive API docs (Swagger)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const API = '';  // same origin
+
+// ── AUDIT REFERENCE DATA (mirrors agent_b.py) ──
+const AUDIT_DB = {
+  SKB001: { skpmg2_score: 85.50, facility_gred: 'A', canteen_hygiene_score: 88.00, integrity_risk_index: 0.120, school_name: 'SK Bandar Baru Nilai', state: 'Negeri Sembilan', last_audit_date: '2023-03-15' },
+  SKB002: { skpmg2_score: 72.00, facility_gred: 'B', canteen_hygiene_score: 65.00, integrity_risk_index: 0.350, school_name: 'SK Bukit Jelutong', state: 'Selangor', last_audit_date: '2022-11-20' },
+  SMK001: { skpmg2_score: 91.20, facility_gred: 'A', canteen_hygiene_score: 92.00, integrity_risk_index: 0.080, school_name: 'SMK Tun Hussein Onn', state: 'W.P. Kuala Lumpur', last_audit_date: '2024-01-10' },
+  SMK002: { skpmg2_score: 58.00, facility_gred: 'C', canteen_hygiene_score: 45.00, integrity_risk_index: 0.680, school_name: 'SMK Pendang', state: 'Kedah', last_audit_date: '2022-08-05' },
+  SBP001: { skpmg2_score: 94.80, facility_gred: 'A', canteen_hygiene_score: 95.50, integrity_risk_index: 0.040, school_name: 'SBP Integrasi Gombak', state: 'Selangor', last_audit_date: '2023-09-22' },
+  MRSM001:{ skpmg2_score: 88.30, facility_gred: 'A', canteen_hygiene_score: 87.00, integrity_risk_index: 0.095, school_name: 'MRSM Kuala Klawang', state: 'Negeri Sembilan', last_audit_date: '2023-06-14' },
+  SKK001: { skpmg2_score: 63.50, facility_gred: 'C', canteen_hygiene_score: 58.00, integrity_risk_index: 0.420, school_name: 'SK Kluang Utama', state: 'Johor', last_audit_date: '2022-05-30' },
+};
+
+const DEMO_PAYLOADS = {
+  extreme: { source_system_id:'PRESTIJ-INTEGRITY-07', source_system_name:'AI Integrity Monitoring Agent', school_id:'SMK002', operational_score:96.5, raw_text:'Laporan kritikal: rasuah dan penipuan rekod sekolah SMK002 oleh pentadbir. Rekod SKPMG2 didapati dimanipulasi secara sengaja. Integriti data sekolah sangat dipersoalkan. Tindakan segera diperlukan.' },
+  severe:  { source_system_id:'PRESTIJ-FACILITY-02', source_system_name:'AI Facility Assessment Agent', school_id:'SKK001', operational_score:89.0, raw_text:'Penilaian kemudahan sekolah SKK001 menunjukkan prestasi yang jauh lebih baik daripada rekod Jemaah Nazir. Bangunan dan tandas dilaporkan dalam keadaan baik. Kantin bersih dan teratur. Namun terdapat tanda-tanda manipulasi rekod.' },
+  aligned: { source_system_id:'PRESTIJ-ACADEMIC-01', source_system_name:'AI Academic Quality Agent', school_id:'SBP001', operational_score:93.0, raw_text:'Laporan prestasi akademik SBP Integrasi Gombak menunjukkan kualiti pengajaran dan kurikulum yang cemerlang. PDPC berjalan dengan lancar. Ujian dan peperiksaan mencapai sasaran yang ditetapkan.' },
+};
+
+// ── STATE ──
+let allCases = [];
+
+// ── NAVIGATION ──
+function showPage(name) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const nav = document.getElementById('nav-' + name);
+  if (nav) nav.classList.add('active');
+  const sb = document.getElementById('sb-' + name);
+  if (sb) sb.classList.add('active');
+  if (name === 'dashboard') refreshDashboard();
+  if (name === 'cases') loadCases();
+}
+
+// ── TOAST ──
+function toast(msg, type = 'info', duration = 4000) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${type === 'info' ? '◈' : type === 'success' ? '✓' : '✕'}</span>${msg}`;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; t.style.transition = 'all .3s'; setTimeout(() => t.remove(), 300); }, duration);
+}
+
+// ── HEALTH CHECK ──
+async function checkHealth() {
+  try {
+    const r = await fetch(API + '/api/v1/health');
+    if (r.ok) {
+      document.getElementById('engine-status').textContent = 'Engine Operational';
+      document.getElementById('engine-status').style.color = 'var(--green)';
+    } else throw new Error();
+  } catch {
+    document.getElementById('engine-status').textContent = 'Engine Offline';
+    document.getElementById('engine-status').style.color = 'var(--red)';
+    document.getElementById('engine-status').style.setProperty('--c', 'var(--red)');
+  }
+}
+
+// ── AUDIT PREVIEW ──
+document.getElementById('f-school-id').addEventListener('change', function() {
+  const rec = AUDIT_DB[this.value];
+  const el = document.getElementById('audit-preview');
+  if (!rec) { el.textContent = 'Rekod tidak dijumpai — fallback default digunakan.'; el.style.color = 'var(--orange)'; return; }
+  el.style.color = 'var(--text-dim)';
+  el.innerHTML = `<b style="color:#fff">${rec.school_name}</b><br>${rec.state}<br><br>
+    SKPMG2: <span style="color:var(--accent)">${rec.skpmg2_score}</span><br>
+    Gred Kemudahan: <span style="color:var(--accent)">${rec.facility_gred}</span><br>
+    Kantin: <span style="color:var(--accent)">${rec.canteen_hygiene_score}</span><br>
+    Risiko: <span style="color:${rec.integrity_risk_index > 0.5 ? 'var(--red)' : rec.integrity_risk_index > 0.3 ? 'var(--orange)' : 'var(--green)'}">${rec.integrity_risk_index.toFixed(3)}</span><br>
+    Audit: ${rec.last_audit_date}`;
+});
+document.getElementById('f-school-id').dispatchEvent(new Event('change'));
+
+// ── LOAD DEMO ──
+function loadDemo(type) {
+  const d = DEMO_PAYLOADS[type];
+  if (!d) return;
+  document.getElementById('f-source-id').value = d.source_system_id;
+  document.getElementById('f-source-name').value = d.source_system_name;
+  document.getElementById('f-school-id').value = d.school_id;
+  document.getElementById('f-school-id').dispatchEvent(new Event('change'));
+  document.getElementById('f-op-score').value = d.operational_score;
+  document.getElementById('score-display').textContent = d.operational_score.toFixed(1);
+  document.getElementById('f-raw-text').value = d.raw_text;
+  showPage('ingest');
+  toast('Demo payload dimuat: ' + type.toUpperCase(), 'info');
+}
+
+function resetForm() {
+  document.getElementById('ingest-form').reset();
+  document.getElementById('score-display').textContent = '50.0';
+  document.getElementById('ingest-result').style.display = 'none';
+  document.getElementById('f-school-id').dispatchEvent(new Event('change'));
+}
+
+// ── INGEST ──
+async function handleIngest(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Memproses...';
+
+  const body = {
+    source_system_id: document.getElementById('f-source-id').value,
+    source_system_name: document.getElementById('f-source-name').value,
+    school_id: document.getElementById('f-school-id').value,
+    operational_score: parseFloat(document.getElementById('f-op-score').value),
+    raw_text: document.getElementById('f-raw-text').value,
+  };
+
+  try {
+    const r = await fetch(API + '/api/v1/matrix/ingest', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail?.message || 'Ralat tidak diketahui');
+
+    showIngestResult(data);
+    toast('Payload diproses: ' + data.case_id, 'success');
+    if (data.anomaly_detected) toast('⚠ ANOMALY DETECTED — DI: ' + data.discrepancy_index.toFixed(4), 'error', 6000);
+  } catch (err) {
+    toast('Error: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '↑ Hantar ke Engine';
+  }
+}
+
+function showIngestResult(data) {
+  const clsColor = { EXTREME_DISCREPANCY:'var(--red)', SEVERE_DISCREPANCY:'var(--orange)', MODERATE_DISCREPANCY:'#EAB308', MINOR_DISCREPANCY:'var(--blue)', DATA_ALIGNED:'var(--green)' };
+  const color = clsColor[data.di_classification] || 'var(--text-dim)';
+  const el = document.getElementById('ingest-result');
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div class="card" style="border-color:${data.anomaly_detected ? 'var(--red-dim)' : 'var(--green-dim)'}">
+      <div class="card-header">
+        <span class="card-title">Keputusan: ${data.case_id}</span>
+        <span class="card-badge ${data.anomaly_detected ? 'badge-red' : 'badge-green'}">${data.anomaly_detected ? 'ANOMALY DETECTED' : 'DATA CLEAN'}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">DI Score</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;color:${color}">${data.discrepancy_index.toFixed(4)}</div></div>
+        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Klasifikasi</div>
+          <div style="font-size:13px;color:${color};font-weight:600">${data.di_classification.replace(/_/g,' ')}</div></div>
+        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Flags</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;color:${data.flags_count>0?'var(--red)':'var(--green)'}">${data.flags_count}</div></div>
+        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Alert</div>
+          <div style="font-size:12px;color:${color}">${data.alert_level}</div></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="viewBrief('${data.case_id}')">◧ Lihat Executive Brief</button>
+        <button class="btn btn-ghost" onclick="showPage('cases')">≡ Ke Kes Log</button>
+      </div>
+    </div>`;
+}
+
+// ── BRIEF ──
+async function viewBrief(caseId) {
+  showPage('brief');
+  const el = document.getElementById('brief-content');
+  el.innerHTML = '<div style="padding:40px;display:flex;justify-content:center"><div class="spinner" style="width:32px;height:32px"></div></div>';
+  try {
+    const r = await fetch(API + '/api/v1/matrix/executive-brief/' + caseId);
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail?.error || 'Not found');
+    renderBrief(d);
+  } catch (err) {
+    el.innerHTML = `<div style="padding:40px;text-align:center;color:var(--red);font-family:'IBM Plex Mono',monospace">Error: ${err.message}</div>`;
+  }
+}
+
+function diClass(cls) {
+  const m = {EXTREME_DISCREPANCY:'extreme',SEVERE_DISCREPANCY:'severe',MODERATE_DISCREPANCY:'moderate',MINOR_DISCREPANCY:'minor',DATA_ALIGNED:'aligned'};
+  return m[cls] || 'aligned';
+}
+function diColor(cls) {
+  const m = {EXTREME_DISCREPANCY:'var(--red)',SEVERE_DISCREPANCY:'var(--orange)',MODERATE_DISCREPANCY:'#EAB308',MINOR_DISCREPANCY:'var(--blue)',DATA_ALIGNED:'var(--green)'};
+  return m[cls] || 'var(--text-dim)';
+}
+
+function renderBrief(d) {
+  const color = diColor(d.di_classification);
+  const cls = diClass(d.di_classification);
+  const di_pct = Math.min(100, d.discrepancy_index * 100);
+
+  const flagsHtml = d.flags_triggered.length
+    ? d.flags_triggered.map(f => `<span class="flag-chip">${f}</span>`).join('')
+    : '<span style="color:var(--green);font-family:\'IBM Plex Mono\',monospace;font-size:12px">Tiada flags — data bersih</span>';
+
+  const enfHtml = d.enforcement_actions.map((a,i) => `
+    <li class="enf-item"><span class="enf-num">${i+1}</span><span class="enf-text">${a}</span></li>`).join('');
+
+  const policyHtml = d.policy_recommendations.length
+    ? d.policy_recommendations.map(p => `
+      <div class="policy-rec">
+        <span class="policy-ref">${p.legal_reference}</span>
+        <span class="policy-action">${p.recommended_action}</span>
+      </div>`).join('')
+    : '<div style="color:var(--text-dim);font-size:13px;padding:12px">Tiada cadangan polisi untuk kes ini.</div>';
+
+  document.getElementById('brief-content').innerHTML = `
+    <div class="brief-panel">
+      <div class="brief-top" style="border-left:4px solid ${color}">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;margin-bottom:8px">PERINTAH EKSEKUTIF — JEMAAH NAZIR</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#fff">${d.school_name || d.school_id}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:4px">${d.case_id} &nbsp;|&nbsp; ${d.state} &nbsp;|&nbsp; ${new Date(d.generated_at).toLocaleString('ms-MY')}</div>
+        </div>
+        <span class="card-badge" style="background:${color}18;border:1px solid ${color};color:${color};padding:8px 16px;font-size:13px">${d.alert_status}</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;border-bottom:1px solid var(--border)">A. MAKLUMAT SEKOLAH</div>
+          <div class="bf-row"><span class="bf-key">Kod Sekolah</span><span class="bf-val">${d.school_id}</span></div>
+          <div class="bf-row"><span class="bf-key">Sumber Sistem</span><span class="bf-val" style="font-size:10px">${d.source_system}</span></div>
+          <div class="bf-row"><span class="bf-key">Domain Isu</span><span class="bf-val">${d.issue_domain}</span></div>
+          <div class="bf-row"><span class="bf-key">Keparahan</span><span class="bf-val" style="color:${d.severity==='CRITICAL'?'var(--red)':d.severity==='HIGH'?'var(--orange)':'var(--accent)'}">${d.severity}</span></div>
+          <div class="bf-row"><span class="bf-key">Keyakinan Deteksi</span><span class="bf-val" style="color:var(--accent)">${Math.round(d.confidence_score*100)}%</span></div>
+        </div>
+        <div style="border-left:1px solid var(--border)">
+          <div style="padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;border-bottom:1px solid var(--border)">B. ANALISIS DISCREPANCY INDEX</div>
+          <div class="bf-row"><span class="bf-key">Skor Audit JN</span><span class="bf-val" style="color:var(--green)">${d.audit_score_reference.toFixed(2)}</span></div>
+          <div class="bf-row"><span class="bf-key">Skor Dilaporkan</span><span class="bf-val" style="color:${Math.abs(d.score_delta) > 20 ? 'var(--red)' : 'var(--text)'}">${d.operational_score_reported.toFixed(2)}</span></div>
+          <div class="bf-row"><span class="bf-key">Delta</span><span class="bf-val" style="color:${Math.abs(d.score_delta)>20?'var(--red)':'var(--text)'}">${d.score_delta > 0 ? '+' : ''}${d.score_delta.toFixed(2)} mata</span></div>
+          <div class="bf-row"><span class="bf-key">DI Score</span><span class="bf-val" style="color:${color};font-size:16px;font-weight:700">${d.discrepancy_index.toFixed(4)}</span></div>
+          <div class="bf-row"><span class="bf-key">Klasifikasi</span><span class="bf-val" style="color:${color};font-size:11px">${d.di_classification.replace(/_/g,' ')}</span></div>
+        </div>
+      </div>
+
+      <!-- DI Bar -->
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">DI Visualisation</div>
+        <div style="display:flex;height:10px;border-radius:2px;overflow:hidden;margin-bottom:8px">
+          <div style="width:10%;background:var(--green);opacity:.8"></div>
+          <div style="width:15%;background:var(--blue);opacity:.8"></div>
+          <div style="width:25%;background:#EAB308;opacity:.8"></div>
+          <div style="width:25%;background:var(--orange);opacity:.8"></div>
+          <div style="width:25%;background:var(--red);opacity:.8"></div>
+        </div>
+        <div style="position:relative;height:20px;">
+          <div style="position:absolute;left:${di_pct}%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
+            <div style="width:2px;height:10px;background:var(--accent)"></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);white-space:nowrap">${d.discrepancy_index.toFixed(4)}</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:4px">
+          <span>0.00</span><span>0.10</span><span>0.25</span><span>0.50</span><span>0.75</span><span>1.00</span>
+        </div>
+      </div>
+
+      <!-- Flags -->
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px">Bendera Risiko Dicetuskan</div>
+        ${flagsHtml}
+      </div>
+
+      <!-- Enforcement -->
+      <div style="padding:20px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px">C. Tindakan Penguatkuasaan</div>
+        <ul class="enf-list">${enfHtml}</ul>
+      </div>
+
+      <!-- Policy -->
+      <div style="padding:0 20px 20px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px">D. Cadangan Pindaan Polisi</div>
+        ${policyHtml}
+      </div>
+
+      <!-- Directive Text -->
+      <div style="padding:0 20px 20px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px">E. Teks Perintah Eksekutif (Full Directive)</div>
+        <div class="directive-block">${d.executive_directive_text}</div>
+      </div>
+
+      <!-- Signature -->
+      <div style="padding:20px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:32px">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:20px;text-transform:uppercase;letter-spacing:.1em">Disahkan oleh:</div>
+          <div style="border-bottom:1px solid var(--border);margin-bottom:8px;height:28px"></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">Ketua Jemaah Nazir Malaysia</div>
+        </div>
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:20px;text-transform:uppercase;letter-spacing:.1em">Diluluskan oleh:</div>
+          <div style="border-bottom:1px solid var(--border);margin-bottom:8px;height:28px"></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">Pengarah, Bahagian Audit KPM</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── CASES TABLE ──
+async function loadCases() {
+  try {
+    const r = await fetch(API + '/api/v1/matrix/cases');
+    const d = await r.json();
+    allCases = d.cases || [];
+    updateSidebar(d);
+    renderCasesTable(allCases);
+  } catch { toast('Gagal memuatkan kes', 'error'); }
+}
+
+function updateSidebar(d) {
+  document.getElementById('sb-case-count').textContent = d.total_cases || 0;
+  const anomalies = (d.cases || []).filter(c => c.anomaly_detected).length;
+  document.getElementById('sb-anomaly-count').textContent = anomalies;
+}
+
+function renderCasesTable(cases) {
+  const el = document.getElementById('cases-table-wrap');
+  if (!cases.length) {
+    el.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace;font-size:12px">Tiada kes. Ingest payload untuk mula.</div>';
+    return;
+  }
+  const clsColor = { EXTREME_DISCREPANCY:'var(--red)', SEVERE_DISCREPANCY:'var(--orange)', MODERATE_DISCREPANCY:'#EAB308', MINOR_DISCREPANCY:'var(--blue)', DATA_ALIGNED:'var(--green)' };
+  el.innerHTML = `<div style="overflow-x:auto"><table class="data-table">
+    <thead><tr>
+      <th>Case ID</th><th>Sekolah</th><th>DI Score</th><th>Klasifikasi</th><th>Flags</th><th>Anomaly</th><th>Diproses</th><th></th>
+    </tr></thead>
+    <tbody>${cases.map(c => `<tr onclick="viewBrief('${c.case_id}')">
+      <td class="mono" style="font-size:11px;color:var(--accent)">${c.case_id}</td>
+      <td><div style="font-size:12px;color:#fff">${c.school_id}</div><div style="font-size:11px;color:var(--text-dim)">${c.school_name||''}</div></td>
+      <td class="mono" style="color:${clsColor[c.di_classification]||'var(--text-dim)'};font-size:14px;font-weight:600">${c.discrepancy_index.toFixed(4)}</td>
+      <td><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:${clsColor[c.di_classification]||'var(--text-dim)'}">${c.di_classification.replace(/_/g,' ')}</span></td>
+      <td class="mono" style="color:${c.flags_count>0?'var(--red)':'var(--green)'}">${c.flags_count}</td>
+      <td><span class="card-badge ${c.anomaly_detected?'badge-red':'badge-green'}">${c.anomaly_detected?'YES':'NO'}</span></td>
+      <td class="mono" style="font-size:11px;color:var(--text-dim)">${new Date(c.ingested_at).toLocaleString('ms-MY')}</td>
+      <td><button class="btn btn-ghost" style="font-size:11px;padding:5px 12px" onclick="event.stopPropagation();viewBrief('${c.case_id}')">Brief →</button></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+async function clearAllCases() {
+  if (!confirm('Padam semua kes dalam engine store?')) return;
+  try {
+    await fetch(API + '/api/v1/matrix/cases', { method: 'DELETE' });
+    allCases = [];
+    renderCasesTable([]);
+    document.getElementById('sb-case-count').textContent = '0';
+    document.getElementById('sb-anomaly-count').textContent = '0';
+    toast('Semua kes dipadam', 'info');
+  } catch { toast('Gagal memadam kes', 'error'); }
+}
+
+// ── DASHBOARD ──
+async function refreshDashboard() {
+  try {
+    const r = await fetch(API + '/api/v1/matrix/cases');
+    const d = await r.json();
+    const cases = d.cases || [];
+    allCases = cases;
+    updateSidebar(d);
+
+    const anomalies = cases.filter(c => c.anomaly_detected).length;
+    const extreme = cases.filter(c => ['EXTREME_DISCREPANCY','SEVERE_DISCREPANCY'].includes(c.di_classification)).length;
+    const aligned = cases.filter(c => c.di_classification === 'DATA_ALIGNED').length;
+
+    document.getElementById('stat-total').textContent = d.total_cases;
+    document.getElementById('stat-anomaly').textContent = anomalies;
+    document.getElementById('stat-extreme').textContent = extreme;
+    document.getElementById('stat-aligned').textContent = aligned;
+    document.getElementById('stat-anomaly-pct').textContent = d.total_cases ? Math.round(anomalies/d.total_cases*100)+'% daripada total' : '—';
+
+    // Recent cases list
+    const wrap = document.getElementById('dashboard-cases');
+    if (!cases.length) {
+      wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace;font-size:12px">Tiada kes. Gunakan <span style="color:var(--accent)">Ingest Payload</span> untuk mula.</div>';
+    } else {
+      const clsColor = { EXTREME_DISCREPANCY:'var(--red)', SEVERE_DISCREPANCY:'var(--orange)', MODERATE_DISCREPANCY:'#EAB308', MINOR_DISCREPANCY:'var(--blue)', DATA_ALIGNED:'var(--green)' };
+      wrap.innerHTML = cases.slice(0,8).map(c => `
+        <div onclick="viewBrief('${c.case_id}')" style="display:grid;grid-template-columns:1fr auto auto;gap:16px;padding:12px 0;border-bottom:1px solid rgba(30,46,74,.4);cursor:pointer;align-items:center;transition:background .15s" onmouseover="this.style.background='rgba(232,160,32,.04)'" onmouseout="this.style.background=''">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent)">${c.case_id}</div>
+            <div style="font-size:13px;color:#fff;margin-top:2px">${c.school_id} ${c.school_name?'— '+c.school_name:''}</div>
+          </div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:${clsColor[c.di_classification]||'#fff'}">${c.discrepancy_index.toFixed(4)}</div>
+          <span class="card-badge ${c.anomaly_detected?'badge-red':'badge-green'}" style="white-space:nowrap">${c.anomaly_detected?'ANOMALY':'CLEAN'}</span>
+        </div>`).join('');
+    }
+
+    // Distribution chart
+    drawDistChart(cases);
+  } catch { }
+}
+
+function drawDistChart(cases) {
+  const canvas = document.getElementById('dist-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 280, 220);
+
+  const counts = { DATA_ALIGNED:0, MINOR_DISCREPANCY:0, MODERATE_DISCREPANCY:0, SEVERE_DISCREPANCY:0, EXTREME_DISCREPANCY:0 };
+  cases.forEach(c => { if (counts[c.di_classification] !== undefined) counts[c.di_classification]++; });
+
+  const labels = ['Aligned','Minor','Moderate','Severe','Extreme'];
+  const colors = ['#3CB87A','#4080E8','#EAB308','#EA7020','#E84040'];
+  const vals = Object.values(counts);
+  const max = Math.max(...vals, 1);
+
+  const bw = 36, gap = 12, startX = 24, startY = 180;
+
+  ctx.fillStyle = '#7A90B0';
+  ctx.font = '10px IBM Plex Mono, monospace';
+  ctx.textAlign = 'center';
+
+  vals.forEach((v, i) => {
+    const x = startX + i * (bw + gap);
+    const h = (v / max) * 140;
+    const y = startY - h;
+
+    // Bar
+    ctx.fillStyle = colors[i] + '33';
+    ctx.fillRect(x, y, bw, h);
+    ctx.fillStyle = colors[i];
+    ctx.fillRect(x, y, bw, 3);
+
+    // Value
+    if (v > 0) {
+      ctx.fillStyle = colors[i];
+      ctx.font = 'bold 14px Barlow Condensed, sans-serif';
+      ctx.fillText(v, x + bw/2, y - 6);
+    }
+
+    // Label
+    ctx.fillStyle = '#7A90B0';
+    ctx.font = '9px IBM Plex Mono, monospace';
+    ctx.fillText(labels[i], x + bw/2, startY + 14);
+  });
+
+  // Baseline
+  ctx.strokeStyle = '#1E2E4A';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(16, startY);
+  ctx.lineTo(264, startY);
+  ctx.stroke();
+
+  ctx.fillStyle = '#7A90B0';
+  ctx.font = '9px IBM Plex Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('DI CLASSIFICATION DISTRIBUTION', 140, 210);
+}
+
+// ── INIT ──
+checkHealth();
+refreshDashboard();
+setInterval(checkHealth, 30000);
+</script>
+</body>
+</html>

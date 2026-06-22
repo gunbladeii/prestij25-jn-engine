@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: prestij25-jn-engine
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: RENDER_SERVICE_NAME
+        value: prestij25-jn-engine
