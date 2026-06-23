@@ -89,34 +89,34 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
 /* ── CONTENT ── */
-.app-content{padding:28px;flex:1}
+.app-content{padding:32px 36px;flex:1}
 .page-section{display:none}
 .page-section.active{display:block}
 
 /* ── PAGE HEADER ── */
-.page-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--crimson);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;font-family:'Plus Jakarta Sans',sans-serif}
-.page-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--crimson)}
-.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:4px}
-.page-desc{font-size:13px;color:var(--text-dim);margin-bottom:24px}
+.page-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--crimson);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif}
+.page-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--crimson)}
+.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:6px}
+.page-desc{font-size:14px;color:var(--text-dim);margin-bottom:28px}
 
 /* ── STAT CARDS ── */
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border);position:relative;overflow:hidden}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--s-color,var(--navy))}
-.stat-icon-box{width:40px;height:40px;border-radius:8px;background:var(--s-bg,#EEF2FF);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
-.stat-icon-box svg{width:18px;height:18px}
-.stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px}
-.stat-label{font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.07em;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
-.stat-trend{font-size:12px;color:var(--text-muted)}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:26px 28px 22px;box-shadow:var(--shadow-sm);border:1px solid var(--border);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--s-color,var(--navy))}
+.stat-icon-box{width:48px;height:48px;border-radius:10px;background:var(--s-bg,#EEF2FF);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.stat-icon-box svg{width:22px;height:22px}
+.stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:40px;font-weight:800;color:var(--text);line-height:1;margin-bottom:6px}
+.stat-label{font-size:12px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.07em;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:3px}
+.stat-trend{font-size:13px;color:var(--text-muted)}
 
 /* ── CARDS ── */
-.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:20px;overflow:hidden}
-.card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text)}
-.card-body{padding:20px}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:22px;overflow:hidden}
+.card-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.card-body{padding:24px}
 
 /* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .14s;border:none;text-decoration:none;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .14s;border:none;text-decoration:none;white-space:nowrap}
 .btn-primary{background:var(--navy);color:#fff}
 .btn-primary:hover{background:var(--navy-mid)}
 .btn-primary:disabled{background:#94A3B8;cursor:not-allowed}
@@ -124,7 +124,7 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 .btn-outline:hover{border-color:var(--navy);color:var(--navy)}
 .btn-danger{background:transparent;color:var(--crimson);border:1px solid rgba(196,30,58,.28)}
 .btn-danger:hover{background:var(--crimson-bg)}
-.btn-sm{padding:5px 12px;font-size:12px}
+.btn-sm{padding:6px 14px;font-size:13px}
 
 /* ── BADGES ── */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.03em;white-space:nowrap}
@@ -144,29 +144,28 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 .mono{font-family:'JetBrains Mono',monospace}
 
 /* ── FORMS ── */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.form-group{display:flex;flex-direction:column;gap:5px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-group{display:flex;flex-direction:column;gap:6px}
 .form-group.full{grid-column:1/-1}
-label{font-size:12px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
-input,select,textarea{border:1.5px solid var(--border);border-radius:6px;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .14s,box-shadow .14s;width:100%}
+label{font-size:13px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
+input,select,textarea{border:1.5px solid var(--border);border-radius:6px;padding:11px 14px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .14s,box-shadow .14s;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(26,39,68,.07)}
 select option{background:var(--surface)}
-textarea{resize:vertical;min-height:100px;font-family:'JetBrains Mono',monospace;font-size:12px}
+textarea{resize:vertical;min-height:120px;font-family:'JetBrains Mono',monospace;font-size:13px}
 input[type=range]{-webkit-appearance:none;height:5px;background:var(--border);border:none;border-radius:3px;cursor:pointer;padding:0;box-shadow:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--navy);cursor:pointer}
 input[type=range]:focus{box-shadow:none}
 
 /* ── CASE ROW (dashboard) ── */
-.case-row{display:grid;grid-template-columns:1fr auto auto;gap:16px;padding:13px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;align-items:center;position:relative}
+.case-row{display:grid;grid-template-columns:1fr auto auto;gap:20px;padding:16px 24px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;align-items:center;position:relative}
 .case-row:last-child{border-bottom:none}
 .case-row:hover{background:#F8FAFC}
-/* Aesthetic risk: diagonal red stripe = official rejected stamp language */
-.case-row.is-anomaly{border-left:3px solid var(--crimson)}
+.case-row.is-anomaly{border-left:4px solid var(--crimson)}
 .case-row.is-anomaly::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(196,30,58,.022) 10px,rgba(196,30,58,.022) 20px);pointer-events:none}
-.case-row.is-clean{border-left:3px solid var(--green)}
-.case-id-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--crimson);margin-bottom:2px;letter-spacing:.04em}
-.case-name-label{font-size:13px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
-.case-score-display{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;text-align:right}
+.case-row.is-clean{border-left:4px solid var(--green)}
+.case-id-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--crimson);margin-bottom:3px;letter-spacing:.04em}
+.case-name-label{font-size:14px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
+.case-score-display{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;text-align:right}
 
 /* ── DI COLOR CLASSES ── */
 .di-extreme{color:var(--crimson)}
@@ -206,12 +205,12 @@ input[type=range]:focus{box-shadow:none}
 .sig-name{font-size:12px;color:var(--text-dim);font-family:'Plus Jakarta Sans',sans-serif}
 
 /* ── INGEST REF CARDS ── */
-.ref-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
-.ref-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px}
-.cls-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12px}
-.cls-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.cls-thr{color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:11px;min-width:36px}
-.cls-lbl{font-weight:600}
+.ref-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.ref-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px}
+.cls-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:13px}
+.cls-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cls-thr{color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:12px;min-width:42px}
+.cls-lbl{font-weight:600;font-size:12px}
 
 /* ── SYSTEM PAGE ── */
 .api-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:6px;margin-bottom:6px;border:1px solid var(--border);background:var(--ground)}
@@ -249,8 +248,9 @@ input[type=range]:focus{box-shadow:none}
 .res-kv-val.sm{font-size:13px;font-weight:600;line-height:1.4}
 
 /* ── RESPONSIVE ── */
-@media(max-width:1100px){.stat-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:768px){.app-shell{grid-template-columns:1fr}.sidebar{display:none}.app-body{margin-left:0}.form-grid{grid-template-columns:1fr}.brief-kv-grid{grid-template-columns:1fr}.res-kv-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:1200px){.stat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.app-shell{grid-template-columns:1fr}.sidebar{display:none}.app-body{margin-left:0}.form-grid{grid-template-columns:1fr}.brief-kv-grid{grid-template-columns:1fr}.res-kv-grid{grid-template-columns:1fr 1fr}.stat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.stat-grid{grid-template-columns:1fr}.res-kv-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.status-dot-indicator,.spinner{animation:none}}
 </style>
 </head>
@@ -397,7 +397,7 @@ input[type=range]:focus{box-shadow:none}
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 300px;gap:16px">
+        <div style="display:grid;grid-template-columns:1fr 400px;gap:20px">
           <div class="card">
             <div class="card-header">
               <span class="card-title" data-i18n="recent_cases">Kes Terkini</span>
@@ -418,7 +418,7 @@ input[type=range]:focus{box-shadow:none}
           <div class="card">
             <div class="card-header"><span class="card-title" data-i18n="di_distribution">Taburan DI</span></div>
             <div style="padding:16px">
-              <canvas id="dist-canvas" width="268" height="210" style="display:block;max-width:100%"></canvas>
+              <canvas id="dist-canvas" width="360" height="280" style="display:block;max-width:100%"></canvas>
             </div>
           </div>
         </div>
@@ -430,7 +430,7 @@ input[type=range]:focus{box-shadow:none}
         <div class="page-title" data-i18n="title_ingest">Hantar Payload</div>
         <p class="page-desc" data-i18n="desc_ingest">Hantar telemetri daripada sistem matrix luaran untuk dianalisis oleh pipeline Ejen A → B → C.</p>
 
-        <div style="display:grid;grid-template-columns:1fr 268px;gap:20px">
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:24px">
           <div class="card">
             <div class="card-header"><span class="card-title" data-i18n="nav_ingest">Hantar Payload</span></div>
             <div class="card-body">
@@ -1278,7 +1278,7 @@ function drawDistChart(cases) {
   const canvas = document.getElementById('dist-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W=268, H=210;
+  const W=360, H=280;
   ctx.clearRect(0,0,W,H);
 
   const counts={DATA_ALIGNED:0,MINOR_DISCREPANCY:0,MODERATE_DISCREPANCY:0,SEVERE_DISCREPANCY:0,EXTREME_DISCREPANCY:0};
@@ -1290,43 +1290,43 @@ function drawDistChart(cases) {
   const vals=Object.values(counts);
   const max=Math.max(...vals,1);
 
-  const bw=34, gap=10, startX=18, startY=168;
+  const bw=46, gap=14, startX=22, startY=224;
 
   vals.forEach((v,i)=>{
     const x=startX+i*(bw+gap);
-    const h=v>0?(v/max)*128:0;
+    const h=v>0?(v/max)*170:0;
     const y=startY-h;
 
     // Bar background
     ctx.fillStyle=bgs[i];
-    ctx.roundRect ? ctx.roundRect(x,startY-130,bw,130,3) : ctx.fillRect(x,startY-130,bw,130);
+    ctx.roundRect ? ctx.roundRect(x,startY-170,bw,170,4) : ctx.fillRect(x,startY-170,bw,170);
     ctx.fill();
 
     // Bar fill
     ctx.fillStyle=colors[i]+'55';
     ctx.beginPath();
-    if(ctx.roundRect){ctx.roundRect(x,y,bw,h,3);}else{ctx.rect(x,y,bw,h);}
+    if(ctx.roundRect){ctx.roundRect(x,y,bw,h,4);}else{ctx.rect(x,y,bw,h);}
     ctx.fill();
 
     // Top cap
     if(v>0){
       ctx.fillStyle=colors[i];
-      ctx.fillRect(x,y,bw,3);
+      ctx.fillRect(x,y,bw,4);
     }
 
     // Value label
     if(v>0){
       ctx.fillStyle=colors[i];
-      ctx.font='bold 13px Plus Jakarta Sans, sans-serif';
+      ctx.font='bold 15px Plus Jakarta Sans, sans-serif';
       ctx.textAlign='center';
-      ctx.fillText(v,x+bw/2,y-6);
+      ctx.fillText(v,x+bw/2,y-8);
     }
 
     // Bottom label
     ctx.fillStyle='#9DAFC5';
-    ctx.font='9px Plus Jakarta Sans, sans-serif';
+    ctx.font='10px Plus Jakarta Sans, sans-serif';
     ctx.textAlign='center';
-    ctx.fillText(labels[i],x+bw/2,startY+13);
+    ctx.fillText(labels[i],x+bw/2,startY+16);
   });
 
   // Baseline
@@ -1338,9 +1338,9 @@ function drawDistChart(cases) {
   ctx.stroke();
 
   ctx.fillStyle='#9DAFC5';
-  ctx.font='9px Plus Jakarta Sans, sans-serif';
+  ctx.font='10px Plus Jakarta Sans, sans-serif';
   ctx.textAlign='center';
-  ctx.fillText(t('chart_label'),W/2,H-4);
+  ctx.fillText(t('chart_label'),W/2,H-6);
 }
 
 // ── INIT ──
