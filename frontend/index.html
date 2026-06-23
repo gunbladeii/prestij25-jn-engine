@@ -514,7 +514,7 @@ input[type=range]:focus{box-shadow:none}
           </div>
 
           <div class="card">
-            <div class="card-header"><span class="card-title" data-i18n="di_distribution" data-tooltip="Discrepancy Index (DI) mengukur perbezaan antara skor audit Jemaah Nazir dengan skor operasi yang dilaporkan. Semakin tinggi DI, semakin besar percanggahan data.">Taburan DI</span></div>
+            <div class="card-header"><span class="card-title" data-i18n="di_distribution" data-tooltip="Discrepancy Index (DI) mengukur perbezaan antara skor audit Jemaah Nazir dengan skor operasi yang dilaporkan. Semakin tinggi DI, semakin besar percanggahan data.">Taburan Discrepancy Index (DI)</span></div>
             <div style="padding:16px">
               <canvas id="dist-canvas" width="360" height="280" style="display:block;max-width:100%"></canvas>
             </div>
@@ -577,7 +577,7 @@ input[type=range]:focus{box-shadow:none}
 
           <div>
             <div class="ref-card">
-              <div class="ref-card-title" data-i18n="ref_formula" data-tooltip="Discrepancy Index = |Skor Audit JN − Skor Operasi Dilapor| ÷ 100. Mengukur jurang antara rekod rasmi Nazir dengan data yang dilaporkan oleh sistem luaran.">Formula DI</div>
+              <div class="ref-card-title" data-i18n="ref_formula" data-tooltip="Discrepancy Index = |Skor Audit JN − Skor Operasi Dilapor| ÷ 100. Mengukur jurang antara rekod rasmi Nazir dengan data yang dilaporkan oleh sistem luaran.">Formula Discrepancy Index (DI)</div>
               <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);line-height:2">
                 <span style="color:var(--navy);font-weight:700">DI</span> = |Audit − Op| / 100<br>
                 <span style="font-size:10px">Julat: [0.0000, 1.0000]</span>
@@ -739,7 +739,7 @@ const TR = {
     btn_submit:'Hantar ke Enjin',
     btn_reset:'Tetapkan Semula',
     btn_processing:'Memproses...',
-    ref_formula:'Formula DI',
+    ref_formula:'Formula Discrepancy Index (DI)',
     ref_classification:'Klasifikasi',
     ref_audit:'Rekod Audit',
     ref_select_hint:'Pilih sekolah untuk lihat rekod audit JN.',
@@ -867,7 +867,7 @@ const TR = {
     btn_submit:'Submit to Engine',
     btn_reset:'Reset',
     btn_processing:'Processing...',
-    ref_formula:'DI Formula',
+    ref_formula:'Discrepancy Index (DI) Formula',
     ref_classification:'Classification',
     ref_audit:'Audit Reference',
     ref_select_hint:'Select a school to view JN audit records.',
