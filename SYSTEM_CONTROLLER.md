@@ -10,7 +10,7 @@
 
 | Property | Value |
 |----------|-------|
-| **System Name** | Jemaah Nazir Smart Check & Balance Engine |
+| **System Name** | JN Resolusi — Smart Cross-Reference & Audit Engine |
 | **Programme** | PRESTIJ-25, MoE Agentic AI |
 | **Tagline** | Supreme Truth & Audit Node |
 | **Live Frontend** | `https://ai-agentic-complaint.netlify.app` |
