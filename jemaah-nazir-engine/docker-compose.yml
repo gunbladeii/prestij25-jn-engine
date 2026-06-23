@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  engine:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: prestij25-engine
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://prestij:prestij25secret@postgres:5432/jemaah_nazir
+      - ENGINE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: prestij25-postgres
+    environment:
+      POSTGRES_DB: jemaah_nazir
+      POSTGRES_USER: prestij
+      POSTGRES_PASSWORD: prestij25secret
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prestij -d jemaah_nazir"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pg_data:

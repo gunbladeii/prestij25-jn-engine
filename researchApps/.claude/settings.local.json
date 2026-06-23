@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\HP\\\\Documents\\\\prestijProject\\\\researchApps\\\\static\")",
+      "PowerShell(netstat -ano | Select-String \"LISTENING\" | ForEach-Object { \\($_ -split '\\\\s+'\\)[3] } | Sort-Object -Unique)"
+    ]
+  }
+}

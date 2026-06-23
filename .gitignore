@@ -1,12 +1,54 @@
+# Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 *.pyc
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+env/
+.venv/
 .env
 .env.*
-*.log
-uvicorn.log
+*.env
+
+# Node / JS
+node_modules/
+.npm
+
+# OS
 .DS_Store
 Thumbs.db
-venv/
-.venv/
-node_modules/
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+uvicorn.log
+
+# Database
+*.sqlite3
+*.db
+
+# Docker volumes
+pgdata/
+
+# Temp
+*.tmp
+*.bak
+
+# Secrets / API keys
+*api key*
+*api_key*
+*.key.txt
+secrets.txt

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Research Paper Summarizer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 44px 48px;
+      width: 100%;
+      max-width: 700px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      color: #fff;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #7f5af0, #2cb67d);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #7f5af0, #2cb67d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 36px;
+      margin-top: 4px;
+    }
+
+    label.upload-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed rgba(127, 90, 240, 0.5);
+      border-radius: 14px;
+      padding: 36px 24px;
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s;
+      background: rgba(127, 90, 240, 0.04);
+      gap: 10px;
+    }
+
+    label.upload-label:hover,
+    label.upload-label.drag-over {
+      border-color: #7f5af0;
+      background: rgba(127, 90, 240, 0.1);
+    }
+
+    label.upload-label .icon {
+      font-size: 2.8rem;
+      line-height: 1;
+    }
+
+    label.upload-label .main-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+    }
+
+    label.upload-label .sub-text {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    #fileInput { display: none; }
+
+    #fileName {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: #2cb67d;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .btn {
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7f5af0, #2cb67d);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn:active:not(:disabled) { transform: translateY(0); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Loader */
+    .loader-wrap {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .loader-wrap.visible { display: flex; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top-color: #7f5af0;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loader-text {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Result */
+    .result-box {
+      display: none;
+      margin-top: 28px;
+      background: rgba(44, 182, 125, 0.08);
+      border: 1px solid rgba(44, 182, 125, 0.3);
+      border-radius: 14px;
+      padding: 24px 26px;
+    }
+
+    .result-box.visible { display: block; }
+
+    .result-box .result-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .result-box .result-header .badge {
+      background: linear-gradient(135deg, #7f5af0, #2cb67d);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .result-box .file-tag {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    #summaryText {
+      font-size: 0.97rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.88);
+    }
+
+    /* Error */
+    .error-box {
+      display: none;
+      margin-top: 20px;
+      background: rgba(255, 80, 80, 0.1);
+      border: 1px solid rgba(255, 80, 80, 0.35);
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 0.88rem;
+      color: #ff8080;
+    }
+
+    .error-box.visible { display: block; }
+
+    .model-tag {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.25);
+    }
+
+    .model-tag span { color: rgba(127, 90, 240, 0.7); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">&#128209;</div>
+      <h1>Research Summarizer</h1>
+    </div>
+    <p class="subtitle">Upload a research paper PDF and get an instant AI-powered summary.</p>
+
+    <label class="upload-label" id="dropZone" for="fileInput">
+      <span class="icon">&#128196;</span>
+      <span class="main-text">Drop your PDF here or click to browse</span>
+      <span class="sub-text">Accepts .pdf files only</span>
+    </label>
+    <input type="file" id="fileInput" accept=".pdf" />
+    <div id="fileName"></div>
+
+    <button class="btn" id="summarizeBtn" disabled>Summarize Paper</button>
+
+    <div class="loader-wrap" id="loader">
+      <div class="spinner"></div>
+      <span class="loader-text">Analyzing paper with Llama 3.3 70B&hellip;</span>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-header">
+        <span class="badge">Summary</span>
+        <span class="file-tag" id="fileTag"></span>
+      </div>
+      <p id="summaryText"></p>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <p class="model-tag">Powered by <span>Llama-3.3-70B-Versatile</span> via Groq API</p>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const dropZone  = document.getElementById('dropZone');
+    const fileName  = document.getElementById('fileName');
+    const btn       = document.getElementById('summarizeBtn');
+    const loader    = document.getElementById('loader');
+    const resultBox = document.getElementById('resultBox');
+    const summaryText = document.getElementById('summaryText');
+    const fileTag   = document.getElementById('fileTag');
+    const errorBox  = document.getElementById('errorBox');
+
+    let selectedFile = null;
+
+    function setFile(file) {
+      if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
+        showError('Please select a valid PDF file.');
+        return;
+      }
+      selectedFile = file;
+      fileName.textContent = '✔ ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+      btn.disabled = false;
+      hideError();
+      resultBox.classList.remove('visible');
+    }
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) setFile(fileInput.files[0]);
+    });
+
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+    });
+
+    btn.addEventListener('click', async () => {
+      if (!selectedFile) return;
+
+      btn.disabled = true;
+      loader.classList.add('visible');
+      resultBox.classList.remove('visible');
+      hideError();
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      try {
+        const res = await fetch('/summarize', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.detail || 'Something went wrong.');
+        } else {
+          fileTag.textContent = data.filename;
+          summaryText.textContent = data.summary;
+          resultBox.classList.add('visible');
+        }
+      } catch (err) {
+        showError('Network error: ' + err.message);
+      } finally {
+        loader.classList.remove('visible');
+        btn.disabled = false;
+      }
+    });
+
+    function showError(msg) {
+      errorBox.textContent = '⚠ ' + msg;
+      errorBox.classList.add('visible');
+    }
+
+    function hideError() {
+      errorBox.classList.remove('visible');
+      errorBox.textContent = '';
+    }
+  </script>
+</body>
+</html>
