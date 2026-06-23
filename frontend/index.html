@@ -48,7 +48,7 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 .app-shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
 
 /* ── SIDEBAR ── */
-.sidebar{background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;width:260px;height:100vh;overflow-y:auto;z-index:100}
+.sidebar{background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;width:260px;height:100vh;overflow-y:auto;z-index:100;grid-row:1;grid-column:1}
 .sidebar-header{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px}
 .sidebar-logo{width:36px;height:36px;background:var(--crimson);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sidebar-logo svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -74,7 +74,7 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 .engine-val.warn{color:#F87171}
 
 /* ── APP BODY ── */
-.app-body{margin-left:260px;display:flex;flex-direction:column;min-height:100vh}
+.app-body{margin-left:260px;display:flex;flex-direction:column;min-height:100vh;grid-column:2;grid-row:1;min-width:0}
 
 /* ── HEADER ── */
 .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
@@ -257,7 +257,7 @@ input[type=range]:focus{box-shadow:none}
 /* ── HAMBURGER (mobile sidebar toggle) ── */
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;flex-shrink:0;z-index:110}
 .hamburger span{display:block;width:22px;height:2.5px;background:var(--text);margin:5px 0;border-radius:2px;transition:all .25s}
-.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99;grid-row:1;grid-column:1}
 .sidebar-backdrop.show{display:block}
 .sidebar.open{transform:translateX(0)}
 
