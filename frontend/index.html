@@ -3,535 +3,943 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI-Complaint-MOE</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%231E3A5F'/%3E%3Cstop offset='100%25' stop-color='%230D1625'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M32 10 L18 18 L18 36 C18 46 26 54 32 56 C38 54 46 46 46 36 L46 18 Z' fill='none' stroke='%23E8A020' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='30' r='3' fill='%23E8A020'/%3E%3Cline x1='32' y1='33' x2='32' y2='42' stroke='%23E8A020' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='28' y1='40' x2='36' y2='40' stroke='%23E8A020' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='24' cy='24' r='1.5' fill='%233CB87A' opacity='0.8'/%3E%3Ccircle cx='40' cy='22' r='1.5' fill='%233CB87A' opacity='0.8'/%3E%3Ccircle cx='22' cy='34' r='1.5' fill='%233CB87A' opacity='0.6'/%3E%3Ccircle cx='42' cy='36' r='1.5' fill='%233CB87A' opacity='0.6'/%3E%3C/svg%3E" />
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%231E3A5F'/%3E%3Cstop offset='100%25' stop-color='%230D1625'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M32 10 L18 18 L18 36 C18 46 26 54 32 56 C38 54 46 46 46 36 L46 18 Z' fill='none' stroke='%23E8A020' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='30' r='3' fill='%23E8A020'/%3E%3Cline x1='32' y1='33' x2='32' y2='42' stroke='%23E8A020' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='28' y1='40' x2='36' y2='40' stroke='%23E8A020' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='24' cy='24' r='1.5' fill='%233CB87A' opacity='0.8'/%3E%3Ccircle cx='40' cy='22' r='1.5' fill='%233CB87A' opacity='0.8'/%3E%3Ccircle cx='22' cy='34' r='1.5' fill='%233CB87A' opacity='0.6'/%3E%3Ccircle cx='42' cy='36' r='1.5' fill='%233CB87A' opacity='0.6'/%3E%3C/svg%3E" />
+<title>AI-Aduan MOE — Sistem Pemantauan JN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
 :root {
-  --ground:    #080E1A;
-  --surface:   #0D1625;
-  --surface-2: #121E33;
-  --border:    #1E2E4A;
-  --text:      #D8E3F0;
-  --text-dim:  #7A90B0;
-  --accent:    #E8A020;
-  --green:     #3CB87A;
-  --green-dim: #1A5238;
-  --red:       #E84040;
-  --red-dim:   #5A1818;
-  --orange:    #EA7020;
-  --blue:      #4080E8;
+  --navy:        #1A2744;
+  --navy-dark:   #111C35;
+  --navy-mid:    #223060;
+  --crimson:     #C41E3A;
+  --crimson-bg:  #FEE2E6;
+  --ground:      #F0F2F7;
+  --surface:     #FFFFFF;
+  --text:        #1C2B3A;
+  --text-dim:    #6B7C93;
+  --text-muted:  #9DAFC5;
+  --border:      #E2E8F0;
+  --border-dark: #CBD5E1;
+  --green:       #0F6B3C;
+  --green-bg:    #DCFCE7;
+  --amber:       #B45309;
+  --amber-bg:    #FEF3C7;
+  --orange:      #C2410C;
+  --orange-bg:   #FFEDD5;
+  --blue:        #1D4ED8;
+  --blue-bg:     #DBEAFE;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:   0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+  --radius:      8px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--ground);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 4px);pointer-events:none;z-index:999}
+body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:var(--ground);color:var(--text);min-height:100vh}
 
-/* NAV */
-nav{position:sticky;top:0;z-index:200;background:rgba(8,14,26,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:24px;height:52px}
-.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;white-space:nowrap}
-.nav-links{display:flex;gap:20px;list-style:none;flex:1}
-.nav-links a{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:color .2s;cursor:pointer}
-.nav-links a:hover,.nav-links a.active{color:var(--accent)}
-.status-dot{margin-left:auto;display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);letter-spacing:.1em;text-transform:uppercase}
-.status-dot::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* ── SHELL ── */
+.app-shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
 
-/* LAYOUT */
-.app{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 52px)}
+/* ── SIDEBAR ── */
+.sidebar{background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;width:260px;height:100vh;overflow-y:auto;z-index:100}
+.sidebar-header{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px}
+.sidebar-logo{width:36px;height:36px;background:var(--crimson);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sidebar-logo svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sidebar-brand-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.2;letter-spacing:.01em}
+.sidebar-brand-sub{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
+.sidebar-nav{padding:14px 10px;flex:1}
+.nav-group-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.28);letter-spacing:.14em;text-transform:uppercase;padding:0 8px;margin-bottom:5px;margin-top:14px}
+.nav-group-label:first-child{margin-top:0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:6px;cursor:pointer;transition:background .14s;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;font-family:'Plus Jakarta Sans',sans-serif;border:none;background:none;width:100%;text-align:left;margin-bottom:1px}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.nav-item.active{background:rgba(196,30,58,.18);color:#fff;border-left:3px solid var(--crimson);padding-left:7px}
+.nav-item-icon{width:17px;height:17px;flex-shrink:0;opacity:.65}
+.nav-item.active .nav-item-icon{opacity:1}
+.nav-divider{height:1px;background:rgba(255,255,255,.07);margin:12px 8px}
+.quick-btn{display:flex;align-items:center;gap:8px;padding:8px 10px;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:6px;color:rgba(255,255,255,.55);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;cursor:pointer;margin-bottom:4px;transition:all .14s;text-align:left}
+.quick-btn:hover{background:rgba(196,30,58,.14);border-color:rgba(196,30,58,.28);color:#fff}
+.quick-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sidebar-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.14)}
+.sidebar-footer-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.28);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.engine-stat{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.42);font-family:'JetBrains Mono',monospace;margin-bottom:5px}
+.engine-val{font-weight:500}
+.engine-val.online{color:#4ADE80}
+.engine-val.warn{color:#F87171}
 
-/* SIDEBAR */
-.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
-.sidebar-section{padding:8px 20px;margin-bottom:4px}
-.sidebar-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:12px;padding-left:12px}
-.sidebar-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:2px;cursor:pointer;transition:background .15s;margin-bottom:2px;border:1px solid transparent}
-.sidebar-item:hover{background:rgba(232,160,32,0.06);border-color:rgba(232,160,32,0.1)}
-.sidebar-item.active{background:rgba(232,160,32,0.1);border-color:rgba(232,160,32,0.2)}
-.sidebar-item .si-icon{font-size:13px;width:18px;text-align:center;flex-shrink:0}
-.sidebar-item .si-text{font-size:12px;color:var(--text-dim)}
-.sidebar-item.active .si-text{color:var(--accent)}
-.sidebar-divider{height:1px;background:var(--border);margin:16px 20px}
+/* ── APP BODY ── */
+.app-body{margin-left:260px;display:flex;flex-direction:column;min-height:100vh}
 
-/* MAIN */
-.main{padding:32px;overflow-y:auto;max-height:calc(100vh - 52px)}
+/* ── HEADER ── */
+.app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim)}
+.breadcrumb-sep{color:var(--text-muted)}
+.breadcrumb-current{color:var(--text);font-weight:600;font-family:'Plus Jakarta Sans',sans-serif}
+.header-right{display:flex;align-items:center;gap:12px}
+.lang-toggle{display:flex;align-items:center;background:var(--ground);border:1px solid var(--border);border-radius:20px;padding:3px;gap:2px}
+.lang-opt{padding:4px 12px;border-radius:16px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.04em;transition:all .14s;color:var(--text-dim);border:none;background:none}
+.lang-opt.active{background:var(--navy);color:#fff}
+.status-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif}
+.status-pill.online{background:#DCFCE7;color:#166534}
+.status-pill.offline{background:var(--crimson-bg);color:#991B1B}
+.status-pill.connecting{background:#FEF3C7;color:#92400E}
+.status-dot-indicator{width:7px;height:7px;border-radius:50%}
+.status-pill.online .status-dot-indicator{background:#16A34A;animation:pulse 2s ease infinite}
+.status-pill.offline .status-dot-indicator{background:#DC2626}
+.status-pill.connecting .status-dot-indicator{background:#D97706;animation:pulse 1.2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
-/* PAGE SECTIONS */
+/* ── CONTENT ── */
+.app-content{padding:28px;flex:1}
 .page-section{display:none}
 .page-section.active{display:block}
 
-/* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);padding:20px;margin-bottom:16px}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.card-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#fff}
-.card-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;letter-spacing:.1em;text-transform:uppercase}
-.badge-green{background:rgba(60,184,122,.15);border:1px solid var(--green-dim);color:var(--green)}
-.badge-red{background:rgba(232,64,64,.15);border:1px solid var(--red-dim);color:var(--red)}
-.badge-amber{background:rgba(232,160,32,.12);border:1px solid rgba(232,160,32,.3);color:var(--accent)}
-.badge-orange{background:rgba(234,112,32,.15);border:1px solid rgba(234,112,32,.3);color:var(--orange)}
-.badge-blue{background:rgba(64,128,232,.12);border:1px solid rgba(64,128,232,.3);color:var(--blue)}
+/* ── PAGE HEADER ── */
+.page-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--crimson);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;font-family:'Plus Jakarta Sans',sans-serif}
+.page-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--crimson)}
+.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:4px}
+.page-desc{font-size:13px;color:var(--text-dim);margin-bottom:24px}
 
-/* STAT GRID */
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.stat-card{background:var(--surface);border:1px solid var(--border);padding:16px 20px}
-.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:700;color:#fff;line-height:1}
-.stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
-.stat-trend{font-family:'IBM Plex Mono',monospace;font-size:11px;margin-top:4px}
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--s-color,var(--navy))}
+.stat-icon-box{width:40px;height:40px;border-radius:8px;background:var(--s-bg,#EEF2FF);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.stat-icon-box svg{width:18px;height:18px}
+.stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px}
+.stat-label{font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.07em;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+.stat-trend{font-size:12px;color:var(--text-muted)}
 
-/* FORM */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.form-group{display:flex;flex-direction:column;gap:6px}
-.form-group.full{grid-column:1/-1}
-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase}
-input,select,textarea{background:var(--surface-2,#121E33);border:1px solid var(--border);color:var(--text);padding:10px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s;width:100%;border-radius:0}
-input:focus,select:focus,textarea:focus{border-color:var(--accent)}
-select option{background:var(--surface)}
-textarea{resize:vertical;min-height:100px;font-family:'IBM Plex Mono',monospace;font-size:12px}
+/* ── CARDS ── */
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:20px;overflow:hidden}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text)}
+.card-body{padding:20px}
 
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:all .2s;border:none;text-transform:uppercase}
-.btn-primary{background:var(--accent);color:#000}
-.btn-primary:hover{background:#ffb830}
-.btn-primary:disabled{background:#7A5010;color:#5a4010;cursor:not-allowed}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-dim)}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.btn-danger{background:transparent;border:1px solid var(--red-dim);color:var(--red)}
-.btn-danger:hover{background:rgba(232,64,64,.1)}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .14s;border:none;text-decoration:none;white-space:nowrap}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--navy-mid)}
+.btn-primary:disabled{background:#94A3B8;cursor:not-allowed}
+.btn-outline{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+.btn-danger{background:transparent;color:var(--crimson);border:1px solid rgba(196,30,58,.28)}
+.btn-danger:hover{background:var(--crimson-bg)}
+.btn-sm{padding:5px 12px;font-size:12px}
 
-/* RANGE SLIDER */
-input[type=range]{padding:0;height:6px;-webkit-appearance:none;background:var(--border);border:none;border-radius:3px;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer}
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.03em;white-space:nowrap}
+.badge-clean{background:var(--green-bg);color:var(--green)}
+.badge-anomaly{background:var(--crimson-bg);color:var(--crimson)}
+.badge-yes{background:var(--crimson-bg);color:var(--crimson)}
+.badge-no{background:var(--green-bg);color:var(--green)}
 
-/* TABLE */
+/* ── TABLE ── */
+.data-table-wrap{overflow-x:auto}
 .data-table{width:100%;border-collapse:collapse;font-size:13px}
-.data-table th{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);background:var(--surface-2,#121E33);white-space:nowrap}
-.data-table td{padding:10px 14px;border-bottom:1px solid rgba(30,46,74,.4);vertical-align:middle}
-.data-table tr{transition:background .15s;cursor:pointer}
-.data-table tr:hover td{background:rgba(13,22,37,.6)}
-.data-table tr.selected td{background:rgba(232,160,32,.06);border-bottom-color:rgba(232,160,32,.15)}
-.mono{font-family:'IBM Plex Mono',monospace}
+.data-table th{background:var(--ground);padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;font-family:'Plus Jakarta Sans',sans-serif;border-bottom:1px solid var(--border);white-space:nowrap}
+.data-table td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tbody tr:last-child td{border-bottom:none}
+.data-table tbody tr{cursor:pointer;transition:background .12s}
+.data-table tbody tr:hover td{background:#F8FAFC}
+.mono{font-family:'JetBrains Mono',monospace}
 
-/* DI BADGE */
-.di-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px}
-.di-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:12px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
+input,select,textarea{border:1.5px solid var(--border);border-radius:6px;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .14s,box-shadow .14s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(26,39,68,.07)}
+select option{background:var(--surface)}
+textarea{resize:vertical;min-height:100px;font-family:'JetBrains Mono',monospace;font-size:12px}
+input[type=range]{-webkit-appearance:none;height:5px;background:var(--border);border:none;border-radius:3px;cursor:pointer;padding:0;box-shadow:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--navy);cursor:pointer}
+input[type=range]:focus{box-shadow:none}
 
-/* ALERT BLOCK */
-.alert-block{padding:16px 20px;border-left:3px solid;margin-bottom:16px;display:flex;gap:16px;align-items:flex-start}
-.alert-block.extreme{border-color:var(--red);background:rgba(232,64,64,.06)}
-.alert-block.severe{border-color:var(--orange);background:rgba(234,112,32,.06)}
-.alert-block.moderate{border-color:#EAB308;background:rgba(234,179,8,.05)}
-.alert-block.aligned{border-color:var(--green);background:rgba(60,184,122,.05)}
-.alert-icon{font-size:22px;line-height:1;flex-shrink:0}
-.alert-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#fff}
-.alert-sub{font-size:12px;color:var(--text-dim);margin-top:2px}
+/* ── CASE ROW (dashboard) ── */
+.case-row{display:grid;grid-template-columns:1fr auto auto;gap:16px;padding:13px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;align-items:center;position:relative}
+.case-row:last-child{border-bottom:none}
+.case-row:hover{background:#F8FAFC}
+/* Aesthetic risk: diagonal red stripe = official rejected stamp language */
+.case-row.is-anomaly{border-left:3px solid var(--crimson)}
+.case-row.is-anomaly::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(196,30,58,.022) 10px,rgba(196,30,58,.022) 20px);pointer-events:none}
+.case-row.is-clean{border-left:3px solid var(--green)}
+.case-id-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--crimson);margin-bottom:2px;letter-spacing:.04em}
+.case-name-label{font-size:13px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
+.case-score-display{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;text-align:right}
 
-/* BRIEF PANEL */
-.brief-panel{background:var(--surface);border:1px solid var(--border);overflow:hidden}
-.brief-top{padding:20px 24px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
-.brief-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.bf-row{display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid rgba(30,46,74,.4)}
-.bf-key{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)}
-.bf-val{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff;text-align:right}
-.enf-list{list-style:none;display:flex;flex-direction:column;gap:8px}
-.enf-item{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:12px 14px;background:var(--surface-2,#121E33);border:1px solid var(--border);align-items:start}
-.enf-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--accent);line-height:1}
+/* ── DI COLOR CLASSES ── */
+.di-extreme{color:var(--crimson)}
+.di-severe{color:var(--orange)}
+.di-moderate{color:var(--amber)}
+.di-minor{color:var(--blue)}
+.di-aligned{color:var(--green)}
+
+/* ── BRIEF PANEL ── */
+.brief-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+.brief-masthead{padding:22px 26px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.brief-masthead-left{}
+.brief-eyebrow{font-size:10px;font-weight:700;color:var(--crimson);letter-spacing:.16em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:5px}
+.brief-school-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px}
+.brief-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim)}
+.brief-section{padding:18px 26px;border-bottom:1px solid var(--border)}
+.brief-section:last-child{border-bottom:none}
+.brief-sec-title{font-size:11px;font-weight:700;color:var(--navy);letter-spacing:.13em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.brief-kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.brief-kv{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;gap:16px}
+.brief-kv:last-child{border-bottom:none}
+.brief-kv-key{color:var(--text-dim);font-weight:500}
+.brief-kv-val{font-weight:600;color:var(--text);text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px}
+.di-bar-track{display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:6px}
+.flag-chip{display:inline-block;padding:4px 10px;background:var(--crimson-bg);border:1px solid rgba(196,30,58,.2);color:var(--crimson);border-radius:4px;font-size:11px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;margin:3px}
+.enf-list{display:flex;flex-direction:column;gap:8px;list-style:none}
+.enf-item{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start;padding:12px 14px;background:var(--ground);border-radius:6px;border:1px solid var(--border)}
+.enf-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:var(--crimson);line-height:1.4}
 .enf-text{font-size:13px;color:var(--text);line-height:1.5}
-.policy-rec{padding:14px;background:var(--surface-2,#121E33);border:1px solid var(--border);border-left:3px solid var(--accent);margin-bottom:8px;display:grid;grid-template-columns:auto 1fr;gap:14px}
-.policy-ref{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);white-space:nowrap;line-height:1.5}
-.policy-action{font-size:12px;color:var(--text);line-height:1.6}
+.policy-rec{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:12px 14px;background:var(--ground);border-radius:6px;border:1px solid var(--border);border-left:3px solid var(--navy);margin-bottom:8px}
+.policy-ref{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--navy);line-height:1.6;white-space:nowrap}
+.policy-action{font-size:13px;color:var(--text);line-height:1.6}
+.directive-block{background:var(--navy-dark);color:#94B4CF;padding:18px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;white-space:pre-wrap;overflow-x:auto;max-height:300px;overflow-y:auto}
+.sig-row{display:grid;grid-template-columns:1fr 1fr;gap:40px;padding:22px 26px}
+.sig-for{font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:22px;font-family:'Plus Jakarta Sans',sans-serif}
+.sig-line{border-bottom:1px solid var(--border-dark);margin-bottom:6px;height:28px}
+.sig-name{font-size:12px;color:var(--text-dim);font-family:'Plus Jakarta Sans',sans-serif}
 
-/* DI GAUGE */
-.di-gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px}
-.gauge-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase}
+/* ── INGEST REF CARDS ── */
+.ref-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.ref-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px}
+.cls-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12px}
+.cls-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cls-thr{color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:11px;min-width:36px}
+.cls-lbl{font-weight:600}
 
-/* FLAGS */
-.flag-chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:4px 10px;background:rgba(232,64,64,.1);border:1px solid rgba(232,64,64,.3);color:var(--red);margin:3px}
+/* ── SYSTEM PAGE ── */
+.api-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:6px;margin-bottom:6px;border:1px solid var(--border);background:var(--ground)}
+.api-method{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:800;width:44px;flex-shrink:0}
+.api-method.post{color:var(--green)}
+.api-method.get{color:var(--blue)}
+.api-path{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
+.api-desc{font-size:12px;color:var(--text-dim)}
 
-/* DIRECTIVE TEXT */
-.directive-block{background:#000;border:1px solid var(--border);padding:20px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#a0b8d0;line-height:1.8;white-space:pre-wrap;overflow-x:auto;max-height:360px;overflow-y:auto}
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:11px 16px;border-radius:8px;font-size:13px;font-weight:500;font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:10px;max-width:380px;box-shadow:var(--shadow-md);animation:toastIn .22s ease;border:1px solid}
+.toast.success{background:#F0FDF4;border-color:#86EFAC;color:#166534}
+.toast.error{background:#FEF2F2;border-color:#FCA5A5;color:#991B1B}
+.toast.info{background:#EFF6FF;border-color:#93C5FD;color:#1D4ED8}
+@keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* TOAST */
-.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px}
-.toast{padding:12px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;border:1px solid;max-width:400px;animation:slideIn .3s ease;display:flex;align-items:center;gap:10px}
-.toast.success{background:rgba(60,184,122,.12);border-color:var(--green);color:var(--green)}
-.toast.error{background:rgba(232,64,64,.12);border-color:var(--red);color:var(--red)}
-.toast.info{background:rgba(232,160,32,.10);border-color:var(--accent);color:var(--accent)}
-@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-
-/* LOADING */
-.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+/* ── SPINNER ── */
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0}
+.spinner.dark{border-color:var(--border);border-top-color:var(--navy)}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* SECTION STAMP */
-.section-stamp{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-.stamp-code{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;border:1px solid rgba(232,160,32,.3);padding:3px 10px;background:rgba(232,160,32,.05);white-space:nowrap}
-.stamp-rule{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
-h2{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:32px;color:#fff;line-height:1.1;margin-bottom:6px}
-h2 .dim{color:var(--text-dim);font-weight:400}
-.section-desc{color:var(--text-dim);font-size:13px;margin-bottom:24px}
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:52px 20px}
+.empty-state-icon{font-size:28px;margin-bottom:10px;opacity:.4}
+.empty-state-text{font-size:14px;font-weight:600;color:var(--text-dim);font-family:'Plus Jakarta Sans',sans-serif}
+.empty-state-sub{font-size:13px;color:var(--text-muted);margin-top:4px}
+.empty-state-sub a{color:var(--navy);cursor:pointer;text-decoration:underline}
 
-/* RESPONSIVE */
-@media(max-width:900px){
-  .app{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .stat-grid{grid-template-columns:1fr 1fr}
-  .form-grid{grid-template-columns:1fr}
-  .brief-field-grid{grid-template-columns:1fr}
-}
-@media(prefers-reduced-motion:reduce){
-  .status-dot::before,.spinner{animation:none}
-}
+/* ── INGEST RESULT CARD ── */
+.res-kv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.res-kv-item{}
+.res-kv-label{font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;font-family:'Plus Jakarta Sans',sans-serif}
+.res-kv-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;line-height:1}
+.res-kv-val.sm{font-size:13px;font-weight:600;line-height:1.4}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.stat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.app-shell{grid-template-columns:1fr}.sidebar{display:none}.app-body{margin-left:0}.form-grid{grid-template-columns:1fr}.brief-kv-grid{grid-template-columns:1fr}.res-kv-grid{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){.status-dot-indicator,.spinner{animation:none}}
 </style>
 </head>
 <body>
+<div class="app-shell">
 
-<!-- NAV -->
-<nav>
-  <span class="nav-brand">AI-COMPLAINT-MOE // JN</span>
-  <ul class="nav-links">
-    <li><a onclick="showPage('dashboard')" class="active" id="nav-dashboard">Dashboard</a></li>
-    <li><a onclick="showPage('ingest')" id="nav-ingest">Ingest Payload</a></li>
-    <li><a onclick="showPage('cases')" id="nav-cases">Kes Log</a></li>
-    <li><a onclick="showPage('brief')" id="nav-brief">Executive Brief</a></li>
-    <li><a onclick="showPage('about')" id="nav-about">Sistem</a></li>
-  </ul>
-  <div class="status-dot" id="engine-status">Connecting...</div>
-</nav>
-
-<div class="app">
-  <!-- SIDEBAR -->
+  <!-- ══ SIDEBAR ══ -->
   <aside class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Navigation</div>
-      <div class="sidebar-item active" onclick="showPage('dashboard')" id="sb-dashboard">
-        <span class="si-icon">▦</span><span class="si-text">Dashboard</span>
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 24 24"><path d="M12 3L4 7v6c0 5.25 3.5 10.15 8 11.35C16.5 23.15 20 18.25 20 13V7L12 3z"/><circle cx="12" cy="12" r="2.5"/><line x1="12" y1="14.5" x2="12" y2="18"/></svg>
       </div>
-      <div class="sidebar-item" onclick="showPage('ingest')" id="sb-ingest">
-        <span class="si-icon">↑</span><span class="si-text">Ingest Payload</span>
-      </div>
-      <div class="sidebar-item" onclick="showPage('cases')" id="sb-cases">
-        <span class="si-icon">≡</span><span class="si-text">Kes Log</span>
-      </div>
-      <div class="sidebar-item" onclick="showPage('brief')" id="sb-brief">
-        <span class="si-icon">◧</span><span class="si-text">Executive Brief</span>
+      <div>
+        <div class="sidebar-brand-name">AI-ADUAN MOE</div>
+        <div class="sidebar-brand-sub" data-i18n="brand_sub">Sistem Pemantauan JN</div>
       </div>
     </div>
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Quick Ingest</div>
-      <div style="padding:0 12px;display:flex;flex-direction:column;gap:6px">
-        <button class="btn btn-ghost" style="font-size:12px;padding:7px 12px;width:100%;justify-content:flex-start" onclick="loadDemo('extreme')">▶ Demo: Extreme DI</button>
-        <button class="btn btn-ghost" style="font-size:12px;padding:7px 12px;width:100%;justify-content:flex-start" onclick="loadDemo('severe')">▶ Demo: Severe DI</button>
-        <button class="btn btn-ghost" style="font-size:12px;padding:7px 12px;width:100%;justify-content:flex-start" onclick="loadDemo('aligned')">▶ Demo: Aligned</button>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-label" data-i18n="nav_label">Navigasi</div>
+
+      <button class="nav-item active" id="nav-item-dashboard" onclick="showPage('dashboard')">
+        <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span data-i18n="nav_dashboard">Papan Pemuka</span>
+      </button>
+
+      <button class="nav-item" id="nav-item-ingest" onclick="showPage('ingest')">
+        <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+        <span data-i18n="nav_ingest">Hantar Payload</span>
+      </button>
+
+      <button class="nav-item" id="nav-item-cases" onclick="showPage('cases')">
+        <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <span data-i18n="nav_cases">Log Kes</span>
+      </button>
+
+      <button class="nav-item" id="nav-item-brief" onclick="showPage('brief')">
+        <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span data-i18n="nav_brief">Ringkasan Eksekutif</span>
+      </button>
+
+      <button class="nav-item" id="nav-item-about" onclick="showPage('about')">
+        <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+        <span data-i18n="nav_system">Maklumat Sistem</span>
+      </button>
+
+      <div class="nav-divider"></div>
+      <div class="nav-group-label" data-i18n="quick_label">Ingest Pantas</div>
+
+      <button class="quick-btn" onclick="loadDemo('extreme')">
+        <span class="quick-dot" style="background:#F87171"></span>
+        <span data-i18n="demo_extreme">Demo: Ekstrem DI</span>
+      </button>
+      <button class="quick-btn" onclick="loadDemo('severe')">
+        <span class="quick-dot" style="background:#FB923C"></span>
+        <span data-i18n="demo_severe">Demo: Teruk DI</span>
+      </button>
+      <button class="quick-btn" onclick="loadDemo('aligned')">
+        <span class="quick-dot" style="background:#4ADE80"></span>
+        <span data-i18n="demo_aligned">Demo: Selaras</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label" data-i18n="stats_label">Statistik Enjin</div>
+      <div class="engine-stat">
+        <span data-i18n="stats_agents">Ejen</span>
+        <span class="engine-val online" data-i18n="agents_online">3 Dalam Talian</span>
       </div>
-    </div>
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Engine Stats</div>
-      <div style="padding:0 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);display:flex;flex-direction:column;gap:8px">
-        <div>Agents: <span style="color:var(--green)">3 Online</span></div>
-        <div>Cases: <span style="color:#fff" id="sb-case-count">0</span></div>
-        <div>Anomalies: <span style="color:var(--red)" id="sb-anomaly-count">0</span></div>
+      <div class="engine-stat">
+        <span data-i18n="stats_cases">Kes</span>
+        <span class="engine-val" id="sb-case-count">0</span>
+      </div>
+      <div class="engine-stat">
+        <span data-i18n="stats_anomalies">Anomali</span>
+        <span class="engine-val warn" id="sb-anomaly-count">0</span>
       </div>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
-  <main class="main">
+  <!-- ══ APP BODY ══ -->
+  <div class="app-body">
 
-    <!-- ══ DASHBOARD ══ -->
-    <section class="page-section active" id="page-dashboard">
-      <div class="section-stamp">
-        <span class="stamp-code">LIVE MONITORING</span>
-        <div class="stamp-rule"></div>
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="breadcrumb">
+        <span data-i18n="home">Utama</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current" id="breadcrumb-current" data-i18n="nav_dashboard">Papan Pemuka</span>
       </div>
-      <h2>Engine <span class="dim">Dashboard</span></h2>
-      <p class="section-desc">Pemantauan masa nyata ekosistem matrix 25×25. Data dikemaskini apabila payload baharu diproses.</p>
-
-      <div class="stat-grid">
-        <div class="stat-card">
-          <div class="stat-val" id="stat-total">0</div>
-          <div class="stat-lbl">Jumlah Kes</div>
-          <div class="stat-trend" style="color:var(--text-dim)">Diproses</div>
+      <div class="header-right">
+        <div class="lang-toggle">
+          <button class="lang-opt active" id="lang-bm" onclick="setLang('bm')">BM</button>
+          <button class="lang-opt" id="lang-en" onclick="setLang('en')">EN</button>
         </div>
-        <div class="stat-card">
-          <div class="stat-val" id="stat-anomaly" style="color:var(--red)">0</div>
-          <div class="stat-lbl">Anomaly Detected</div>
-          <div class="stat-trend" id="stat-anomaly-pct" style="color:var(--text-dim)">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-val" id="stat-extreme" style="color:var(--red)">0</div>
-          <div class="stat-lbl">Extreme / Severe</div>
-          <div class="stat-trend" style="color:var(--text-dim)">Tindakan Segera</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-val" id="stat-aligned" style="color:var(--green)">0</div>
-          <div class="stat-lbl">Data Aligned</div>
-          <div class="stat-trend" style="color:var(--text-dim)">Konsisten</div>
+        <div class="status-pill connecting" id="engine-status">
+          <span class="status-dot-indicator"></span>
+          <span id="engine-status-text" data-i18n="status_connecting">Menyambung...</span>
         </div>
       </div>
+    </header>
 
-      <div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Kes Terkini</span>
-            <button class="btn btn-ghost" style="font-size:12px;padding:6px 14px" onclick="refreshDashboard()">↺ Refresh</button>
-          </div>
-          <div id="dashboard-cases">
-            <div style="text-align:center;padding:40px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px;">
-              Tiada kes diproses.<br>Gunakan <span style="color:var(--accent)">Ingest Payload</span> untuk mula.
+    <!-- MAIN CONTENT -->
+    <main class="app-content">
+
+      <!-- ══ DASHBOARD ══ -->
+      <section class="page-section active" id="page-dashboard">
+        <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_dashboard">PEMANTAUAN LANGSUNG</span></div>
+        <div class="page-title" data-i18n="title_dashboard">Papan Pemuka Enjin</div>
+        <p class="page-desc" data-i18n="desc_dashboard">Pemantauan masa nyata ekosistem matrix 25×25. Data dikemaskini apabila payload baharu diproses.</p>
+
+        <div class="stat-grid">
+          <div class="stat-card" style="--s-color:var(--navy);--s-bg:#EEF2FF">
+            <div class="stat-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             </div>
+            <div class="stat-val" id="stat-total">0</div>
+            <div class="stat-label" data-i18n="stat_total">Jumlah Kes</div>
+            <div class="stat-trend" data-i18n="stat_processed">Diproses</div>
+          </div>
+          <div class="stat-card" style="--s-color:var(--crimson);--s-bg:var(--crimson-bg)">
+            <div class="stat-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--crimson)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="stat-val" id="stat-anomaly" style="color:var(--crimson)">0</div>
+            <div class="stat-label" data-i18n="stat_anomaly">Anomali Dikesan</div>
+            <div class="stat-trend" id="stat-anomaly-pct">—</div>
+          </div>
+          <div class="stat-card" style="--s-color:var(--orange);--s-bg:var(--orange-bg)">
+            <div class="stat-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </div>
+            <div class="stat-val" id="stat-extreme" style="color:var(--orange)">0</div>
+            <div class="stat-label" data-i18n="stat_extreme">Ekstrem / Teruk</div>
+            <div class="stat-trend" data-i18n="stat_action">Tindakan Segera</div>
+          </div>
+          <div class="stat-card" style="--s-color:var(--green);--s-bg:var(--green-bg)">
+            <div class="stat-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="stat-val" id="stat-aligned" style="color:var(--green)">0</div>
+            <div class="stat-label" data-i18n="stat_aligned">Data Selaras</div>
+            <div class="stat-trend" data-i18n="stat_consistent">Konsisten</div>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header"><span class="card-title">DI Distribution</span></div>
-          <canvas id="dist-canvas" width="280" height="220" style="display:block;margin:0 auto"></canvas>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ INGEST ══ -->
-    <section class="page-section" id="page-ingest">
-      <div class="section-stamp">
-        <span class="stamp-code">MATRIX INGESTION</span>
-        <div class="stamp-rule"></div>
-      </div>
-      <h2>Ingest <span class="dim">Payload</span></h2>
-      <p class="section-desc">Hantar telemetri daripada sistem matrix luaran untuk dianalisis oleh pipeline Agent A → B → C.</p>
-
-      <div style="display:grid;grid-template-columns:1fr 280px;gap:20px">
-        <div class="card">
-          <form id="ingest-form" onsubmit="handleIngest(event)">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Sistem Sumber (Source System ID)</label>
-                <input type="text" id="f-source-id" placeholder="e.g. PRESTIJ-BULLY-03" value="PRESTIJ-BULLY-03" required>
-              </div>
-              <div class="form-group">
-                <label>Nama Sistem</label>
-                <input type="text" id="f-source-name" placeholder="e.g. AI Bully Detection Agent" value="AI-Powered Bully Detection Agent" required>
-              </div>
-              <div class="form-group">
-                <label>Kod Sekolah (School ID)</label>
-                <select id="f-school-id">
-                  <option value="SMK002">SMK002 — SMK Pendang, Kedah (High Risk)</option>
-                  <option value="SKB001">SKB001 — SK Bandar Baru Nilai (Low Risk)</option>
-                  <option value="SKB002">SKB002 — SK Bukit Jelutong (Medium Risk)</option>
-                  <option value="SMK001">SMK001 — SMK Tun Hussein Onn (Low Risk)</option>
-                  <option value="SBP001">SBP001 — SBP Integrasi Gombak (Very Low Risk)</option>
-                  <option value="MRSM001">MRSM001 — MRSM Kuala Klawang</option>
-                  <option value="SKK001">SKK001 — SK Kluang Utama</option>
-                  <option value="UNKNOWN99">UNKNOWN99 — (Sekolah Tidak Dikenali)</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Skor Operasi: <span id="score-display" style="color:var(--accent)">92.0</span></label>
-                <input type="range" id="f-op-score" min="0" max="100" step="0.5" value="92" oninput="document.getElementById('score-display').textContent=parseFloat(this.value).toFixed(1)">
-              </div>
-              <div class="form-group full">
-                <label>Laporan Teks (Raw Text Payload)</label>
-                <textarea id="f-raw-text" required>Terdapat laporan kritikal berhubung salah guna kuasa oleh pentadbir sekolah SMK002. Rekod peruntukan kewangan didapati tidak konsisten dengan laporan rasmi. Pelajar melaporkan kejadian buli yang serius dan pergaduhan berulang di kawasan sekolah. Kantin sekolah didapati tidak memenuhi piawaian kebersihan yang ditetapkan. Laporan ini dihantar secara urgent untuk tindakan segera pihak berkuasa.</textarea>
-              </div>
-            </div>
-            <div style="margin-top:20px;display:flex;gap:12px;align-items:center">
-              <button type="submit" class="btn btn-primary" id="submit-btn">
-                ↑ Hantar ke Engine
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:16px">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" data-i18n="recent_cases">Kes Terkini</span>
+              <button class="btn btn-outline btn-sm" onclick="refreshDashboard()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                <span data-i18n="refresh">Refresh</span>
               </button>
-              <button type="button" class="btn btn-ghost" onclick="resetForm()">Reset</button>
             </div>
-          </form>
-        </div>
+            <div id="dashboard-cases">
+              <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <div class="empty-state-text" data-i18n="no_cases">Tiada kes diproses.</div>
+                <div class="empty-state-sub"><span data-i18n="no_cases_hint">Gunakan </span><a onclick="showPage('ingest')" data-i18n="nav_ingest">Hantar Payload</a><span> untuk mula.</span></div>
+              </div>
+            </div>
+          </div>
 
-        <!-- Quick Reference -->
-        <div>
-          <div class="card" style="margin-bottom:16px">
-            <div class="card-header"><span class="card-title" style="font-size:14px">DI Formula</span></div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text-dim);line-height:2">
-              <span style="color:var(--accent)">DI</span> = |Audit − Op| / 100<br>
-              <span style="color:var(--text-dim);font-size:10px">Range: [0.0000, 1.0000]</span>
+          <div class="card">
+            <div class="card-header"><span class="card-title" data-i18n="di_distribution">Taburan DI</span></div>
+            <div style="padding:16px">
+              <canvas id="dist-canvas" width="268" height="210" style="display:block;max-width:100%"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ INGEST ══ -->
+      <section class="page-section" id="page-ingest">
+        <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_ingest">PENGAMBILAN MATRIX</span></div>
+        <div class="page-title" data-i18n="title_ingest">Hantar Payload</div>
+        <p class="page-desc" data-i18n="desc_ingest">Hantar telemetri daripada sistem matrix luaran untuk dianalisis oleh pipeline Ejen A → B → C.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 268px;gap:20px">
+          <div class="card">
+            <div class="card-header"><span class="card-title" data-i18n="nav_ingest">Hantar Payload</span></div>
+            <div class="card-body">
+              <form id="ingest-form" onsubmit="handleIngest(event)">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label data-i18n="label_source_id">ID Sistem Sumber</label>
+                    <input type="text" id="f-source-id" placeholder="cth. PRESTIJ-BULLY-03" value="PRESTIJ-BULLY-03" required>
+                  </div>
+                  <div class="form-group">
+                    <label data-i18n="label_source_name">Nama Sistem</label>
+                    <input type="text" id="f-source-name" placeholder="cth. AI Bully Detection Agent" value="AI-Powered Bully Detection Agent" required>
+                  </div>
+                  <div class="form-group">
+                    <label data-i18n="label_school_id">Kod Sekolah</label>
+                    <select id="f-school-id">
+                      <option value="SMK002">SMK002 — SMK Pendang, Kedah (Risiko Tinggi)</option>
+                      <option value="SKB001">SKB001 — SK Bandar Baru Nilai (Risiko Rendah)</option>
+                      <option value="SKB002">SKB002 — SK Bukit Jelutong (Risiko Sederhana)</option>
+                      <option value="SMK001">SMK001 — SMK Tun Hussein Onn (Risiko Rendah)</option>
+                      <option value="SBP001">SBP001 — SBP Integrasi Gombak (Risiko Sangat Rendah)</option>
+                      <option value="MRSM001">MRSM001 — MRSM Kuala Klawang</option>
+                      <option value="SKK001">SKK001 — SK Kluang Utama</option>
+                      <option value="UNKNOWN99">UNKNOWN99 — (Sekolah Tidak Dikenali)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label><span data-i18n="label_op_score">Skor Operasi</span>: <span id="score-display" style="color:var(--navy);font-weight:700">92.0</span></label>
+                    <input type="range" id="f-op-score" min="0" max="100" step="0.5" value="92" oninput="document.getElementById('score-display').textContent=parseFloat(this.value).toFixed(1)">
+                  </div>
+                  <div class="form-group full">
+                    <label data-i18n="label_raw_text">Laporan Teks (Raw Text Payload)</label>
+                    <textarea id="f-raw-text" required>Terdapat laporan kritikal berhubung salah guna kuasa oleh pentadbir sekolah SMK002. Rekod peruntukan kewangan didapati tidak konsisten dengan laporan rasmi. Pelajar melaporkan kejadian buli yang serius dan pergaduhan berulang di kawasan sekolah. Kantin sekolah didapati tidak memenuhi piawaian kebersihan yang ditetapkan. Laporan ini dihantar secara urgent untuk tindakan segera pihak berkuasa.</textarea>
+                  </div>
+                </div>
+                <div style="margin-top:20px;display:flex;gap:10px;align-items:center">
+                  <button type="submit" class="btn btn-primary" id="submit-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                    <span data-i18n="btn_submit">Hantar ke Enjin</span>
+                  </button>
+                  <button type="button" class="btn btn-outline" onclick="resetForm()" data-i18n="btn_reset">Tetapkan Semula</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div>
+            <div class="ref-card">
+              <div class="ref-card-title" data-i18n="ref_formula">Formula DI</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);line-height:2">
+                <span style="color:var(--navy);font-weight:700">DI</span> = |Audit − Op| / 100<br>
+                <span style="font-size:10px">Julat: [0.0000, 1.0000]</span>
+              </div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-card-title" data-i18n="ref_classification">Klasifikasi</div>
+              <div class="cls-row"><span class="cls-dot" style="background:var(--crimson)"></span><span class="cls-thr">≥ 0.75</span><span class="cls-lbl di-extreme" data-i18n="cls_extreme">EKSTREM</span></div>
+              <div class="cls-row"><span class="cls-dot" style="background:var(--orange)"></span><span class="cls-thr">≥ 0.50</span><span class="cls-lbl di-severe" data-i18n="cls_severe">TERUK</span></div>
+              <div class="cls-row"><span class="cls-dot" style="background:var(--amber)"></span><span class="cls-thr">≥ 0.25</span><span class="cls-lbl di-moderate" data-i18n="cls_moderate">SEDERHANA</span></div>
+              <div class="cls-row"><span class="cls-dot" style="background:var(--blue)"></span><span class="cls-thr">≥ 0.10</span><span class="cls-lbl di-minor" data-i18n="cls_minor">MINOR</span></div>
+              <div class="cls-row"><span class="cls-dot" style="background:var(--green)"></span><span class="cls-thr">&lt; 0.10</span><span class="cls-lbl di-aligned" data-i18n="cls_aligned">SELARAS</span></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-card-title" data-i18n="ref_audit">Rekod Audit</div>
+              <div id="audit-preview" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);line-height:1.8" data-i18n-placeholder="ref_select_hint">Pilih sekolah untuk lihat rekod audit JN.</div>
+            </div>
+          </div>
+        </div>
+        <div id="ingest-result" style="display:none;margin-top:20px"></div>
+      </section>
+
+      <!-- ══ CASES LOG ══ -->
+      <section class="page-section" id="page-cases">
+        <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_cases">LOG KES</span></div>
+        <div class="page-title" data-i18n="title_cases">Log Kes</div>
+        <p class="page-desc" data-i18n="desc_cases">Semua kes yang telah diproses oleh enjin. Klik kes untuk lihat ringkasan penuh.</p>
+        <div style="display:flex;gap:10px;margin-bottom:18px">
+          <button class="btn btn-outline" onclick="loadCases()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            <span data-i18n="btn_refresh">Segar Semula</span>
+          </button>
+          <button class="btn btn-danger" onclick="clearAllCases()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+            <span data-i18n="btn_clear">Padam Semua</span>
+          </button>
+        </div>
+        <div class="card">
+          <div id="cases-table-wrap">
+            <div class="empty-state">
+              <div class="empty-state-icon">🗂</div>
+              <div class="empty-state-text" data-i18n="no_cases_table">Tiada kes. Ingest payload untuk mula.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ EXECUTIVE BRIEF ══ -->
+      <section class="page-section" id="page-brief">
+        <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_brief">OUTPUT EKSEKUTIF</span></div>
+        <div class="page-title" data-i18n="title_brief">Ringkasan Eksekutif</div>
+        <p class="page-desc" data-i18n="desc_brief">Paparan penuh Ringkasan Eksekutif yang dijana oleh Ejen C untuk kes yang dipilih.</p>
+        <div id="brief-content">
+          <div class="empty-state" style="padding:80px 20px">
+            <div class="empty-state-icon">📄</div>
+            <div class="empty-state-text" data-i18n="brief_no_case">Pilih kes daripada Log Kes atau ingest payload baharu untuk lihat ringkasan.</div>
+            <div class="empty-state-sub" style="margin-top:8px">
+              <a onclick="showPage('cases')" data-i18n="nav_cases">Log Kes</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ SYSTEM ══ -->
+      <section class="page-section" id="page-about">
+        <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_system">INFO SISTEM</span></div>
+        <div class="page-title" data-i18n="title_system">Tentang Sistem</div>
+        <p class="page-desc" data-i18n="desc_system">MoE AI-Complaint — Sistem Imbangan Semak Pintar. Supreme Truth &amp; Audit Node dalam ekosistem matrix 25×25.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="card-header"><span class="card-title" data-i18n="sys_architecture">Seni Bina</span></div>
+            <div class="card-body" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);line-height:2.2">
+              <div><span style="color:var(--navy);font-weight:600">Ejen A</span> — Semantic Ingestion &amp; Mapping</div>
+              <div style="padding-left:16px;font-size:11px;color:var(--text-muted)">NER + Weighted Taxonomy Scoring</div>
+              <div><span style="color:var(--navy);font-weight:600">Ejen B</span> — Cross-Examination &amp; Anomaly</div>
+              <div style="padding-left:16px;font-size:11px;color:var(--text-muted)">DI Computation + 8-Flag Generator</div>
+              <div><span style="color:var(--navy);font-weight:600">Ejen C</span> — Executive Briefing</div>
+              <div style="padding-left:16px;font-size:11px;color:var(--text-muted)">Policy Matrix + Directive Generator</div>
             </div>
           </div>
           <div class="card">
-            <div class="card-header"><span class="card-title" style="font-size:14px">Klasifikasi</span></div>
-            <div style="display:flex;flex-direction:column;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:11px">
-              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span><span style="color:var(--text-dim)">≥ 0.75</span><span style="color:var(--red)">EXTREME</span></div>
-              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--orange);display:inline-block"></span><span style="color:var(--text-dim)">≥ 0.50</span><span style="color:var(--orange)">SEVERE</span></div>
-              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#EAB308;display:inline-block"></span><span style="color:var(--text-dim)">≥ 0.25</span><span style="color:#EAB308">MODERATE</span></div>
-              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block"></span><span style="color:var(--text-dim)">≥ 0.10</span><span style="color:var(--blue)">MINOR</span></div>
-              <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span><span style="color:var(--text-dim)">&lt; 0.10</span><span style="color:var(--green)">ALIGNED</span></div>
+            <div class="card-header"><span class="card-title" data-i18n="sys_techstack">Tindanan Teknologi</span></div>
+            <div class="card-body" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);line-height:2.2">
+              <div><span style="color:var(--text);font-weight:600">Backend</span> — FastAPI + Python 3.12</div>
+              <div><span style="color:var(--text);font-weight:600">Database</span> — PostgreSQL 16 (JSONB)</div>
+              <div><span style="color:var(--text);font-weight:600">Frontend</span> — Vanilla HTML/CSS/JS</div>
+              <div><span style="color:var(--text);font-weight:600">Deploy</span> — Docker / Netlify / Render</div>
             </div>
           </div>
-          <div class="card" style="margin-top:16px">
-            <div class="card-header"><span class="card-title" style="font-size:14px">Audit Reference</span></div>
-            <div id="audit-preview" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);line-height:1.8">
-              Pilih sekolah untuk lihat rekod audit JN.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Result Panel -->
-      <div id="ingest-result" style="display:none;margin-top:20px"></div>
-    </section>
-
-    <!-- ══ CASES LOG ══ -->
-    <section class="page-section" id="page-cases">
-      <div class="section-stamp">
-        <span class="stamp-code">KES LOG</span>
-        <div class="stamp-rule"></div>
-      </div>
-      <h2>Kes <span class="dim">Log</span></h2>
-      <p class="section-desc">Semua kes yang telah diproses oleh engine. Klik kes untuk lihat brief penuh.</p>
-      <div style="display:flex;gap:12px;margin-bottom:20px">
-        <button class="btn btn-ghost" onclick="loadCases()">↺ Refresh</button>
-        <button class="btn btn-danger" onclick="clearAllCases()">✕ Clear All</button>
-      </div>
-      <div id="cases-table-wrap">
-        <div style="text-align:center;padding:60px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px">Tiada kes. Ingest payload untuk mula.</div>
-      </div>
-    </section>
-
-    <!-- ══ EXECUTIVE BRIEF ══ -->
-    <section class="page-section" id="page-brief">
-      <div class="section-stamp">
-        <span class="stamp-code">EXECUTIVE OUTPUT</span>
-        <div class="stamp-rule"></div>
-      </div>
-      <h2>Executive <span class="dim">Brief</span></h2>
-      <p class="section-desc">Paparan penuh Executive Briefing yang dijana oleh Agent C untuk kes yang dipilih.</p>
-
-      <div id="brief-content">
-        <div style="text-align:center;padding:80px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px">
-          Pilih kes daripada <span style="color:var(--accent);cursor:pointer" onclick="showPage('cases')">Kes Log</span> atau ingest payload baharu untuk lihat brief.
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ ABOUT ══ -->
-    <section class="page-section" id="page-about">
-      <div class="section-stamp">
-        <span class="stamp-code">SISTEM INFO</span>
-        <div class="stamp-rule"></div>
-      </div>
-      <h2>Tentang <span class="dim">Sistem</span></h2>
-      <p class="section-desc">MoE AI-Complaint — Sistem Imbangan Semak Pintar. Supreme Truth &amp; Audit Node dalam ekosistem matrix 25×25.</p>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Architecture</span></div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim);line-height:2">
-            <div><span style="color:var(--accent)">Agent A</span> — Semantic Ingestion & Mapping</div>
-            <div style="padding-left:20px;font-size:11px">NER + Weighted Taxonomy Scoring</div>
-            <div><span style="color:var(--accent)">Agent B</span> — Cross-Examination & Anomaly</div>
-            <div style="padding-left:20px;font-size:11px">DI Computation + 8-Flag Generator</div>
-            <div><span style="color:var(--accent)">Agent C</span> — Executive Briefing</div>
-            <div style="padding-left:20px;font-size:11px">Policy Matrix + Directive Generator</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Tech Stack</span></div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim);line-height:2">
-            <div><span style="color:#fff">Backend</span> — FastAPI + Python 3.12</div>
-            <div><span style="color:#fff">Database</span> — PostgreSQL 16 (JSONB)</div>
-            <div><span style="color:#fff">Frontend</span> — Vanilla HTML/CSS/JS</div>
-            <div><span style="color:#fff">Deploy</span> — Docker Compose</div>
-          </div>
-        </div>
-        <div class="card" style="grid-column:1/-1">
-          <div class="card-header"><span class="card-title">API Endpoints</span></div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="display:flex;gap:12px;align-items:center;padding:8px 12px;background:rgba(60,184,122,.05);border:1px solid rgba(60,184,122,.15)">
-              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--green);font-size:14px;width:40px">POST</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff">/api/v1/matrix/ingest</span>
-              <span style="font-size:12px;color:var(--text-dim)">— Ingest payload dari sistem matrix</span>
-            </div>
-            <div style="display:flex;gap:12px;align-items:center;padding:8px 12px;background:rgba(64,128,232,.05);border:1px solid rgba(64,128,232,.15)">
-              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--blue);font-size:14px;width:40px">GET</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff">/api/v1/matrix/executive-brief/{case_id}</span>
-              <span style="font-size:12px;color:var(--text-dim)">— Retrieve executive brief</span>
-            </div>
-            <div style="display:flex;gap:12px;align-items:center;padding:8px 12px;background:rgba(64,128,232,.05);border:1px solid rgba(64,128,232,.15)">
-              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--blue);font-size:14px;width:40px">GET</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff">/api/v1/matrix/cases</span>
-              <span style="font-size:12px;color:var(--text-dim)">— List all processed cases</span>
-            </div>
-            <div style="display:flex;gap:12px;align-items:center;padding:8px 12px;background:rgba(64,128,232,.05);border:1px solid rgba(64,128,232,.15)">
-              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--blue);font-size:14px;width:40px">GET</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff">/api/docs</span>
-              <span style="font-size:12px;color:var(--text-dim)">— Interactive API docs (Swagger)</span>
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-header"><span class="card-title" data-i18n="sys_api">Endpoint API</span></div>
+            <div class="card-body">
+              <div class="api-row"><span class="api-method post">POST</span><span class="api-path">/api/v1/matrix/ingest</span><span class="api-desc">— Ingest payload dari sistem matrix</span></div>
+              <div class="api-row"><span class="api-method get">GET</span><span class="api-path">/api/v1/matrix/executive-brief/{case_id}</span><span class="api-desc">— Retrieve executive brief</span></div>
+              <div class="api-row"><span class="api-method get">GET</span><span class="api-path">/api/v1/matrix/cases</span><span class="api-desc">— List all processed cases</span></div>
+              <div class="api-row"><span class="api-method get">GET</span><span class="api-path">/api/v1/health</span><span class="api-desc">— Engine health check</span></div>
+              <div class="api-row"><span class="api-method get">GET</span><span class="api-path">/api/docs</span><span class="api-desc">— Interactive API docs (Swagger)</span></div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-  </main>
-</div>
+    </main>
+  </div><!-- /.app-body -->
+</div><!-- /.app-shell -->
 
-<!-- TOAST CONTAINER -->
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-const API = '';  // same origin
+const API = '';
 
-// ── AUDIT REFERENCE DATA (mirrors agent_b.py) ──
+// ── TRANSLATIONS ──
+const TR = {
+  bm: {
+    brand_sub:'Sistem Pemantauan JN',
+    nav_label:'Navigasi',
+    nav_dashboard:'Papan Pemuka',
+    nav_ingest:'Hantar Payload',
+    nav_cases:'Log Kes',
+    nav_brief:'Ringkasan Eksekutif',
+    nav_system:'Maklumat Sistem',
+    quick_label:'Ingest Pantas',
+    demo_extreme:'Demo: Ekstrem DI',
+    demo_severe:'Demo: Teruk DI',
+    demo_aligned:'Demo: Selaras',
+    stats_label:'Statistik Enjin',
+    stats_agents:'Ejen',
+    stats_cases:'Kes',
+    stats_anomalies:'Anomali',
+    agents_online:'3 Dalam Talian',
+    home:'Utama',
+    status_operational:'Enjin Beroperasi',
+    status_offline:'Enjin Luar Talian',
+    status_connecting:'Menyambung...',
+    eyebrow_dashboard:'PEMANTAUAN LANGSUNG',
+    title_dashboard:'Papan Pemuka Enjin',
+    desc_dashboard:'Pemantauan masa nyata ekosistem matrix 25×25. Data dikemaskini apabila payload baharu diproses.',
+    stat_total:'Jumlah Kes',
+    stat_processed:'Diproses',
+    stat_anomaly:'Anomali Dikesan',
+    stat_extreme:'Ekstrem / Teruk',
+    stat_action:'Tindakan Segera',
+    stat_aligned:'Data Selaras',
+    stat_consistent:'Konsisten',
+    recent_cases:'Kes Terkini',
+    refresh:'Refresh',
+    di_distribution:'Taburan DI',
+    no_cases:'Tiada kes diproses.',
+    no_cases_hint:'Gunakan ',
+    eyebrow_ingest:'PENGAMBILAN MATRIX',
+    title_ingest:'Hantar Payload',
+    desc_ingest:'Hantar telemetri daripada sistem matrix luaran untuk dianalisis oleh pipeline Ejen A → B → C.',
+    label_source_id:'ID Sistem Sumber',
+    label_source_name:'Nama Sistem',
+    label_school_id:'Kod Sekolah',
+    label_op_score:'Skor Operasi',
+    label_raw_text:'Laporan Teks (Raw Text Payload)',
+    btn_submit:'Hantar ke Enjin',
+    btn_reset:'Tetapkan Semula',
+    btn_processing:'Memproses...',
+    ref_formula:'Formula DI',
+    ref_classification:'Klasifikasi',
+    ref_audit:'Rekod Audit',
+    ref_select_hint:'Pilih sekolah untuk lihat rekod audit JN.',
+    ref_not_found:'Rekod tidak dijumpai — fallback default digunakan.',
+    demo_loaded:'Demo payload dimuat:',
+    cls_extreme:'EKSTREM',
+    cls_severe:'TERUK',
+    cls_moderate:'SEDERHANA',
+    cls_minor:'MINOR',
+    cls_aligned:'SELARAS',
+    eyebrow_cases:'LOG KES',
+    title_cases:'Log Kes',
+    desc_cases:'Semua kes yang telah diproses oleh enjin. Klik kes untuk lihat ringkasan penuh.',
+    btn_refresh:'Segar Semula',
+    btn_clear:'Padam Semua',
+    confirm_clear:'Padam semua kes dalam storan enjin?',
+    col_case_id:'ID Kes',
+    col_school:'Sekolah',
+    col_di_score:'Skor DI',
+    col_classification:'Klasifikasi',
+    col_flags:'Bendera',
+    col_anomaly:'Anomali',
+    col_processed:'Diproses',
+    btn_brief:'Brief →',
+    no_cases_table:'Tiada kes. Ingest payload untuk mula.',
+    cases_cleared:'Semua kes dipadam',
+    cases_clear_error:'Gagal memadam kes',
+    cases_load_error:'Gagal memuatkan kes',
+    eyebrow_brief:'OUTPUT EKSEKUTIF',
+    title_brief:'Ringkasan Eksekutif',
+    desc_brief:'Paparan penuh Ringkasan Eksekutif yang dijana oleh Ejen C untuk kes yang dipilih.',
+    brief_no_case:'Pilih kes daripada Log Kes atau ingest payload baharu untuk lihat ringkasan.',
+    brief_directive_label:'ARAHAN EKSEKUTIF — AI-COMPLAINT-MOE',
+    brief_sec_a:'A. MAKLUMAT SEKOLAH',
+    brief_sec_b:'B. ANALISIS DISCREPANCY INDEX',
+    brief_sec_c:'C. TINDAKAN PENGUATKUASAAN',
+    brief_sec_d:'D. CADANGAN PINDAAN POLISI',
+    brief_sec_e:'E. TEKS PERINTAH EKSEKUTIF (PENUH)',
+    brief_sec_flags:'BENDERA RISIKO DICETUSKAN',
+    brief_sec_di:'VISUALISASI DI',
+    kv_school_code:'Kod Sekolah',
+    kv_source:'Sumber Sistem',
+    kv_domain:'Domain Isu',
+    kv_severity:'Keparahan',
+    kv_confidence:'Keyakinan Deteksi',
+    kv_audit_score:'Skor Audit JN',
+    kv_op_score:'Skor Dilaporkan',
+    kv_delta:'Delta',
+    kv_di_score:'Skor DI',
+    kv_classification:'Klasifikasi',
+    no_flags:'Tiada flags — data bersih',
+    no_policy:'Tiada cadangan polisi untuk kes ini.',
+    sig_verified:'Disahkan oleh:',
+    sig_approved:'Diluluskan oleh:',
+    sig_verified_name:'Pengarah Bahagian AI & Integriti MOE',
+    sig_approved_name:'Pengarah, Bahagian Audit KPM',
+    eyebrow_system:'INFO SISTEM',
+    title_system:'Tentang Sistem',
+    desc_system:'MoE AI-Complaint — Sistem Imbangan Semak Pintar. Supreme Truth & Audit Node dalam ekosistem matrix 25×25.',
+    sys_architecture:'Seni Bina',
+    sys_techstack:'Tindanan Teknologi',
+    sys_api:'Endpoint API',
+    res_result:'Keputusan',
+    res_anomaly:'ANOMALI DIKESAN',
+    res_clean:'DATA BERSIH',
+    res_di_score:'Skor DI',
+    res_classification:'Klasifikasi',
+    res_flags:'Bendera',
+    res_alert:'Amaran',
+    res_view_brief:'Lihat Ringkasan Eksekutif',
+    res_to_cases:'Ke Log Kes',
+    payload_processed:'Payload diproses:',
+    anomaly_msg:'⚠ ANOMALI DIKESAN — DI:',
+    chart_label:'TABURAN KLASIFIKASI DI',
+    di_chart_aligned:'Selaras',
+    di_chart_minor:'Minor',
+    di_chart_moderate:'Sederhana',
+    di_chart_severe:'Teruk',
+    di_chart_extreme:'Ekstrem',
+  },
+  en: {
+    brand_sub:'JN Monitoring System',
+    nav_label:'Navigation',
+    nav_dashboard:'Dashboard',
+    nav_ingest:'Ingest Payload',
+    nav_cases:'Case Log',
+    nav_brief:'Executive Brief',
+    nav_system:'System Info',
+    quick_label:'Quick Ingest',
+    demo_extreme:'Demo: Extreme DI',
+    demo_severe:'Demo: Severe DI',
+    demo_aligned:'Demo: Aligned',
+    stats_label:'Engine Stats',
+    stats_agents:'Agents',
+    stats_cases:'Cases',
+    stats_anomalies:'Anomalies',
+    agents_online:'3 Online',
+    home:'Home',
+    status_operational:'Engine Operational',
+    status_offline:'Engine Offline',
+    status_connecting:'Connecting...',
+    eyebrow_dashboard:'LIVE MONITORING',
+    title_dashboard:'Engine Dashboard',
+    desc_dashboard:'Real-time monitoring of the 25×25 matrix ecosystem. Data updates when new payloads are processed.',
+    stat_total:'Total Cases',
+    stat_processed:'Processed',
+    stat_anomaly:'Anomaly Detected',
+    stat_extreme:'Extreme / Severe',
+    stat_action:'Immediate Action',
+    stat_aligned:'Data Aligned',
+    stat_consistent:'Consistent',
+    recent_cases:'Recent Cases',
+    refresh:'Refresh',
+    di_distribution:'DI Distribution',
+    no_cases:'No cases processed.',
+    no_cases_hint:'Use ',
+    eyebrow_ingest:'MATRIX INGESTION',
+    title_ingest:'Ingest Payload',
+    desc_ingest:'Submit telemetry from external matrix systems for analysis by the Agent A → B → C pipeline.',
+    label_source_id:'Source System ID',
+    label_source_name:'System Name',
+    label_school_id:'School Code',
+    label_op_score:'Operational Score',
+    label_raw_text:'Raw Text Payload',
+    btn_submit:'Submit to Engine',
+    btn_reset:'Reset',
+    btn_processing:'Processing...',
+    ref_formula:'DI Formula',
+    ref_classification:'Classification',
+    ref_audit:'Audit Reference',
+    ref_select_hint:'Select a school to view JN audit records.',
+    ref_not_found:'Record not found — default fallback used.',
+    demo_loaded:'Demo payload loaded:',
+    cls_extreme:'EXTREME',
+    cls_severe:'SEVERE',
+    cls_moderate:'MODERATE',
+    cls_minor:'MINOR',
+    cls_aligned:'ALIGNED',
+    eyebrow_cases:'CASE LOG',
+    title_cases:'Case Log',
+    desc_cases:'All cases processed by the engine. Click a case to view the full brief.',
+    btn_refresh:'Refresh',
+    btn_clear:'Clear All',
+    confirm_clear:'Delete all cases in the engine store?',
+    col_case_id:'Case ID',
+    col_school:'School',
+    col_di_score:'DI Score',
+    col_classification:'Classification',
+    col_flags:'Flags',
+    col_anomaly:'Anomaly',
+    col_processed:'Processed',
+    btn_brief:'Brief →',
+    no_cases_table:'No cases. Ingest a payload to begin.',
+    cases_cleared:'All cases deleted',
+    cases_clear_error:'Failed to delete cases',
+    cases_load_error:'Failed to load cases',
+    eyebrow_brief:'EXECUTIVE OUTPUT',
+    title_brief:'Executive Brief',
+    desc_brief:'Full Executive Briefing generated by Agent C for the selected case.',
+    brief_no_case:'Select a case from Case Log or ingest a new payload to view the brief.',
+    brief_directive_label:'EXECUTIVE DIRECTIVE — AI-COMPLAINT-MOE',
+    brief_sec_a:'A. SCHOOL INFORMATION',
+    brief_sec_b:'B. DISCREPANCY INDEX ANALYSIS',
+    brief_sec_c:'C. ENFORCEMENT ACTIONS',
+    brief_sec_d:'D. POLICY AMENDMENT RECOMMENDATIONS',
+    brief_sec_e:'E. EXECUTIVE DIRECTIVE TEXT (FULL)',
+    brief_sec_flags:'RISK FLAGS TRIGGERED',
+    brief_sec_di:'DI VISUALISATION',
+    kv_school_code:'School Code',
+    kv_source:'Source System',
+    kv_domain:'Issue Domain',
+    kv_severity:'Severity',
+    kv_confidence:'Detection Confidence',
+    kv_audit_score:'JN Audit Score',
+    kv_op_score:'Reported Score',
+    kv_delta:'Delta',
+    kv_di_score:'DI Score',
+    kv_classification:'Classification',
+    no_flags:'No flags — data clean',
+    no_policy:'No policy recommendations for this case.',
+    sig_verified:'Verified by:',
+    sig_approved:'Approved by:',
+    sig_verified_name:'Director, AI & Integrity Division, MOE',
+    sig_approved_name:'Director, Audit Division, KPM',
+    eyebrow_system:'SYSTEM INFO',
+    title_system:'About System',
+    desc_system:'MoE AI-Complaint — Smart Checks & Balances System. Supreme Truth & Audit Node in the 25×25 matrix ecosystem.',
+    sys_architecture:'Architecture',
+    sys_techstack:'Tech Stack',
+    sys_api:'API Endpoints',
+    res_result:'Result',
+    res_anomaly:'ANOMALY DETECTED',
+    res_clean:'DATA CLEAN',
+    res_di_score:'DI Score',
+    res_classification:'Classification',
+    res_flags:'Flags',
+    res_alert:'Alert',
+    res_view_brief:'View Executive Brief',
+    res_to_cases:'To Case Log',
+    payload_processed:'Payload processed:',
+    anomaly_msg:'⚠ ANOMALY DETECTED — DI:',
+    chart_label:'DI CLASSIFICATION DISTRIBUTION',
+    di_chart_aligned:'Aligned',
+    di_chart_minor:'Minor',
+    di_chart_moderate:'Moderate',
+    di_chart_severe:'Severe',
+    di_chart_extreme:'Extreme',
+  }
+};
+
+let currentLang = 'bm';
+
+function t(key) {
+  return TR[currentLang][key] || TR.bm[key] || key;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('lang-bm').classList.toggle('active', lang === 'bm');
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  document.documentElement.lang = lang === 'bm' ? 'ms' : 'en';
+  applyTranslations();
+  // Re-render dynamic content if visible
+  if (document.getElementById('page-cases').classList.contains('active')) loadCases();
+  if (document.getElementById('page-dashboard').classList.contains('active')) refreshDashboard();
+  // Update breadcrumb
+  const bc = document.getElementById('breadcrumb-current');
+  if (bc && bc.dataset.i18n) bc.textContent = t(bc.dataset.i18n);
+  // Update audit preview placeholder
+  document.getElementById('f-school-id').dispatchEvent(new Event('change'));
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+}
+
+// ── AUDIT DB ──
 const AUDIT_DB = {
-  SKB001: { skpmg2_score: 85.50, facility_gred: 'A', canteen_hygiene_score: 88.00, integrity_risk_index: 0.120, school_name: 'SK Bandar Baru Nilai', state: 'Negeri Sembilan', last_audit_date: '2023-03-15' },
-  SKB002: { skpmg2_score: 72.00, facility_gred: 'B', canteen_hygiene_score: 65.00, integrity_risk_index: 0.350, school_name: 'SK Bukit Jelutong', state: 'Selangor', last_audit_date: '2022-11-20' },
-  SMK001: { skpmg2_score: 91.20, facility_gred: 'A', canteen_hygiene_score: 92.00, integrity_risk_index: 0.080, school_name: 'SMK Tun Hussein Onn', state: 'W.P. Kuala Lumpur', last_audit_date: '2024-01-10' },
-  SMK002: { skpmg2_score: 58.00, facility_gred: 'C', canteen_hygiene_score: 45.00, integrity_risk_index: 0.680, school_name: 'SMK Pendang', state: 'Kedah', last_audit_date: '2022-08-05' },
-  SBP001: { skpmg2_score: 94.80, facility_gred: 'A', canteen_hygiene_score: 95.50, integrity_risk_index: 0.040, school_name: 'SBP Integrasi Gombak', state: 'Selangor', last_audit_date: '2023-09-22' },
-  MRSM001:{ skpmg2_score: 88.30, facility_gred: 'A', canteen_hygiene_score: 87.00, integrity_risk_index: 0.095, school_name: 'MRSM Kuala Klawang', state: 'Negeri Sembilan', last_audit_date: '2023-06-14' },
-  SKK001: { skpmg2_score: 63.50, facility_gred: 'C', canteen_hygiene_score: 58.00, integrity_risk_index: 0.420, school_name: 'SK Kluang Utama', state: 'Johor', last_audit_date: '2022-05-30' },
+  SKB001:{skpmg2_score:85.50,facility_gred:'A',canteen_hygiene_score:88.00,integrity_risk_index:0.120,school_name:'SK Bandar Baru Nilai',state:'Negeri Sembilan',last_audit_date:'2023-03-15'},
+  SKB002:{skpmg2_score:72.00,facility_gred:'B',canteen_hygiene_score:65.00,integrity_risk_index:0.350,school_name:'SK Bukit Jelutong',state:'Selangor',last_audit_date:'2022-11-20'},
+  SMK001:{skpmg2_score:91.20,facility_gred:'A',canteen_hygiene_score:92.00,integrity_risk_index:0.080,school_name:'SMK Tun Hussein Onn',state:'W.P. Kuala Lumpur',last_audit_date:'2024-01-10'},
+  SMK002:{skpmg2_score:58.00,facility_gred:'C',canteen_hygiene_score:45.00,integrity_risk_index:0.680,school_name:'SMK Pendang',state:'Kedah',last_audit_date:'2022-08-05'},
+  SBP001:{skpmg2_score:94.80,facility_gred:'A',canteen_hygiene_score:95.50,integrity_risk_index:0.040,school_name:'SBP Integrasi Gombak',state:'Selangor',last_audit_date:'2023-09-22'},
+  MRSM001:{skpmg2_score:88.30,facility_gred:'A',canteen_hygiene_score:87.00,integrity_risk_index:0.095,school_name:'MRSM Kuala Klawang',state:'Negeri Sembilan',last_audit_date:'2023-06-14'},
+  SKK001:{skpmg2_score:63.50,facility_gred:'C',canteen_hygiene_score:58.00,integrity_risk_index:0.420,school_name:'SK Kluang Utama',state:'Johor',last_audit_date:'2022-05-30'},
 };
 
 const DEMO_PAYLOADS = {
-  extreme: { source_system_id:'PRESTIJ-INTEGRITY-07', source_system_name:'AI Integrity Monitoring Agent', school_id:'SMK002', operational_score:96.5, raw_text:'Laporan kritikal: rasuah dan penipuan rekod sekolah SMK002 oleh pentadbir. Rekod SKPMG2 didapati dimanipulasi secara sengaja. Integriti data sekolah sangat dipersoalkan. Tindakan segera diperlukan.' },
-  severe:  { source_system_id:'PRESTIJ-FACILITY-02', source_system_name:'AI Facility Assessment Agent', school_id:'SKK001', operational_score:89.0, raw_text:'Penilaian kemudahan sekolah SKK001 menunjukkan prestasi yang jauh lebih baik daripada rekod Nazir. Bangunan dan tandas dilaporkan dalam keadaan baik. Kantin bersih dan teratur. Namun terdapat tanda-tanda manipulasi rekod.' },
-  aligned: { source_system_id:'PRESTIJ-ACADEMIC-01', source_system_name:'AI Academic Quality Agent', school_id:'SBP001', operational_score:93.0, raw_text:'Laporan prestasi akademik SBP Integrasi Gombak menunjukkan kualiti pengajaran dan kurikulum yang cemerlang. PDPC berjalan dengan lancar. Ujian dan peperiksaan mencapai sasaran yang ditetapkan.' },
+  extreme:{source_system_id:'PRESTIJ-INTEGRITY-07',source_system_name:'AI Integrity Monitoring Agent',school_id:'SMK002',operational_score:96.5,raw_text:'Laporan kritikal: rasuah dan penipuan rekod sekolah SMK002 oleh pentadbir. Rekod SKPMG2 didapati dimanipulasi secara sengaja. Integriti data sekolah sangat dipersoalkan. Tindakan segera diperlukan.'},
+  severe:{source_system_id:'PRESTIJ-FACILITY-02',source_system_name:'AI Facility Assessment Agent',school_id:'SKK001',operational_score:89.0,raw_text:'Penilaian kemudahan sekolah SKK001 menunjukkan prestasi yang jauh lebih baik daripada rekod Nazir. Bangunan dan tandas dilaporkan dalam keadaan baik. Kantin bersih dan teratur. Namun terdapat tanda-tanda manipulasi rekod.'},
+  aligned:{source_system_id:'PRESTIJ-ACADEMIC-01',source_system_name:'AI Academic Quality Agent',school_id:'SBP001',operational_score:93.0,raw_text:'Laporan prestasi akademik SBP Integrasi Gombak menunjukkan kualiti pengajaran dan kurikulum yang cemerlang. PDPC berjalan dengan lancar. Ujian dan peperiksaan mencapai sasaran yang ditetapkan.'},
 };
 
-// ── STATE ──
 let allCases = [];
 
 // ── NAVIGATION ──
 function showPage(name) {
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  const nav = document.getElementById('nav-' + name);
-  if (nav) nav.classList.add('active');
-  const sb = document.getElementById('sb-' + name);
-  if (sb) sb.classList.add('active');
+  const navEl = document.getElementById('nav-item-' + name);
+  if (navEl) navEl.classList.add('active');
+  const bc = document.getElementById('breadcrumb-current');
+  const keyMap = {dashboard:'nav_dashboard',ingest:'nav_ingest',cases:'nav_cases',brief:'nav_brief',about:'nav_system'};
+  if (bc && keyMap[name]) { bc.dataset.i18n = keyMap[name]; bc.textContent = t(keyMap[name]); }
   if (name === 'dashboard') refreshDashboard();
   if (name === 'cases') loadCases();
 }
 
 // ── TOAST ──
-function toast(msg, type = 'info', duration = 4000) {
+function toast(msg, type='info', duration=4000) {
   const c = document.getElementById('toast-container');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.innerHTML = `<span>${type === 'info' ? '◈' : type === 'success' ? '✓' : '✕'}</span>${msg}`;
-  c.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; t.style.transition = 'all .3s'; setTimeout(() => t.remove(), 300); }, duration);
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icon = type==='success'?'✓':type==='error'?'✕':'ℹ';
+  el.innerHTML = `<span style="font-weight:700;flex-shrink:0">${icon}</span>${msg}`;
+  c.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(6px)';el.style.transition='all .25s';setTimeout(()=>el.remove(),260);},duration);
 }
 
-// ── HEALTH CHECK ──
+// ── HEALTH ──
 async function checkHealth() {
+  const pill = document.getElementById('engine-status');
+  const txt = document.getElementById('engine-status-text');
   try {
-    const r = await fetch(API + '/api/v1/health');
+    const r = await fetch(API+'/api/v1/health');
     if (r.ok) {
-      document.getElementById('engine-status').textContent = 'Engine Operational';
-      document.getElementById('engine-status').style.color = 'var(--green)';
+      pill.className='status-pill online';
+      txt.dataset.i18n='status_operational';
+      txt.textContent=t('status_operational');
     } else throw new Error();
   } catch {
-    document.getElementById('engine-status').textContent = 'Engine Offline';
-    document.getElementById('engine-status').style.color = 'var(--red)';
-    document.getElementById('engine-status').style.setProperty('--c', 'var(--red)');
+    pill.className='status-pill offline';
+    txt.dataset.i18n='status_offline';
+    txt.textContent=t('status_offline');
   }
 }
 
@@ -539,18 +947,17 @@ async function checkHealth() {
 document.getElementById('f-school-id').addEventListener('change', function() {
   const rec = AUDIT_DB[this.value];
   const el = document.getElementById('audit-preview');
-  if (!rec) { el.textContent = 'Rekod tidak dijumpai — fallback default digunakan.'; el.style.color = 'var(--orange)'; return; }
-  el.style.color = 'var(--text-dim)';
-  el.innerHTML = `<b style="color:#fff">${rec.school_name}</b><br>${rec.state}<br><br>
-    SKPMG2: <span style="color:var(--accent)">${rec.skpmg2_score}</span><br>
-    Gred Kemudahan: <span style="color:var(--accent)">${rec.facility_gred}</span><br>
-    Kantin: <span style="color:var(--accent)">${rec.canteen_hygiene_score}</span><br>
-    Risiko: <span style="color:${rec.integrity_risk_index > 0.5 ? 'var(--red)' : rec.integrity_risk_index > 0.3 ? 'var(--orange)' : 'var(--green)'}">${rec.integrity_risk_index.toFixed(3)}</span><br>
-    Audit: ${rec.last_audit_date}`;
+  if (!rec) {
+    el.style.color='var(--orange)';
+    el.textContent=t('ref_not_found');
+    return;
+  }
+  el.style.color='var(--text-dim)';
+  el.innerHTML=`<b style="color:var(--text)">${rec.school_name}</b><br>${rec.state}<br><br>SKPMG2: <b style="color:var(--navy)">${rec.skpmg2_score}</b><br>Gred: <b style="color:var(--navy)">${rec.facility_gred}</b><br>Kantin: <b style="color:var(--navy)">${rec.canteen_hygiene_score}</b><br>Risiko: <b style="color:${rec.integrity_risk_index>0.5?'var(--crimson)':rec.integrity_risk_index>0.3?'var(--orange)':'var(--green)'}">${rec.integrity_risk_index.toFixed(3)}</b><br>${rec.last_audit_date}`;
 });
 document.getElementById('f-school-id').dispatchEvent(new Event('change'));
 
-// ── LOAD DEMO ──
+// ── DEMO ──
 function loadDemo(type) {
   const d = DEMO_PAYLOADS[type];
   if (!d) return;
@@ -562,13 +969,13 @@ function loadDemo(type) {
   document.getElementById('score-display').textContent = d.operational_score.toFixed(1);
   document.getElementById('f-raw-text').value = d.raw_text;
   showPage('ingest');
-  toast('Demo payload dimuat: ' + type.toUpperCase(), 'info');
+  toast(t('demo_loaded')+' '+type.toUpperCase(), 'info');
 }
 
 function resetForm() {
   document.getElementById('ingest-form').reset();
-  document.getElementById('score-display').textContent = '50.0';
-  document.getElementById('ingest-result').style.display = 'none';
+  document.getElementById('score-display').textContent='50.0';
+  document.getElementById('ingest-result').style.display='none';
   document.getElementById('f-school-id').dispatchEvent(new Event('change'));
 }
 
@@ -576,9 +983,8 @@ function resetForm() {
 async function handleIngest(e) {
   e.preventDefault();
   const btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Memproses...';
-
+  btn.disabled=true;
+  btn.innerHTML=`<div class="spinner"></div>${t('btn_processing')}`;
   const body = {
     source_system_id: document.getElementById('f-source-id').value,
     source_system_name: document.getElementById('f-source-name').value,
@@ -586,49 +992,70 @@ async function handleIngest(e) {
     operational_score: parseFloat(document.getElementById('f-op-score').value),
     raw_text: document.getElementById('f-raw-text').value,
   };
-
   try {
-    const r = await fetch(API + '/api/v1/matrix/ingest', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-    });
+    const r = await fetch(API+'/api/v1/matrix/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data = await r.json();
-    if (!r.ok) throw new Error(data.detail?.message || 'Ralat tidak diketahui');
-
+    if (!r.ok) throw new Error(data.detail?.message||t('error_unknown'));
     showIngestResult(data);
-    toast('Payload diproses: ' + data.case_id, 'success');
-    if (data.anomaly_detected) toast('⚠ ANOMALY DETECTED — DI: ' + data.discrepancy_index.toFixed(4), 'error', 6000);
-  } catch (err) {
-    toast('Error: ' + err.message, 'error');
+    toast(t('payload_processed')+' '+data.case_id,'success');
+    if (data.anomaly_detected) toast(t('anomaly_msg')+' '+data.discrepancy_index.toFixed(4),'error',6000);
+  } catch(err) {
+    toast('Error: '+err.message,'error');
   } finally {
-    btn.disabled = false;
-    btn.innerHTML = '↑ Hantar ke Engine';
+    btn.disabled=false;
+    btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>${t('btn_submit')}`;
   }
 }
 
+function diColor(cls) {
+  return {EXTREME_DISCREPANCY:'var(--crimson)',SEVERE_DISCREPANCY:'var(--orange)',MODERATE_DISCREPANCY:'var(--amber)',MINOR_DISCREPANCY:'var(--blue)',DATA_ALIGNED:'var(--green)'}[cls]||'var(--text-dim)';
+}
+function diClass(cls) {
+  return {EXTREME_DISCREPANCY:'extreme',SEVERE_DISCREPANCY:'severe',MODERATE_DISCREPANCY:'moderate',MINOR_DISCREPANCY:'minor',DATA_ALIGNED:'aligned'}[cls]||'aligned';
+}
+function diBadgeClass(cls) {
+  return {EXTREME_DISCREPANCY:'di-extreme',SEVERE_DISCREPANCY:'di-severe',MODERATE_DISCREPANCY:'di-moderate',MINOR_DISCREPANCY:'di-minor',DATA_ALIGNED:'di-aligned'}[cls]||'';
+}
+
 function showIngestResult(data) {
-  const clsColor = { EXTREME_DISCREPANCY:'var(--red)', SEVERE_DISCREPANCY:'var(--orange)', MODERATE_DISCREPANCY:'#EAB308', MINOR_DISCREPANCY:'var(--blue)', DATA_ALIGNED:'var(--green)' };
-  const color = clsColor[data.di_classification] || 'var(--text-dim)';
+  const color = diColor(data.di_classification);
   const el = document.getElementById('ingest-result');
-  el.style.display = 'block';
-  el.innerHTML = `
-    <div class="card" style="border-color:${data.anomaly_detected ? 'var(--red-dim)' : 'var(--green-dim)'}">
+  el.style.display='block';
+  el.innerHTML=`
+    <div class="card" style="border-left:4px solid ${color}">
       <div class="card-header">
-        <span class="card-title">Keputusan: ${data.case_id}</span>
-        <span class="card-badge ${data.anomaly_detected ? 'badge-red' : 'badge-green'}">${data.anomaly_detected ? 'ANOMALY DETECTED' : 'DATA CLEAN'}</span>
+        <span class="card-title">${t('res_result')}: <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim)">${data.case_id}</span></span>
+        <span class="badge ${data.anomaly_detected?'badge-anomaly':'badge-clean'}">${data.anomaly_detected?t('res_anomaly'):t('res_clean')}</span>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
-        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">DI Score</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;color:${color}">${data.discrepancy_index.toFixed(4)}</div></div>
-        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Klasifikasi</div>
-          <div style="font-size:13px;color:${color};font-weight:600">${data.di_classification.replace(/_/g,' ')}</div></div>
-        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Flags</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;color:${data.flags_count>0?'var(--red)':'var(--green)'}">${data.flags_count}</div></div>
-        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Alert</div>
-          <div style="font-size:12px;color:${color}">${data.alert_level}</div></div>
-      </div>
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-primary" onclick="viewBrief('${data.case_id}')">◧ Lihat Executive Brief</button>
-        <button class="btn btn-ghost" onclick="showPage('cases')">≡ Ke Kes Log</button>
+      <div class="card-body">
+        <div class="res-kv-grid">
+          <div class="res-kv-item">
+            <div class="res-kv-label">${t('res_di_score')}</div>
+            <div class="res-kv-val" style="color:${color}">${data.discrepancy_index.toFixed(4)}</div>
+          </div>
+          <div class="res-kv-item">
+            <div class="res-kv-label">${t('res_classification')}</div>
+            <div class="res-kv-val sm ${diBadgeClass(data.di_classification)}">${data.di_classification.replace(/_/g,' ')}</div>
+          </div>
+          <div class="res-kv-item">
+            <div class="res-kv-label">${t('res_flags')}</div>
+            <div class="res-kv-val" style="color:${data.flags_count>0?'var(--crimson)':'var(--green)'}">${data.flags_count}</div>
+          </div>
+          <div class="res-kv-item">
+            <div class="res-kv-label">${t('res_alert')}</div>
+            <div class="res-kv-val sm" style="color:${color}">${data.alert_level}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="viewBrief('${data.case_id}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            ${t('res_view_brief')}
+          </button>
+          <button class="btn btn-outline" onclick="showPage('cases')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
+            ${t('res_to_cases')}
+          </button>
+        </div>
       </div>
     </div>`;
 }
@@ -637,132 +1064,113 @@ function showIngestResult(data) {
 async function viewBrief(caseId) {
   showPage('brief');
   const el = document.getElementById('brief-content');
-  el.innerHTML = '<div style="padding:40px;display:flex;justify-content:center"><div class="spinner" style="width:32px;height:32px"></div></div>';
+  el.innerHTML='<div style="padding:60px;display:flex;justify-content:center"><div class="spinner dark" style="width:28px;height:28px"></div></div>';
   try {
-    const r = await fetch(API + '/api/v1/matrix/executive-brief/' + caseId);
+    const r = await fetch(API+'/api/v1/matrix/executive-brief/'+caseId);
     const d = await r.json();
-    if (!r.ok) throw new Error(d.detail?.error || 'Not found');
+    if (!r.ok) throw new Error(d.detail?.error||'Not found');
     renderBrief(d);
-  } catch (err) {
-    el.innerHTML = `<div style="padding:40px;text-align:center;color:var(--red);font-family:'IBM Plex Mono',monospace">Error: ${err.message}</div>`;
+  } catch(err) {
+    el.innerHTML=`<div style="padding:40px;text-align:center;color:var(--crimson);font-family:'JetBrains Mono',monospace;font-size:13px">${t('error_brief')} ${err.message}</div>`;
   }
-}
-
-function diClass(cls) {
-  const m = {EXTREME_DISCREPANCY:'extreme',SEVERE_DISCREPANCY:'severe',MODERATE_DISCREPANCY:'moderate',MINOR_DISCREPANCY:'minor',DATA_ALIGNED:'aligned'};
-  return m[cls] || 'aligned';
-}
-function diColor(cls) {
-  const m = {EXTREME_DISCREPANCY:'var(--red)',SEVERE_DISCREPANCY:'var(--orange)',MODERATE_DISCREPANCY:'#EAB308',MINOR_DISCREPANCY:'var(--blue)',DATA_ALIGNED:'var(--green)'};
-  return m[cls] || 'var(--text-dim)';
 }
 
 function renderBrief(d) {
   const color = diColor(d.di_classification);
-  const cls = diClass(d.di_classification);
-  const di_pct = Math.min(100, d.discrepancy_index * 100);
+  const di_pct = Math.min(100, d.discrepancy_index*100);
 
   const flagsHtml = d.flags_triggered.length
-    ? d.flags_triggered.map(f => `<span class="flag-chip">${f}</span>`).join('')
-    : '<span style="color:var(--green);font-family:\'IBM Plex Mono\',monospace;font-size:12px">Tiada flags — data bersih</span>';
+    ? d.flags_triggered.map(f=>`<span class="flag-chip">${f}</span>`).join('')
+    : `<span style="color:var(--green);font-size:13px;font-weight:600">${t('no_flags')}</span>`;
 
-  const enfHtml = d.enforcement_actions.map((a,i) => `
+  const enfHtml = d.enforcement_actions.map((a,i)=>`
     <li class="enf-item"><span class="enf-num">${i+1}</span><span class="enf-text">${a}</span></li>`).join('');
 
   const policyHtml = d.policy_recommendations.length
-    ? d.policy_recommendations.map(p => `
-      <div class="policy-rec">
-        <span class="policy-ref">${p.legal_reference}</span>
-        <span class="policy-action">${p.recommended_action}</span>
-      </div>`).join('')
-    : '<div style="color:var(--text-dim);font-size:13px;padding:12px">Tiada cadangan polisi untuk kes ini.</div>';
+    ? d.policy_recommendations.map(p=>`
+      <div class="policy-rec"><span class="policy-ref">${p.legal_reference}</span><span class="policy-action">${p.recommended_action}</span></div>`).join('')
+    : `<div style="color:var(--text-dim);font-size:13px;padding:4px 0">${t('no_policy')}</div>`;
 
-  document.getElementById('brief-content').innerHTML = `
+  document.getElementById('brief-content').innerHTML=`
     <div class="brief-panel">
-      <div class="brief-top" style="border-left:4px solid ${color}">
-        <div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;margin-bottom:8px">ARAHAN EKSEKUTIF — AI-COMPLAINT-MOE</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#fff">${d.school_name || d.school_id}</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:4px">${d.case_id} &nbsp;|&nbsp; ${d.state} &nbsp;|&nbsp; ${new Date(d.generated_at).toLocaleString('ms-MY')}</div>
+      <div class="brief-masthead" style="border-left:4px solid ${color}">
+        <div class="brief-masthead-left">
+          <div class="brief-eyebrow">${t('brief_directive_label')}</div>
+          <div class="brief-school-name">${d.school_name||d.school_id}</div>
+          <div class="brief-meta">${d.case_id} &nbsp;·&nbsp; ${d.state} &nbsp;·&nbsp; ${new Date(d.generated_at).toLocaleString(currentLang==='bm'?'ms-MY':'en-MY')}</div>
         </div>
-        <span class="card-badge" style="background:${color}18;border:1px solid ${color};color:${color};padding:8px 16px;font-size:13px">${d.alert_status}</span>
+        <span class="badge" style="background:${color}18;border:1px solid ${color};color:${color};padding:6px 14px;font-size:12px;border-radius:6px">${d.alert_status}</span>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)">
-        <div>
-          <div style="padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;border-bottom:1px solid var(--border)">A. MAKLUMAT SEKOLAH</div>
-          <div class="bf-row"><span class="bf-key">Kod Sekolah</span><span class="bf-val">${d.school_id}</span></div>
-          <div class="bf-row"><span class="bf-key">Sumber Sistem</span><span class="bf-val" style="font-size:10px">${d.source_system}</span></div>
-          <div class="bf-row"><span class="bf-key">Domain Isu</span><span class="bf-val">${d.issue_domain}</span></div>
-          <div class="bf-row"><span class="bf-key">Keparahan</span><span class="bf-val" style="color:${d.severity==='CRITICAL'?'var(--red)':d.severity==='HIGH'?'var(--orange)':'var(--accent)'}">${d.severity}</span></div>
-          <div class="bf-row"><span class="bf-key">Keyakinan Deteksi</span><span class="bf-val" style="color:var(--accent)">${Math.round(d.confidence_score*100)}%</span></div>
+        <div class="brief-section" style="border-bottom:none;border-right:1px solid var(--border)">
+          <div class="brief-sec-title">${t('brief_sec_a')}</div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_school_code')}</span><span class="brief-kv-val">${d.school_id}</span></div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_source')}</span><span class="brief-kv-val" style="font-size:10px">${d.source_system}</span></div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_domain')}</span><span class="brief-kv-val">${d.issue_domain}</span></div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_severity')}</span><span class="brief-kv-val" style="color:${d.severity==='CRITICAL'?'var(--crimson)':d.severity==='HIGH'?'var(--orange)':'var(--amber)'}">${d.severity}</span></div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_confidence')}</span><span class="brief-kv-val" style="color:var(--navy)">${Math.round(d.confidence_score*100)}%</span></div>
         </div>
-        <div style="border-left:1px solid var(--border)">
-          <div style="padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;border-bottom:1px solid var(--border)">B. ANALISIS DISCREPANCY INDEX</div>
-          <div class="bf-row"><span class="bf-key">Skor Audit JN</span><span class="bf-val" style="color:var(--green)">${d.audit_score_reference.toFixed(2)}</span></div>
-          <div class="bf-row"><span class="bf-key">Skor Dilaporkan</span><span class="bf-val" style="color:${Math.abs(d.score_delta) > 20 ? 'var(--red)' : 'var(--text)'}">${d.operational_score_reported.toFixed(2)}</span></div>
-          <div class="bf-row"><span class="bf-key">Delta</span><span class="bf-val" style="color:${Math.abs(d.score_delta)>20?'var(--red)':'var(--text)'}">${d.score_delta > 0 ? '+' : ''}${d.score_delta.toFixed(2)} mata</span></div>
-          <div class="bf-row"><span class="bf-key">DI Score</span><span class="bf-val" style="color:${color};font-size:16px;font-weight:700">${d.discrepancy_index.toFixed(4)}</span></div>
-          <div class="bf-row"><span class="bf-key">Klasifikasi</span><span class="bf-val" style="color:${color};font-size:11px">${d.di_classification.replace(/_/g,' ')}</span></div>
+        <div class="brief-section" style="border-bottom:none">
+          <div class="brief-sec-title">${t('brief_sec_b')}</div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_audit_score')}</span><span class="brief-kv-val" style="color:var(--green)">${d.audit_score_reference.toFixed(2)}</span></div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_op_score')}</span><span class="brief-kv-val" style="color:${Math.abs(d.score_delta)>20?'var(--crimson)':'var(--text)'}">${d.operational_score_reported.toFixed(2)}</span></div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_delta')}</span><span class="brief-kv-val" style="color:${Math.abs(d.score_delta)>20?'var(--crimson)':'var(--text)'}">${d.score_delta>0?'+':''}${d.score_delta.toFixed(2)}</span></div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_di_score')}</span><span class="brief-kv-val" style="color:${color};font-size:16px">${d.discrepancy_index.toFixed(4)}</span></div>
+          <div class="brief-kv"><span class="brief-kv-key">${t('kv_classification')}</span><span class="brief-kv-val" style="color:${color};font-size:11px">${d.di_classification.replace(/_/g,' ')}</span></div>
         </div>
       </div>
 
-      <!-- DI Bar -->
-      <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">DI Visualisation</div>
-        <div style="display:flex;height:10px;border-radius:2px;overflow:hidden;margin-bottom:8px">
-          <div style="width:10%;background:var(--green);opacity:.8"></div>
-          <div style="width:15%;background:var(--blue);opacity:.8"></div>
-          <div style="width:25%;background:#EAB308;opacity:.8"></div>
-          <div style="width:25%;background:var(--orange);opacity:.8"></div>
-          <div style="width:25%;background:var(--red);opacity:.8"></div>
+      <div class="brief-section">
+        <div class="brief-sec-title">${t('brief_sec_di')}</div>
+        <div class="di-bar-track">
+          <div style="width:10%;background:var(--green);opacity:.75"></div>
+          <div style="width:15%;background:var(--blue);opacity:.75"></div>
+          <div style="width:25%;background:var(--amber);opacity:.75"></div>
+          <div style="width:25%;background:var(--orange);opacity:.75"></div>
+          <div style="width:25%;background:var(--crimson);opacity:.75"></div>
         </div>
-        <div style="position:relative;height:20px;">
+        <div style="position:relative;height:20px;margin-bottom:4px">
           <div style="position:absolute;left:${di_pct}%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center">
-            <div style="width:2px;height:10px;background:var(--accent)"></div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);white-space:nowrap">${d.discrepancy_index.toFixed(4)}</div>
+            <div style="width:2px;height:10px;background:var(--navy)"></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--navy);font-weight:600;white-space:nowrap">${d.discrepancy_index.toFixed(4)}</div>
           </div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:4px">
+        <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted)">
           <span>0.00</span><span>0.10</span><span>0.25</span><span>0.50</span><span>0.75</span><span>1.00</span>
         </div>
       </div>
 
-      <!-- Flags -->
-      <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px">Bendera Risiko Dicetuskan</div>
+      <div class="brief-section">
+        <div class="brief-sec-title">${t('brief_sec_flags')}</div>
         ${flagsHtml}
       </div>
 
-      <!-- Enforcement -->
-      <div style="padding:20px">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px">C. Tindakan Penguatkuasaan</div>
+      <div class="brief-section">
+        <div class="brief-sec-title">${t('brief_sec_c')}</div>
         <ul class="enf-list">${enfHtml}</ul>
       </div>
 
-      <!-- Policy -->
-      <div style="padding:0 20px 20px">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px">D. Cadangan Pindaan Polisi</div>
+      <div class="brief-section">
+        <div class="brief-sec-title">${t('brief_sec_d')}</div>
         ${policyHtml}
       </div>
 
-      <!-- Directive Text -->
-      <div style="padding:0 20px 20px">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px">E. Teks Perintah Eksekutif (Full Directive)</div>
+      <div class="brief-section">
+        <div class="brief-sec-title">${t('brief_sec_e')}</div>
         <div class="directive-block">${d.executive_directive_text}</div>
       </div>
 
-      <!-- Signature -->
-      <div style="padding:20px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:32px">
+      <div class="sig-row">
         <div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:20px;text-transform:uppercase;letter-spacing:.1em">Disahkan oleh:</div>
-          <div style="border-bottom:1px solid var(--border);margin-bottom:8px;height:28px"></div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">Pengarah Bahagian AI &amp; Integriti MOE</div>
+          <div class="sig-for">${t('sig_verified')}</div>
+          <div class="sig-line"></div>
+          <div class="sig-name">${t('sig_verified_name')}</div>
         </div>
         <div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:20px;text-transform:uppercase;letter-spacing:.1em">Diluluskan oleh:</div>
-          <div style="border-bottom:1px solid var(--border);margin-bottom:8px;height:28px"></div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">Pengarah, Bahagian Audit KPM</div>
+          <div class="sig-for">${t('sig_approved')}</div>
+          <div class="sig-line"></div>
+          <div class="sig-name">${t('sig_approved_name')}</div>
         </div>
       </div>
     </div>`;
@@ -771,93 +1179,97 @@ function renderBrief(d) {
 // ── CASES TABLE ──
 async function loadCases() {
   try {
-    const r = await fetch(API + '/api/v1/matrix/cases');
+    const r = await fetch(API+'/api/v1/matrix/cases');
     const d = await r.json();
-    allCases = d.cases || [];
-    updateSidebar(d);
+    allCases = d.cases||[];
+    updateSidebarStats(d);
     renderCasesTable(allCases);
-  } catch { toast('Gagal memuatkan kes', 'error'); }
+  } catch { toast(t('cases_load_error'),'error'); }
 }
 
-function updateSidebar(d) {
-  document.getElementById('sb-case-count').textContent = d.total_cases || 0;
-  const anomalies = (d.cases || []).filter(c => c.anomaly_detected).length;
+function updateSidebarStats(d) {
+  document.getElementById('sb-case-count').textContent = d.total_cases||0;
+  const anomalies = (d.cases||[]).filter(c=>c.anomaly_detected).length;
   document.getElementById('sb-anomaly-count').textContent = anomalies;
 }
 
 function renderCasesTable(cases) {
   const el = document.getElementById('cases-table-wrap');
   if (!cases.length) {
-    el.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace;font-size:12px">Tiada kes. Ingest payload untuk mula.</div>';
+    el.innerHTML=`<div class="empty-state"><div class="empty-state-icon">🗂</div><div class="empty-state-text">${t('no_cases_table')}</div></div>`;
     return;
   }
-  const clsColor = { EXTREME_DISCREPANCY:'var(--red)', SEVERE_DISCREPANCY:'var(--orange)', MODERATE_DISCREPANCY:'#EAB308', MINOR_DISCREPANCY:'var(--blue)', DATA_ALIGNED:'var(--green)' };
-  el.innerHTML = `<div style="overflow-x:auto"><table class="data-table">
+  el.innerHTML=`<div class="data-table-wrap"><table class="data-table">
     <thead><tr>
-      <th>Case ID</th><th>Sekolah</th><th>DI Score</th><th>Klasifikasi</th><th>Flags</th><th>Anomaly</th><th>Diproses</th><th></th>
+      <th>${t('col_case_id')}</th>
+      <th>${t('col_school')}</th>
+      <th>${t('col_di_score')}</th>
+      <th>${t('col_classification')}</th>
+      <th>${t('col_flags')}</th>
+      <th>${t('col_anomaly')}</th>
+      <th>${t('col_processed')}</th>
+      <th></th>
     </tr></thead>
-    <tbody>${cases.map(c => `<tr onclick="viewBrief('${c.case_id}')">
-      <td class="mono" style="font-size:11px;color:var(--accent)">${c.case_id}</td>
-      <td><div style="font-size:12px;color:#fff">${c.school_id}</div><div style="font-size:11px;color:var(--text-dim)">${c.school_name||''}</div></td>
-      <td class="mono" style="color:${clsColor[c.di_classification]||'var(--text-dim)'};font-size:14px;font-weight:600">${c.discrepancy_index.toFixed(4)}</td>
-      <td><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:${clsColor[c.di_classification]||'var(--text-dim)'}">${c.di_classification.replace(/_/g,' ')}</span></td>
-      <td class="mono" style="color:${c.flags_count>0?'var(--red)':'var(--green)'}">${c.flags_count}</td>
-      <td><span class="card-badge ${c.anomaly_detected?'badge-red':'badge-green'}">${c.anomaly_detected?'YES':'NO'}</span></td>
-      <td class="mono" style="font-size:11px;color:var(--text-dim)">${new Date(c.ingested_at).toLocaleString('ms-MY')}</td>
-      <td><button class="btn btn-ghost" style="font-size:11px;padding:5px 12px" onclick="event.stopPropagation();viewBrief('${c.case_id}')">Brief →</button></td>
+    <tbody>${cases.map(c=>`<tr onclick="viewBrief('${c.case_id}')">
+      <td class="mono" style="font-size:11px;color:var(--crimson)">${c.case_id}</td>
+      <td><div style="font-size:13px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif">${c.school_id}</div><div style="font-size:11px;color:var(--text-dim)">${c.school_name||''}</div></td>
+      <td class="mono" style="color:${diColor(c.di_classification)};font-size:14px;font-weight:700">${c.discrepancy_index.toFixed(4)}</td>
+      <td><span style="font-size:12px;font-weight:600;color:${diColor(c.di_classification)}">${c.di_classification.replace(/_/g,' ')}</span></td>
+      <td class="mono" style="color:${c.flags_count>0?'var(--crimson)':'var(--green)'}; font-weight:700">${c.flags_count}</td>
+      <td><span class="badge ${c.anomaly_detected?'badge-yes':'badge-no'}">${c.anomaly_detected?'YA':'TIDAK'}</span></td>
+      <td class="mono" style="font-size:11px;color:var(--text-dim)">${new Date(c.ingested_at).toLocaleString(currentLang==='bm'?'ms-MY':'en-MY')}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();viewBrief('${c.case_id}')">${t('btn_brief')}</button></td>
     </tr>`).join('')}</tbody>
   </table></div>`;
 }
 
 async function clearAllCases() {
-  if (!confirm('Padam semua kes dalam engine store?')) return;
+  if (!confirm(t('confirm_clear'))) return;
   try {
-    await fetch(API + '/api/v1/matrix/cases', { method: 'DELETE' });
-    allCases = [];
+    await fetch(API+'/api/v1/matrix/cases',{method:'DELETE'});
+    allCases=[];
     renderCasesTable([]);
-    document.getElementById('sb-case-count').textContent = '0';
-    document.getElementById('sb-anomaly-count').textContent = '0';
-    toast('Semua kes dipadam', 'info');
-  } catch { toast('Gagal memadam kes', 'error'); }
+    document.getElementById('sb-case-count').textContent='0';
+    document.getElementById('sb-anomaly-count').textContent='0';
+    toast(t('cases_cleared'),'info');
+  } catch { toast(t('cases_clear_error'),'error'); }
 }
 
 // ── DASHBOARD ──
 async function refreshDashboard() {
   try {
-    const r = await fetch(API + '/api/v1/matrix/cases');
+    const r = await fetch(API+'/api/v1/matrix/cases');
     const d = await r.json();
-    const cases = d.cases || [];
+    const cases = d.cases||[];
     allCases = cases;
-    updateSidebar(d);
+    updateSidebarStats(d);
 
-    const anomalies = cases.filter(c => c.anomaly_detected).length;
-    const extreme = cases.filter(c => ['EXTREME_DISCREPANCY','SEVERE_DISCREPANCY'].includes(c.di_classification)).length;
-    const aligned = cases.filter(c => c.di_classification === 'DATA_ALIGNED').length;
+    const anomalies = cases.filter(c=>c.anomaly_detected).length;
+    const extreme = cases.filter(c=>['EXTREME_DISCREPANCY','SEVERE_DISCREPANCY'].includes(c.di_classification)).length;
+    const aligned = cases.filter(c=>c.di_classification==='DATA_ALIGNED').length;
 
     document.getElementById('stat-total').textContent = d.total_cases;
     document.getElementById('stat-anomaly').textContent = anomalies;
     document.getElementById('stat-extreme').textContent = extreme;
     document.getElementById('stat-aligned').textContent = aligned;
-    document.getElementById('stat-anomaly-pct').textContent = d.total_cases ? Math.round(anomalies/d.total_cases*100)+'% daripada total' : '—';
+    const pctEl = document.getElementById('stat-anomaly-pct');
+    pctEl.textContent = d.total_cases ? Math.round(anomalies/d.total_cases*100)+'% '+t('stat_processed').toLowerCase() : '—';
 
-    // Recent cases list
     const wrap = document.getElementById('dashboard-cases');
     if (!cases.length) {
-      wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-family:\'IBM Plex Mono\',monospace;font-size:12px">Tiada kes. Gunakan <span style="color:var(--accent)">Ingest Payload</span> untuk mula.</div>';
+      wrap.innerHTML=`<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">${t('no_cases')}</div><div class="empty-state-sub">${t('no_cases_hint')}<a onclick="showPage('ingest')">${t('nav_ingest')}</a>.</div></div>`;
     } else {
-      const clsColor = { EXTREME_DISCREPANCY:'var(--red)', SEVERE_DISCREPANCY:'var(--orange)', MODERATE_DISCREPANCY:'#EAB308', MINOR_DISCREPANCY:'var(--blue)', DATA_ALIGNED:'var(--green)' };
-      wrap.innerHTML = cases.slice(0,8).map(c => `
-        <div onclick="viewBrief('${c.case_id}')" style="display:grid;grid-template-columns:1fr auto auto;gap:16px;padding:12px 0;border-bottom:1px solid rgba(30,46,74,.4);cursor:pointer;align-items:center;transition:background .15s" onmouseover="this.style.background='rgba(232,160,32,.04)'" onmouseout="this.style.background=''">
+      wrap.innerHTML = cases.slice(0,8).map(c=>`
+        <div class="case-row ${c.anomaly_detected?'is-anomaly':'is-clean'}" onclick="viewBrief('${c.case_id}')">
           <div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent)">${c.case_id}</div>
-            <div style="font-size:13px;color:#fff;margin-top:2px">${c.school_id} ${c.school_name?'— '+c.school_name:''}</div>
+            <div class="case-id-label">${c.case_id}</div>
+            <div class="case-name-label">${c.school_id}${c.school_name?' — '+c.school_name:''}</div>
           </div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:${clsColor[c.di_classification]||'#fff'}">${c.discrepancy_index.toFixed(4)}</div>
-          <span class="card-badge ${c.anomaly_detected?'badge-red':'badge-green'}" style="white-space:nowrap">${c.anomaly_detected?'ANOMALY':'CLEAN'}</span>
+          <div class="case-score-display ${diBadgeClass(c.di_classification)}">${c.discrepancy_index.toFixed(4)}</div>
+          <span class="badge ${c.anomaly_detected?'badge-anomaly':'badge-clean'}">${c.anomaly_detected?t('res_anomaly').replace(' DIKESAN','').replace(' DETECTED',''):'BERSIH'}</span>
         </div>`).join('');
     }
 
-    // Distribution chart
     drawDistChart(cases);
   } catch { }
 }
@@ -866,64 +1278,75 @@ function drawDistChart(cases) {
   const canvas = document.getElementById('dist-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 280, 220);
+  const W=268, H=210;
+  ctx.clearRect(0,0,W,H);
 
-  const counts = { DATA_ALIGNED:0, MINOR_DISCREPANCY:0, MODERATE_DISCREPANCY:0, SEVERE_DISCREPANCY:0, EXTREME_DISCREPANCY:0 };
-  cases.forEach(c => { if (counts[c.di_classification] !== undefined) counts[c.di_classification]++; });
+  const counts={DATA_ALIGNED:0,MINOR_DISCREPANCY:0,MODERATE_DISCREPANCY:0,SEVERE_DISCREPANCY:0,EXTREME_DISCREPANCY:0};
+  cases.forEach(c=>{if(counts[c.di_classification]!==undefined)counts[c.di_classification]++;});
 
-  const labels = ['Aligned','Minor','Moderate','Severe','Extreme'];
-  const colors = ['#3CB87A','#4080E8','#EAB308','#EA7020','#E84040'];
-  const vals = Object.values(counts);
-  const max = Math.max(...vals, 1);
+  const labels=[t('di_chart_aligned'),t('di_chart_minor'),t('di_chart_moderate'),t('di_chart_severe'),t('di_chart_extreme')];
+  const colors=['#0F6B3C','#1D4ED8','#B45309','#C2410C','#C41E3A'];
+  const bgs=['#DCFCE7','#DBEAFE','#FEF3C7','#FFEDD5','#FEE2E6'];
+  const vals=Object.values(counts);
+  const max=Math.max(...vals,1);
 
-  const bw = 36, gap = 12, startX = 24, startY = 180;
+  const bw=34, gap=10, startX=18, startY=168;
 
-  ctx.fillStyle = '#7A90B0';
-  ctx.font = '10px IBM Plex Mono, monospace';
-  ctx.textAlign = 'center';
+  vals.forEach((v,i)=>{
+    const x=startX+i*(bw+gap);
+    const h=v>0?(v/max)*128:0;
+    const y=startY-h;
 
-  vals.forEach((v, i) => {
-    const x = startX + i * (bw + gap);
-    const h = (v / max) * 140;
-    const y = startY - h;
+    // Bar background
+    ctx.fillStyle=bgs[i];
+    ctx.roundRect ? ctx.roundRect(x,startY-130,bw,130,3) : ctx.fillRect(x,startY-130,bw,130);
+    ctx.fill();
 
-    // Bar
-    ctx.fillStyle = colors[i] + '33';
-    ctx.fillRect(x, y, bw, h);
-    ctx.fillStyle = colors[i];
-    ctx.fillRect(x, y, bw, 3);
+    // Bar fill
+    ctx.fillStyle=colors[i]+'55';
+    ctx.beginPath();
+    if(ctx.roundRect){ctx.roundRect(x,y,bw,h,3);}else{ctx.rect(x,y,bw,h);}
+    ctx.fill();
 
-    // Value
-    if (v > 0) {
-      ctx.fillStyle = colors[i];
-      ctx.font = 'bold 14px Barlow Condensed, sans-serif';
-      ctx.fillText(v, x + bw/2, y - 6);
+    // Top cap
+    if(v>0){
+      ctx.fillStyle=colors[i];
+      ctx.fillRect(x,y,bw,3);
     }
 
-    // Label
-    ctx.fillStyle = '#7A90B0';
-    ctx.font = '9px IBM Plex Mono, monospace';
-    ctx.fillText(labels[i], x + bw/2, startY + 14);
+    // Value label
+    if(v>0){
+      ctx.fillStyle=colors[i];
+      ctx.font='bold 13px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText(v,x+bw/2,y-6);
+    }
+
+    // Bottom label
+    ctx.fillStyle='#9DAFC5';
+    ctx.font='9px Plus Jakarta Sans, sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(labels[i],x+bw/2,startY+13);
   });
 
   // Baseline
-  ctx.strokeStyle = '#1E2E4A';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle='#E2E8F0';
+  ctx.lineWidth=1;
   ctx.beginPath();
-  ctx.moveTo(16, startY);
-  ctx.lineTo(264, startY);
+  ctx.moveTo(10,startY);
+  ctx.lineTo(W-10,startY);
   ctx.stroke();
 
-  ctx.fillStyle = '#7A90B0';
-  ctx.font = '9px IBM Plex Mono, monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('DI CLASSIFICATION DISTRIBUTION', 140, 210);
+  ctx.fillStyle='#9DAFC5';
+  ctx.font='9px Plus Jakarta Sans, sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText(t('chart_label'),W/2,H-4);
 }
 
 // ── INIT ──
 checkHealth();
 refreshDashboard();
-setInterval(checkHealth, 30000);
+setInterval(checkHealth,30000);
 </script>
 </body>
 </html>
