@@ -274,18 +274,25 @@ input[type=range]:focus{box-shadow:none}
 }
 
 /* ── RESPONSIVE ── */
-/* Tablet-landscape / small laptops: stack stat cards to 2-col */
-@media(max-width:1300px){
-  .stat-grid{grid-template-columns:repeat(2,1fr);gap:14px}
-  .stat-card{padding:22px 20px 18px}
-  .stat-val{font-size:36px}
-  .stat-icon-box{width:42px;height:42px;margin-bottom:12px}
-  .stat-icon-box svg{width:19px;height:19px}
+/* Laptop (up to 1500px): 2-col stats, stack dash/ingest sidebars */
+@media(max-width:1500px){
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:18px}
+  .stat-card{padding:28px 32px 24px}
+  .stat-val{font-size:42px}
+  .stat-icon-box{width:52px;height:52px;margin-bottom:18px}
+  .stat-icon-box svg{width:24px;height:24px}
+  .stat-label{font-size:13px}
+  .dash-grid{grid-template-columns:1fr}
+  .ingest-grid{grid-template-columns:1fr}
 }
-/* Medium: tighten padding */
+/* Small laptop / large tablet: tighten */
 @media(max-width:1100px){
   .app-content{padding:24px 20px}
   .page-title{font-size:26px}
+  .stat-card{padding:22px 24px 18px}
+  .stat-val{font-size:36px}
+  .stat-icon-box{width:46px;height:46px;margin-bottom:14px}
+  .stat-icon-box svg{width:21px;height:21px}
   .card-header{padding:14px 18px}
   .card-body{padding:18px}
   .btn{padding:9px 16px;font-size:13px}
