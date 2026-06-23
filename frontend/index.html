@@ -236,12 +236,11 @@ input[type=range]:focus{box-shadow:none}
 @keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── TOOLTIP SYSTEM ── */
-[data-tooltip]{position:relative;cursor:help;border-bottom:1px dotted var(--text-muted)}
-[data-tooltip]:hover::after{content:attr(data-tooltip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--navy-dark);color:#D8E3F0;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:400;font-family:'Inter',sans-serif;white-space:normal;max-width:320px;width:max-content;line-height:1.5;z-index:999;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);text-align:left;letter-spacing:0;text-transform:none}
-[data-tooltip]:hover::before{content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--navy-dark);z-index:999;pointer-events:none}
-/* Tooltip on card headers — adjust positioning */
-.card-header [data-tooltip]:hover::after,.stat-card [data-tooltip]:hover::after{bottom:auto;top:calc(100% + 8px)}
-.card-header [data-tooltip]:hover::before,.stat-card [data-tooltip]:hover::before{bottom:auto;top:calc(100% + 2px);border-top-color:transparent;border-bottom-color:var(--navy-dark)}
+[data-tooltip]{cursor:help;border-bottom:1px dotted var(--text-muted)}
+.tooltip-global{position:fixed;background:var(--navy-dark);color:#E8EDF5;padding:7px 12px;border-radius:6px;font-size:11px;font-weight:400;font-family:'Inter',sans-serif;white-space:normal;max-width:280px;line-height:1.45;z-index:99999;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.12);text-align:left;letter-spacing:0;text-transform:none;word-break:break-word;opacity:0;transition:opacity .15s;display:none}
+.tooltip-global.show{display:block;opacity:1}
+.tooltip-arrow{position:fixed;width:0;height:0;border:5px solid transparent;border-top-color:var(--navy-dark);z-index:99999;pointer-events:none;opacity:0;transition:opacity .15s;display:none}
+.tooltip-arrow.show{display:block;opacity:1}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0}
 .spinner.dark{border-color:var(--border);border-top-color:var(--navy)}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -998,7 +997,97 @@ const DEMO_PAYLOADS = {
 
 let allCases = [];
 
-// ── MOBILE SIDEBAR TOGGLE ──
+// ── TOOLTIP ENGINE (Global, escapes all overflow) ──
+(function(){
+  const tip = document.createElement('div');
+  tip.className = 'tooltip-global';
+  const arrow = document.createElement('div');
+  arrow.className = 'tooltip-arrow';
+  document.body.appendChild(tip);
+  document.body.appendChild(arrow);
+
+  let activeEl = null;
+  let hideTimer = null;
+
+  function show(e) {
+    const el = e.currentTarget;
+    const text = el.getAttribute('data-tooltip');
+    if (!text) return;
+    activeEl = el;
+    clearTimeout(hideTimer);
+    tip.textContent = text;
+    tip.className = 'tooltip-global show';
+    arrow.className = 'tooltip-arrow show';
+    position(el);
+  }
+
+  function position(el) {
+    const r = el.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const gap = 10;
+
+    // Default: above element, centered
+    let left = r.left + r.width/2;
+    let top = r.top - gap;
+    let arrowTop = r.top - 2;
+
+    tip.style.transform = 'translate(-50%,-100%)';
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+
+    // Arrow position
+    arrow.style.left = r.left + r.width/2 + 'px';
+    arrow.style.top = (r.top - 1) + 'px';
+
+    // If tooltip goes above viewport, flip below
+    const tipRect = tip.getBoundingClientRect();
+    if (tipRect.top < 4) {
+      tip.style.transform = 'translate(-50%,0)';
+      tip.style.top = (r.bottom + gap) + 'px';
+      arrow.style.top = (r.bottom - 0) + 'px';
+      arrow.style.borderTopColor = 'transparent';
+      arrow.style.borderBottomColor = 'var(--navy-dark)';
+    } else {
+      arrow.style.borderTopColor = 'var(--navy-dark)';
+      arrow.style.borderBottomColor = 'transparent';
+    }
+
+    // Keep within horizontal bounds
+    const afterRect = tip.getBoundingClientRect();
+    if (afterRect.left < 6) {
+      tip.style.transform = 'translate(0,' + (tip.style.transform.includes('-100%') ? '-100%' : '0') + ')';
+      tip.style.left = '6px';
+    }
+    if (afterRect.right > vw - 6) {
+      tip.style.transform = 'translate(-100%,' + (tip.style.transform.includes('-100%') ? '-100%' : '0') + ')';
+      tip.style.left = (vw - 6) + 'px';
+    }
+  }
+
+  function hide() {
+    hideTimer = setTimeout(() => {
+      tip.className = 'tooltip-global';
+      arrow.className = 'tooltip-arrow';
+      activeEl = null;
+    }, 150);
+  }
+
+  document.addEventListener('mouseover', e => {
+    const el = e.target.closest('[data-tooltip]');
+    if (el && el !== activeEl) show({ currentTarget: el });
+  }, true);
+
+  document.addEventListener('mouseout', e => {
+    const el = e.target.closest('[data-tooltip]');
+    if (el && el === activeEl) hide();
+  }, true);
+
+  // Reposition on scroll
+  window.addEventListener('scroll', () => {
+    if (activeEl) position(activeEl);
+  }, { passive: true });
+})();
 function toggleSidebar() {
   const sidebar = document.querySelector('.sidebar');
   const backdrop = document.getElementById('sidebar-backdrop');
