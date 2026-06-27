@@ -134,12 +134,12 @@ def _run_with_ai(
     api_key: str, school_id: str, raw_text: str, source_system_id: str
 ) -> AgentAResult:
     """
-    Claude Haiku semantic analysis path.
+    Groq LLM semantic analysis path.
     Extracts category, severity, entities AND estimates operational score.
     """
-    import anthropic
+    from groq import Groq
 
-    client = anthropic.Anthropic(api_key=api_key)
+    client = Groq(api_key=api_key)
 
     prompt = (
         "Anda adalah sistem analisis audit PRESTIJ-25 untuk Jemaah Nazir Malaysia.\n\n"
@@ -163,13 +163,14 @@ def _run_with_ai(
         f"Kod Sekolah: {school_id} | Sistem Sumber: {source_system_id}"
     )
 
-    response = client.messages.create(
-        model="claude-haiku-4-5",
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
         max_tokens=512,
+        response_format={"type": "json_object"},
         messages=[{"role": "user", "content": prompt}],
     )
 
-    data = _parse_ai_json(response.content[0].text)
+    data = _parse_ai_json(response.choices[0].message.content)
 
     mapped_category = data.get("mapped_category", "Uncategorised")
     if mapped_category not in CATEGORY_TAXONOMY:

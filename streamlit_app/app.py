@@ -774,12 +774,12 @@ def require_role(*roles: str) -> bool:
 # AGENT PIPELINE
 # ---------------------------------------------------------------------------
 def _get_api_key() -> str:
-    """Read Anthropic API key from Streamlit secrets or environment variable."""
+    """Read Groq API key from Streamlit secrets or environment variable."""
     import os
     try:
-        return st.secrets.get("ANTHROPIC_API_KEY", "")
+        return st.secrets.get("GROQ_API_KEY", "")
     except Exception:
-        return os.environ.get("ANTHROPIC_API_KEY", "")
+        return os.environ.get("GROQ_API_KEY", "")
 
 
 def run_agent_pipeline(

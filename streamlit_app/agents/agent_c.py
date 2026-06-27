@@ -281,14 +281,14 @@ def _run_with_ai(
     state: str,
 ) -> tuple[str, list[str], list[PolicyRecommendation]]:
     """
-    Call Claude Haiku to generate a dynamic formal BM executive directive,
+    Call Groq LLM to generate a dynamic formal BM executive directive,
     enforcement actions, and policy recommendations for this specific case.
 
     Returns (executive_directive_text, enforcement_actions, policy_recs).
     """
-    import anthropic
+    from groq import Groq
 
-    client = anthropic.Anthropic(api_key=api_key)
+    client = Groq(api_key=api_key)
 
     flags_text = "\n".join(f"- {f}" for f in agent_b.flags) if agent_b.flags else "- Tiada"
     ai_summary = agent_a.ai_category_summary or ""
@@ -318,13 +318,14 @@ def _run_with_ai(
         "- Rujuk Akta Pendidikan 1996, Pekeliling Ikhtisas KPM, PKPA"
     )
 
-    response = client.messages.create(
-        model="claude-haiku-4-5",
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
         max_tokens=1024,
+        response_format={"type": "json_object"},
         messages=[{"role": "user", "content": prompt_text}],
     )
 
-    data = _parse_ai_json(response.content[0].text)
+    data = _parse_ai_json(response.choices[0].message.content)
 
     directive = data.get("executive_directive", "")
     if not directive:
