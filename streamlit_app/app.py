@@ -1334,40 +1334,49 @@ def render_sidebar() -> None:
     user = st.session_state.user
     with st.sidebar:
         # ── Brand ──────────────────────────────────
-        st.markdown("""
-        <div class="brand-block">
-            <div style="display:flex;align-items:center;gap:11px">
-                <div style="flex-shrink:0">
-                    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"
-                         style="width:44px;height:44px;filter:drop-shadow(0 0 10px rgba(37,99,235,0.55))">
-                        <defs>
-                            <linearGradient id="sg1" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-                                <stop offset="0%" stop-color="#2563EB"/>
-                                <stop offset="100%" stop-color="#0891B2"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M22 2 L40 9 L40 24 C40 33.5 32 39.5 22 42.5 C12 39.5 4 33.5 4 24 L4 9 Z"
-                              fill="url(#sg1)" opacity="0.88"/>
-                        <path d="M22 2 L40 9 L40 24 C40 33.5 32 39.5 22 42.5 C12 39.5 4 33.5 4 24 L4 9 Z"
-                              fill="none" stroke="rgba(96,165,250,0.65)" stroke-width="1.3"/>
-                        <path d="M22 10 L24.1 17.2 L31.5 17.2 L25.7 21.7 L27.8 29 L22 24.5 L16.2 29 L18.3 21.7 L12.5 17.2 L19.9 17.2 Z"
-                              fill="white" opacity="0.95"/>
-                        <circle cx="22" cy="22" r="3" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="0.6"/>
-                    </svg>
-                </div>
-                <div>
-                    <div style="font-weight:900;font-size:14px;color:#F1F5F9;
-                                line-height:1.2;letter-spacing:0.05em">JN RESOLUSI</div>
-                    <div style="font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
-                                background:linear-gradient(90deg,#60A5FA,#22D3EE);
-                                -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-                                background-clip:text;margin-top:3px">
-                        Sistem Audit Pintar MOE
-                    </div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        _logo_svg = (
+            '<svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"'
+            ' style="width:52px;height:52px;filter:drop-shadow(0 0 12px rgba(37,99,235,0.65))">'
+            '<defs>'
+            '<linearGradient id="sg1" x1="0" y1="0" x2="52" y2="52" gradientUnits="userSpaceOnUse">'
+            '<stop offset="0%" stop-color="#1D4ED8"/>'
+            '<stop offset="50%" stop-color="#2563EB"/>'
+            '<stop offset="100%" stop-color="#0891B2"/>'
+            '</linearGradient>'
+            '<linearGradient id="sg2" x1="0" y1="0" x2="52" y2="0" gradientUnits="userSpaceOnUse">'
+            '<stop offset="0%" stop-color="rgba(96,165,250,0.8)"/>'
+            '<stop offset="100%" stop-color="rgba(34,211,238,0.4)"/>'
+            '</linearGradient>'
+            '</defs>'
+            '<path d="M26 2 L47 10 L47 27 C47 39 38 46 26 50 C14 46 5 39 5 27 L5 10 Z" fill="url(#sg1)"/>'
+            '<path d="M26 2 L47 10 L47 27 C47 39 38 46 26 50 C14 46 5 39 5 27 L5 10 Z"'
+            ' fill="none" stroke="url(#sg2)" stroke-width="1.5"/>'
+            '<path d="M26 11 L28.7 19.8 L38 19.8 L30.6 25.2 L33.4 34 L26 28.6 L18.6 34 L21.4 25.2 L14 19.8 L23.3 19.8 Z"'
+            ' fill="white" opacity="0.96"/>'
+            '</svg>'
+        )
+        _brand_html = (
+            '<div style="background:linear-gradient(135deg,rgba(29,78,216,0.22) 0%,rgba(8,145,178,0.12) 100%);'
+            'border:1px solid rgba(56,189,248,0.2);border-radius:14px;padding:14px 12px 10px;'
+            'margin-bottom:6px;position:relative;overflow:hidden;">'
+            '<div style="position:absolute;top:-15px;right:-15px;width:70px;height:70px;'
+            'background:radial-gradient(circle,rgba(37,99,235,0.2) 0%,transparent 70%);border-radius:50%"></div>'
+            '<div style="display:flex;align-items:center;gap:12px;position:relative">'
+            + _logo_svg +
+            '<div>'
+            '<div style="font-weight:900;font-size:15px;color:#F8FAFC;letter-spacing:0.06em;'
+            'text-shadow:0 0 20px rgba(37,99,235,0.4)">JN RESOLUSI</div>'
+            '<div style="font-size:9px;letter-spacing:0.16em;text-transform:uppercase;'
+            'background:linear-gradient(90deg,#60A5FA,#22D3EE);'
+            '-webkit-background-clip:text;-webkit-text-fill-color:transparent;'
+            'background-clip:text;margin-top:3px;font-weight:700">Sistem Audit Pintar MOE</div>'
+            '</div></div>'
+            '<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(56,189,248,0.12);'
+            'font-size:8px;color:rgba(56,189,248,0.35);letter-spacing:0.18em;font-weight:700">'
+            'PRESTIJ-25 &nbsp;&middot;&nbsp; KPM AGENTIC AI &nbsp;&middot;&nbsp; v2.0</div>'
+            '</div>'
+        )
+        st.markdown(_brand_html, unsafe_allow_html=True)
 
         # ── Language toggle ─────────────────────────
         lang = st.session_state.get("lang", "BM")
@@ -1874,17 +1883,20 @@ def _render_brief_body():
     flags       = _json.loads(case["flags"]) if case["flags"] else []
     agent_c_data= _json.loads(case["agent_c_result"]) if case["agent_c_result"] else {}
 
-    st.markdown(f"""
-    <div class="brief-header" style="border-left:4px solid {color}">
-        <div style="font-size:10px;color:#C41E3A;letter-spacing:0.16em;font-weight:700;margin-bottom:4px">
-            ARAHAN EKSEKUTIF — AI-COMPLAINT-MOE
-        </div>
-        <div style="font-size:22px;font-weight:800;color:#fff">{case['school_name'] or '—'}</div>
-        <div style="font-family:monospace;font-size:11px;color:#6B7C93;margin-top:4px">
-            {case['case_id']} · {case['state'] or 'N/A'} · {case['timestamp'][:19]}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    _sname = case['school_name'] or '—'
+    _scid  = case['case_id']
+    _sstate= case['state'] or 'N/A'
+    _sts   = case['timestamp'][:19]
+    _bh = (
+        f'<div class="brief-header" style="border-left:4px solid {color}">'
+        '<div style="font-size:10px;color:#C41E3A;letter-spacing:0.16em;font-weight:700;margin-bottom:4px">'
+        'ARAHAN EKSEKUTIF &mdash; AI-COMPLAINT-MOE</div>'
+        f'<div style="font-size:22px;font-weight:800;color:#fff">{_sname}</div>'
+        '<div style="font-family:monospace;font-size:11px;color:#6B7C93;margin-top:4px">'
+        f'{_scid} &middot; {_sstate} &middot; {_sts}</div>'
+        '</div>'
+    )
+    st.markdown(_bh, unsafe_allow_html=True)
     st.markdown(f"**{t('brief_status')}:** {agent_c_data.get('alert_status', 'N/A')}")
 
     with st.expander(t("brief_school"), expanded=True):
@@ -1916,37 +1928,38 @@ def _render_brief_body():
         facility_gred  = audit_row_detail["facility_gred"]   if audit_row_detail else "—"
         risk_idx       = f"{audit_row_detail['integrity_risk_index']:.3f}" if audit_row_detail else "—"
         direction = "lebih tinggi" if op_sc > audit_sc else ("lebih rendah" if op_sc < audit_sc else "sama")
-        st.markdown(f"""
-        <div class="di-calc-box">
-            <div class="di-calc-title">📐 Cara Pengiraan Discrepancy Index (DI)</div>
-
-            <div class="di-calc-row">
-                <span>Skor Audit JN (SKPMG2)</span>
-                <span class="src"> ← rekod nazir bertarikh {last_audit_str} · Gred {facility_gred}</span>
-                <br><span class="val">{audit_sc:.2f} / 100</span>
-                <span class="di-source-tag">SUMBER: JN AUDIT DB</span>
-            </div>
-            <div class="di-calc-row" style="margin-top:8px">
-                <span>Skor Operasi Dilaporkan</span>
-                <span class="src"> ← dihantar oleh {case['source_system_name']}</span>
-                <br><span class="val">{op_sc:.2f} / 100</span>
-                <span class="di-source-tag">SUMBER: SISTEM LUAR</span>
-            </div>
-            <div class="di-calc-formula">
-                <div style="color:#64748B;font-size:11px;margin-bottom:6px">Formula:</div>
-                DI = |Skor Audit − Skor Dilaporkan| ÷ 100<br>
-                DI = |{audit_sc:.2f} − {op_sc:.2f}| ÷ 100<br>
-                DI = {delta:.2f} ÷ 100 = <span class="result">{case['discrepancy_index']:.4f}</span>
-                <span style="color:#94A3B8;font-size:11px;margin-left:10px">
-                    (Skor dilaporkan {direction} sebanyak {delta:.1f} mata)
-                </span>
-            </div>
-            <div style="margin-top:10px;color:#475569;font-size:10px">
-                Indeks Risiko Integriti Sekolah: <span style="color:#F59E0B">{risk_idx}</span>
-                &nbsp;·&nbsp; Julat DI: [0.0000 = selaras sempurna, 1.0000 = discrepancy ekstrem]
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        _src = case['source_system_name']
+        _di  = case['discrepancy_index']
+        _html_di = (
+            '<div class="di-calc-box">'
+            '<div class="di-calc-title">📐 Cara Pengiraan Discrepancy Index (DI)</div>'
+            '<div class="di-calc-row">'
+            '<span>Skor Audit JN (SKPMG2)</span> '
+            f'<span class="src">← rekod nazir bertarikh {last_audit_str} · Gred {facility_gred}</span>'
+            f'<br><span class="val">{audit_sc:.2f} / 100</span> '
+            '<span class="di-source-tag">SUMBER: JN AUDIT DB</span>'
+            '</div>'
+            '<div class="di-calc-row" style="margin-top:8px">'
+            '<span>Skor Operasi Dilaporkan</span> '
+            f'<span class="src">← dihantar oleh {_src}</span>'
+            f'<br><span class="val">{op_sc:.2f} / 100</span> '
+            '<span class="di-source-tag">SUMBER: SISTEM LUAR</span>'
+            '</div>'
+            '<div class="di-calc-formula">'
+            '<div style="color:#64748B;font-size:11px;margin-bottom:6px">Formula:</div>'
+            'DI = |Skor Audit &minus; Skor Dilaporkan| &divide; 100<br>'
+            f'DI = |{audit_sc:.2f} &minus; {op_sc:.2f}| &divide; 100<br>'
+            f'DI = {delta:.2f} &divide; 100 = <span class="result">{_di:.4f}</span> '
+            f'<span style="color:#94A3B8;font-size:11px;margin-left:10px">'
+            f'(Skor dilaporkan {direction} sebanyak {delta:.1f} mata)</span>'
+            '</div>'
+            f'<div style="margin-top:10px;color:#475569;font-size:10px">'
+            f'Indeks Risiko Integriti Sekolah: <span style="color:#F59E0B">{risk_idx}</span>'
+            ' &nbsp;&middot;&nbsp; Julat DI: [0.0000 = selaras sempurna, 1.0000 = discrepancy ekstrem]'
+            '</div>'
+            '</div>'
+        )
+        st.markdown(_html_di, unsafe_allow_html=True)
 
     if flags:
         with st.expander(f"{t('brief_flags')} ({len(flags)})", expanded=True):
@@ -2000,13 +2013,14 @@ def _render_brief_body():
                         raw_flag.replace("_", " ").title(),
                         "Bendera risiko automatik diaktifkan oleh algoritma Ejen B berdasarkan analisis data yang diterima."
                     ))
-                st.markdown(f"""
-                <div class="flag-card">
-                    <div class="flag-card-raw">⚑ {raw_flag}</div>
-                    <div class="flag-card-title">🔴 {title}</div>
-                    <div class="flag-card-desc">{desc}</div>
-                </div>
-                """, unsafe_allow_html=True)
+                _fc = (
+                    f'<div class="flag-card">'
+                    f'<div class="flag-card-raw">&#9873; {raw_flag}</div>'
+                    f'<div class="flag-card-title">&#128308; {title}</div>'
+                    f'<div class="flag-card-desc">{desc}</div>'
+                    f'</div>'
+                )
+                st.markdown(_fc, unsafe_allow_html=True)
 
     enf = agent_c_data.get("enforcement", [])
     if enf:
@@ -2046,61 +2060,48 @@ def _render_brief_body():
             _state     = case["state"] or "—"
             _di_cls    = case["di_classification"].replace("_", " ")
 
-            st.markdown(f"""
-            <div class="directive-doc">
-                <div class="directive-doc-header">
-                    <div class="directive-doc-agency">Kementerian Pendidikan Malaysia</div>
-                    <div class="directive-doc-dept">Jemaah Nazir dan Jaminan Kualiti</div>
-                    <div class="directive-doc-dept" style="font-size:11px;color:#64748B;margin-top:2px">
-                        PRESTIJ-25 · Agentic AI Programme · JN Resolusi Enjin
-                    </div>
-                    <div class="directive-doc-title">Arahan Eksekutif Audit</div>
-                </div>
-
-                <div class="directive-meta-row">
-                    <span class="directive-meta-label">NO. RUJUKAN</span>
-                    <span class="directive-meta-value">: {_ref_num}</span>
-                </div>
-                <div class="directive-meta-row">
-                    <span class="directive-meta-label">TARIKH</span>
-                    <span class="directive-meta-value">: {_date_formal}</span>
-                </div>
-                <div class="directive-meta-row">
-                    <span class="directive-meta-label">STATUS AMARAN</span>
-                    <span class="directive-meta-value">: <strong style="color:#F59E0B">{_alert_lbl}</strong></span>
-                </div>
-                <div class="directive-meta-row">
-                    <span class="directive-meta-label">SEKOLAH BERKENAAN</span>
-                    <span class="directive-meta-value">: {_school}</span>
-                </div>
-                <div class="directive-meta-row">
-                    <span class="directive-meta-label">NEGERI</span>
-                    <span class="directive-meta-value">: {_state}</span>
-                </div>
-                <div class="directive-meta-row">
-                    <span class="directive-meta-label">KLASIFIKASI DI</span>
-                    <span class="directive-meta-value">: <strong>{_di_cls}</strong>
-                        &nbsp;(DI = {case['discrepancy_index']:.4f})</span>
-                </div>
-
-                <div class="directive-section-label">Perkara: Arahan Eksekutif Berdasarkan Analisis AI</div>
-                <div class="directive-body-text">{_directive_html}</div>
-
-                <div class="directive-footer">
-                    <div style="font-size:11px;color:#64748B;margin-bottom:16px">
-                        Arahan ini dijana secara automatik oleh Ejen C — JN Resolusi Enjin pada {_date_formal}.
-                        Dokumen ini hendaklah dibaca bersama laporan audit penuh dan tidak menggantikan
-                        keputusan rasmi Jemaah Nazir.
-                    </div>
-                    <div class="directive-sig-block">
-                        <div class="directive-sig-line"></div>
-                        <div class="directive-sig-name">PENGARAH JEMAAH NAZIR</div>
-                        <div class="directive-sig-title">Kementerian Pendidikan Malaysia</div>
-                        <div class="directive-sig-title" style="margin-top:4px">PRESTIJ-25 | JN Resolusi AI Engine</div>
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            _di_val = case['discrepancy_index']
+            _meta = (
+                f'<div class="directive-meta-row"><span class="directive-meta-label">NO. RUJUKAN</span>'
+                f'<span class="directive-meta-value">: {_ref_num}</span></div>'
+                f'<div class="directive-meta-row"><span class="directive-meta-label">TARIKH</span>'
+                f'<span class="directive-meta-value">: {_date_formal}</span></div>'
+                f'<div class="directive-meta-row"><span class="directive-meta-label">STATUS AMARAN</span>'
+                f'<span class="directive-meta-value">: <strong style="color:#F59E0B">{_alert_lbl}</strong></span></div>'
+                f'<div class="directive-meta-row"><span class="directive-meta-label">SEKOLAH BERKENAAN</span>'
+                f'<span class="directive-meta-value">: {_school}</span></div>'
+                f'<div class="directive-meta-row"><span class="directive-meta-label">NEGERI</span>'
+                f'<span class="directive-meta-value">: {_state}</span></div>'
+                f'<div class="directive-meta-row"><span class="directive-meta-label">KLASIFIKASI DI</span>'
+                f'<span class="directive-meta-value">: <strong>{_di_cls}</strong>'
+                f' &nbsp;(DI = {_di_val:.4f})</span></div>'
+            )
+            _footer_note = (
+                f'Arahan ini dijana secara automatik oleh Ejen C &mdash; JN Resolusi Enjin pada {_date_formal}. '
+                'Dokumen ini hendaklah dibaca bersama laporan audit penuh dan tidak menggantikan keputusan rasmi Jemaah Nazir.'
+            )
+            _doc = (
+                '<div class="directive-doc">'
+                '<div class="directive-doc-header">'
+                '<div class="directive-doc-agency">Kementerian Pendidikan Malaysia</div>'
+                '<div class="directive-doc-dept">Jemaah Nazir dan Jaminan Kualiti</div>'
+                '<div class="directive-doc-dept" style="font-size:11px;color:#64748B;margin-top:2px">'
+                'PRESTIJ-25 &middot; Agentic AI Programme &middot; JN Resolusi Enjin</div>'
+                '<div class="directive-doc-title">Arahan Eksekutif Audit</div>'
+                '</div>'
+                + _meta +
+                '<div class="directive-section-label">Perkara: Arahan Eksekutif Berdasarkan Analisis AI</div>'
+                f'<div class="directive-body-text">{_directive_html}</div>'
+                '<div class="directive-footer">'
+                f'<div style="font-size:11px;color:#64748B;margin-bottom:16px">{_footer_note}</div>'
+                '<div class="directive-sig-block">'
+                '<div class="directive-sig-line"></div>'
+                '<div class="directive-sig-name">PENGARAH JEMAAH NAZIR</div>'
+                '<div class="directive-sig-title">Kementerian Pendidikan Malaysia</div>'
+                '<div class="directive-sig-title" style="margin-top:4px">PRESTIJ-25 | JN Resolusi AI Engine</div>'
+                '</div></div></div>'
+            )
+            st.markdown(_doc, unsafe_allow_html=True)
             st.caption("💡 Gunakan Ctrl+P (Windows) atau Cmd+P (Mac) untuk cetak dokumen ini sebagai PDF.")
 
 # ---------------------------------------------------------------------------
