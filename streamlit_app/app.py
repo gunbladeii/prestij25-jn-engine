@@ -283,6 +283,12 @@ _TR = {
         "tip_agent_a":        "Ejen A: Pengambilan Semantik — menjalankan NER dan pemetaan taksonomi pada teks laporan masuk.",
         "tip_agent_b":        "Ejen B: Cross-Examination — mengira DI, menjana bendera risiko, dan mengesan anomali statistik.",
         "tip_agent_c":        "Ejen C: Ringkasan Eksekutif — menjana perintah, tindakan penguatkuasaan, dan cadangan polisi.",
+        # Nav tooltips
+        "tip_nav_dashboard":  "Papan pemuka utama — statistik enjin, kes terkini dan taburan DI.",
+        "tip_nav_cases":      "Log semua kes yang telah diproses beserta ringkasan eksekutif.",
+        "tip_nav_data":       "Hantar payload baharu atau muat naik fail CSV / DOCX / PDF untuk dianalisis.",
+        "tip_nav_users":      "Urus akaun pengguna sistem (hanya Admin).",
+        "tip_nav_info":       "Lihat seni bina sistem, tindanan teknologi dan maklumat deployment.",
         # Misc
         "anomaly_yes":        "🔴 ANOMALI",
         "anomaly_no":         "🟢 BERSIH",
@@ -476,6 +482,12 @@ _TR = {
         "tip_agent_a":        "Agent A: Semantic Ingestion — performs NER and weighted taxonomy mapping on incoming report text.",
         "tip_agent_b":        "Agent B: Cross-Examination — computes DI, generates risk flags, and detects statistical anomalies.",
         "tip_agent_c":        "Agent C: Executive Brief — generates directives, enforcement actions, and policy recommendations.",
+        # Nav tooltips
+        "tip_nav_dashboard":  "Main dashboard — engine statistics, recent cases and DI distribution.",
+        "tip_nav_cases":      "Log of all processed cases with their executive briefs.",
+        "tip_nav_data":       "Submit a new payload or upload CSV / DOCX / PDF for analysis.",
+        "tip_nav_users":      "Manage system user accounts (Admin only).",
+        "tip_nav_info":       "View system architecture, technology stack and deployment info.",
         # Misc
         "anomaly_yes":        "🔴 ANOMALY",
         "anomaly_no":         "🟢 CLEAN",
@@ -510,11 +522,11 @@ def inject_css():
 
     /* ── Base & deep-space background ───────────────────────────── */
     [data-testid="stAppViewContainer"] {
-        background: #020817 !important;
+        background: #0D1B35 !important;
         background-image:
-            linear-gradient(rgba(56,189,248,0.028) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(56,189,248,0.028) 1px, transparent 1px),
-            radial-gradient(ellipse 80% 50% at 50% -5%, rgba(59,130,246,0.09) 0%, transparent 70%);
+            linear-gradient(rgba(56,189,248,0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(56,189,248,0.035) 1px, transparent 1px),
+            radial-gradient(ellipse 80% 50% at 50% -5%, rgba(59,130,246,0.14) 0%, transparent 70%);
         background-size: 52px 52px, 52px 52px, 100% 100%;
     }
     [data-testid="stAppViewContainer"] > .main { background: transparent !important; }
@@ -522,9 +534,10 @@ def inject_css():
 
     /* ── Sidebar shell ───────────────────────────────────────────── */
     section[data-testid="stSidebar"] > div:first-child {
-        background: rgba(2,8,23,0.97) !important;
-        border-right: 1px solid rgba(56,189,248,0.07) !important;
+        background: rgba(1,4,13,0.98) !important;
+        border-right: 2px solid rgba(56,189,248,0.14) !important;
         padding: 1rem 0.7rem !important;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.45) !important;
     }
 
     /* Nav group labels */
@@ -849,6 +862,111 @@ def inject_css():
         background: rgba(56,189,248,0.18); border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover { background: rgba(56,189,248,0.38); }
+
+    /* ── Flag cards (Section C) ──────────────────────────────────── */
+    .flag-card {
+        background: rgba(196,30,58,0.06);
+        border: 1px solid rgba(196,30,58,0.22);
+        border-left: 3px solid #C41E3A;
+        border-radius: 8px; padding: 11px 15px; margin-bottom: 7px;
+    }
+    .flag-card-title { color: #FCA5A5; font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+    .flag-card-raw   { color: #475569; font-family: monospace; font-size: 10px; margin-bottom: 5px; }
+    .flag-card-desc  { color: #94A3B8; font-size: 12px; line-height: 1.6; }
+
+    /* ── DI Calculation detail ───────────────────────────────────── */
+    .di-calc-box {
+        background: rgba(6,12,30,0.65);
+        border: 1px solid rgba(56,189,248,0.1);
+        border-radius: 10px; padding: 16px 20px; margin-top: 14px;
+        font-family: 'Courier New', monospace;
+    }
+    .di-calc-title { color: rgba(56,189,248,0.5); font-size: 9px; font-weight: 800;
+                     letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; }
+    .di-calc-row   { color: #64748B; font-size: 11px; margin-bottom: 5px; }
+    .di-calc-row .val { color: #38BDF8; font-weight: 700; }
+    .di-calc-row .src { color: #475569; font-size: 10px; }
+    .di-calc-formula { border-top: 1px solid rgba(56,189,248,0.08);
+                       margin-top: 10px; padding-top: 10px;
+                       color: #E2E8F0; font-size: 13px; }
+    .di-calc-formula .result { color: #F59E0B; font-weight: 900; font-size: 16px; }
+    .di-source-tag {
+        display: inline-block; padding: 2px 8px; border-radius: 4px;
+        font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
+        background: rgba(37,99,235,0.15); border: 1px solid rgba(37,99,235,0.3);
+        color: #60A5FA; margin-left: 6px; vertical-align: middle;
+    }
+
+    /* ── Official Directive Document ─────────────────────────────── */
+    .directive-doc {
+        background: rgba(8,15,35,0.7);
+        border: 1px solid rgba(56,189,248,0.15);
+        border-radius: 12px; padding: 36px 42px;
+        font-family: 'Georgia', 'Times New Roman', serif;
+        color: #CBD5E1; line-height: 1.85;
+    }
+    .directive-doc-header {
+        text-align: center;
+        border-bottom: 2px solid rgba(56,189,248,0.18);
+        padding-bottom: 20px; margin-bottom: 24px;
+    }
+    .directive-doc-agency {
+        font-size: 11px; font-weight: 800; letter-spacing: 0.2em;
+        text-transform: uppercase; color: #60A5FA; margin-bottom: 4px;
+    }
+    .directive-doc-dept {
+        font-size: 13px; font-weight: 700; color: #E2E8F0; margin-bottom: 2px;
+    }
+    .directive-doc-title {
+        font-size: 16px; font-weight: 900; color: #fff;
+        letter-spacing: 0.05em; text-transform: uppercase;
+        margin-top: 12px; text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+    .directive-meta-row {
+        display: flex; gap: 12px; margin-bottom: 5px; font-size: 12px;
+    }
+    .directive-meta-label {
+        color: #60A5FA; font-weight: 700; min-width: 130px; font-family: monospace;
+    }
+    .directive-meta-value { color: #CBD5E1; }
+    .directive-section-label {
+        color: #38BDF8; font-weight: 800; font-size: 11px;
+        letter-spacing: 0.15em; text-transform: uppercase;
+        border-bottom: 1px solid rgba(56,189,248,0.12);
+        padding-bottom: 4px; margin: 20px 0 10px;
+    }
+    .directive-body-text { font-size: 13px; color: #CBD5E1; }
+    .directive-footer {
+        border-top: 1px solid rgba(56,189,248,0.15);
+        margin-top: 30px; padding-top: 20px;
+    }
+    .directive-sig-block { margin-top: 36px; }
+    .directive-sig-line  {
+        border-bottom: 1px solid rgba(148,163,184,0.35);
+        width: 220px; height: 32px; margin-bottom: 6px;
+    }
+    .directive-sig-name  { color: #E2E8F0; font-weight: 700; font-size: 13px; }
+    .directive-sig-title { color: #64748B; font-size: 11px; }
+
+    /* ── Print styles ────────────────────────────────────────────── */
+    @media print {
+        section[data-testid="stSidebar"],
+        [data-testid="baseButton-primary"],
+        [data-testid="baseButton-secondary"],
+        .nav-group, .section-tag, .sidebar-stats { display: none !important; }
+        [data-testid="stAppViewContainer"] { background: white !important; }
+        .directive-doc {
+            background: white !important; color: black !important;
+            border: none; border-radius: 0; padding: 0;
+            font-family: 'Times New Roman', serif;
+        }
+        .directive-doc-agency, .directive-doc-dept, .directive-meta-label,
+        .directive-section-label { color: #003399 !important; }
+        .directive-meta-value, .directive-body-text { color: black !important; }
+        .directive-doc-header { border-bottom: 2px solid #003399; }
+        .directive-footer { border-top: 1px solid #ccc; }
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -1098,13 +1216,14 @@ def section_header(label: str):
     </div>
     """, unsafe_allow_html=True)
 
-def _nav_btn(label_key: str, page_key: str, role_required=None):
+def _nav_btn(label_key: str, page_key: str, role_required=None, tooltip_key: str = None):
     if role_required and not require_role(*role_required):
         return
     is_active = st.session_state.get("current_page") == page_key
     btn_type  = "primary" if is_active else "secondary"
+    tip = t(tooltip_key) if tooltip_key else None
     if st.sidebar.button(t(label_key), key=f"nav_{page_key}",
-                         use_container_width=True, type=btn_type):
+                         use_container_width=True, type=btn_type, help=tip):
         st.session_state.current_page = page_key
         st.session_state.pop("edit_user_id",   None)
         st.session_state.pop("delete_user_id", None)
@@ -1147,7 +1266,23 @@ def render_login():
     with col_hero:
         st.markdown(f"""
         <div class="login-hero">
-            <div style="font-size:52px;margin-bottom:16px">🛡️</div>
+            <div style="margin-bottom:18px">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"
+                     style="width:80px;height:80px;filter:drop-shadow(0 0 18px rgba(37,99,235,0.7))">
+                    <defs>
+                        <linearGradient id="lg1" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#2563EB"/>
+                            <stop offset="100%" stop-color="#0891B2"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M40 4 L72 16 L72 42 C72 60 58 71 40 77 C22 71 8 60 8 42 L8 16 Z"
+                          fill="url(#lg1)" opacity="0.90"/>
+                    <path d="M40 4 L72 16 L72 42 C72 60 58 71 40 77 C22 71 8 60 8 42 L8 16 Z"
+                          fill="none" stroke="rgba(96,165,250,0.7)" stroke-width="2"/>
+                    <path d="M40 18 L43.8 30.8 L57 30.8 L46.6 38.7 L50.4 51.5 L40 43.6 L29.6 51.5 L33.4 38.7 L23 30.8 L36.2 30.8 Z"
+                          fill="white" opacity="0.95"/>
+                </svg>
+            </div>
             <h1 style="font-size:34px;font-weight:900;color:#fff;margin:0;line-height:1.1;letter-spacing:-0.02em">
                 JN RESOLUSI
             </h1>
@@ -1199,21 +1334,34 @@ def render_sidebar() -> None:
     user = st.session_state.user
     with st.sidebar:
         # ── Brand ──────────────────────────────────
-        st.markdown(f"""
+        st.markdown("""
         <div class="brand-block">
-            <div style="display:flex;align-items:center;gap:10px">
-                <div style="background:linear-gradient(135deg,#2563EB,#0891B2);
-                            width:38px;height:38px;border-radius:10px;
-                            display:flex;align-items:center;justify-content:center;
-                            font-size:19px;box-shadow:0 0 14px rgba(37,99,235,0.45);
-                            flex-shrink:0">🛡️</div>
+            <div style="display:flex;align-items:center;gap:11px">
+                <div style="flex-shrink:0">
+                    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"
+                         style="width:44px;height:44px;filter:drop-shadow(0 0 10px rgba(37,99,235,0.55))">
+                        <defs>
+                            <linearGradient id="sg1" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#2563EB"/>
+                                <stop offset="100%" stop-color="#0891B2"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M22 2 L40 9 L40 24 C40 33.5 32 39.5 22 42.5 C12 39.5 4 33.5 4 24 L4 9 Z"
+                              fill="url(#sg1)" opacity="0.88"/>
+                        <path d="M22 2 L40 9 L40 24 C40 33.5 32 39.5 22 42.5 C12 39.5 4 33.5 4 24 L4 9 Z"
+                              fill="none" stroke="rgba(96,165,250,0.65)" stroke-width="1.3"/>
+                        <path d="M22 10 L24.1 17.2 L31.5 17.2 L25.7 21.7 L27.8 29 L22 24.5 L16.2 29 L18.3 21.7 L12.5 17.2 L19.9 17.2 Z"
+                              fill="white" opacity="0.95"/>
+                        <circle cx="22" cy="22" r="3" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="0.6"/>
+                    </svg>
+                </div>
                 <div>
                     <div style="font-weight:900;font-size:14px;color:#F1F5F9;
-                                line-height:1.2;letter-spacing:0.02em">JN RESOLUSI</div>
-                    <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;
+                                line-height:1.2;letter-spacing:0.05em">JN RESOLUSI</div>
+                    <div style="font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
                                 background:linear-gradient(90deg,#60A5FA,#22D3EE);
                                 -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-                                background-clip:text;margin-top:2px">
+                                background-clip:text;margin-top:3px">
                         Sistem Audit Pintar MOE
                     </div>
                 </div>
@@ -1235,18 +1383,18 @@ def render_sidebar() -> None:
 
         # ── Nav: MONITORING ─────────────────────────
         st.markdown(f'<div class="nav-group">{t("nav_monitoring")}</div>', unsafe_allow_html=True)
-        _nav_btn("nav_dashboard", "dashboard")
-        _nav_btn("nav_cases",     "cases")
+        _nav_btn("nav_dashboard", "dashboard", tooltip_key="tip_nav_dashboard")
+        _nav_btn("nav_cases",     "cases",     tooltip_key="tip_nav_cases")
 
         # ── Nav: DATA INPUT ─────────────────────────
         st.markdown(f'<div class="nav-group">{t("nav_data_input")}</div>', unsafe_allow_html=True)
         if require_role("admin", "penyelaras_jn"):
-            _nav_btn("nav_data_sub", "data_input")
+            _nav_btn("nav_data_sub", "data_input", tooltip_key="tip_nav_data")
 
         # ── Nav: SYSTEM ─────────────────────────────
         st.markdown(f'<div class="nav-group">{t("nav_system")}</div>', unsafe_allow_html=True)
-        _nav_btn("nav_users", "user_management", role_required=("admin",))
-        _nav_btn("nav_info",  "system_info")
+        _nav_btn("nav_users", "user_management", role_required=("admin",), tooltip_key="tip_nav_users")
+        _nav_btn("nav_info",  "system_info",     tooltip_key="tip_nav_info")
 
         st.divider()
 
@@ -1756,10 +1904,109 @@ def _render_brief_body():
         di_pct = min(100, case["discrepancy_index"] * 100)
         st.progress(di_pct / 100, text=f"DI: {case['discrepancy_index']:.4f} / 1.0000")
 
+        # ── Detailed DI calculation panel ────────────────────────────────
+        audit_sc = case["audit_score_reference"] or 0.0
+        op_sc    = case["operational_score_reported"] or 0.0
+        delta    = abs(audit_sc - op_sc)
+        audit_row_detail = get_db().execute(
+            "SELECT last_audit_date, facility_gred, integrity_risk_index FROM jn_audit_records WHERE school_id=?",
+            (case["school_id"],)
+        ).fetchone()
+        last_audit_str = audit_row_detail["last_audit_date"] if audit_row_detail else "—"
+        facility_gred  = audit_row_detail["facility_gred"]   if audit_row_detail else "—"
+        risk_idx       = f"{audit_row_detail['integrity_risk_index']:.3f}" if audit_row_detail else "—"
+        direction = "lebih tinggi" if op_sc > audit_sc else ("lebih rendah" if op_sc < audit_sc else "sama")
+        st.markdown(f"""
+        <div class="di-calc-box">
+            <div class="di-calc-title">📐 Cara Pengiraan Discrepancy Index (DI)</div>
+
+            <div class="di-calc-row">
+                <span>Skor Audit JN (SKPMG2)</span>
+                <span class="src"> ← rekod nazir bertarikh {last_audit_str} · Gred {facility_gred}</span>
+                <br><span class="val">{audit_sc:.2f} / 100</span>
+                <span class="di-source-tag">SUMBER: JN AUDIT DB</span>
+            </div>
+            <div class="di-calc-row" style="margin-top:8px">
+                <span>Skor Operasi Dilaporkan</span>
+                <span class="src"> ← dihantar oleh {case['source_system_name']}</span>
+                <br><span class="val">{op_sc:.2f} / 100</span>
+                <span class="di-source-tag">SUMBER: SISTEM LUAR</span>
+            </div>
+            <div class="di-calc-formula">
+                <div style="color:#64748B;font-size:11px;margin-bottom:6px">Formula:</div>
+                DI = |Skor Audit − Skor Dilaporkan| ÷ 100<br>
+                DI = |{audit_sc:.2f} − {op_sc:.2f}| ÷ 100<br>
+                DI = {delta:.2f} ÷ 100 = <span class="result">{case['discrepancy_index']:.4f}</span>
+                <span style="color:#94A3B8;font-size:11px;margin-left:10px">
+                    (Skor dilaporkan {direction} sebanyak {delta:.1f} mata)
+                </span>
+            </div>
+            <div style="margin-top:10px;color:#475569;font-size:10px">
+                Indeks Risiko Integriti Sekolah: <span style="color:#F59E0B">{risk_idx}</span>
+                &nbsp;·&nbsp; Julat DI: [0.0000 = selaras sempurna, 1.0000 = discrepancy ekstrem]
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
     if flags:
         with st.expander(f"{t('brief_flags')} ({len(flags)})", expanded=True):
-            for f in flags:
-                st.markdown(f"🔴 {f}")
+            _FLAG_MAP = {
+                "POTENTIAL_DATA_MANIPULATION": (
+                    "Petanda Manipulasi Data",
+                    "Perbezaan DI melebihi ambang 0.50. Sistem mengesan kemungkinan pengubahsuaian atau pemalsuan rekod prestasi sekolah secara sengaja. Siasatan forensik data disyorkan."
+                ),
+                "OPERATIONAL_OVER_REPORTING_DETECTED": (
+                    "Pelaporan Berlebihan (Over-Reporting)",
+                    "Skor yang dilaporkan oleh sistem luar adalah jauh lebih tinggi daripada rekod audit JN. Ini menunjukkan kemungkinan sekolah melaporkan pencapaian yang lebih baik daripada realiti sebenar."
+                ),
+                "VISIBILITY_GAP_SUSPECTED": (
+                    "Jurang Keterlihatan (Visibility Gap)",
+                    "Skor dilaporkan adalah lebih rendah daripada rekod audit JN. Ini mungkin disebabkan kekurangan pelaporan atau sekolah menyembunyikan kelemahan tertentu daripada sistem luar."
+                ),
+                "HIGH_INTEGRITY_RISK_SCHOOL": (
+                    "Sekolah Berisiko Integriti Tinggi",
+                    "Rekod audit JN menunjukkan indeks risiko integriti melebihi 0.50 untuk sekolah ini. Kawalan dalaman dan tadbir urus sekolah memerlukan pengawasan rapi."
+                ),
+                "CANTEEN_HYGIENE_BELOW_THRESHOLD": (
+                    "Kebersihan Kantin Di Bawah Piawaian",
+                    "Skor kebersihan kantin dalam rekod JN berada di bawah tahap minimum 50 mata. Ini menunjukkan isu kesihatan dan pengurusan kantin yang serius."
+                ),
+                "CRITICAL_SEVERITY_REPORTED_BY_SOURCE": (
+                    "Tahap Keterukan KRITIKAL Dilaporkan",
+                    "Ejen A mengesan kandungan laporan teks pada tahap keterukan KRITIKAL. Isu yang dilaporkan oleh sistem sumber adalah serius dan memerlukan tindakan segera."
+                ),
+                "ADMINISTRATIVE_MISCONDUCT_CROSS_SIGNAL": (
+                    "Isyarat Silang Salah Laku Pentadbiran",
+                    "Laporan teks mengandungi petanda salah laku pentadbiran, dan DI melebihi 0.20. Kedua-dua faktor ini secara bersama menguatkan dakwaan masalah integriti di peringkat pengurusan sekolah."
+                ),
+                "SCHOOL_CODE_IDENTIFIER_MISMATCH": (
+                    "Ketidakpadanan Kod Sekolah",
+                    "Sistem mengesan ketidakpadanan antara kod sekolah dalam laporan dan rekod pangkalan data JN. Data mungkin dikaitkan kepada sekolah yang salah. Pengesahan manual diperlukan."
+                ),
+            }
+            for raw_flag in flags:
+                if raw_flag.startswith("AUDIT_DATA_STALE_"):
+                    try:
+                        days = int(raw_flag.split("_")[3])
+                        title = "Data Audit JN Lapuk / Tidak Terkini"
+                        desc  = (f"Rekod audit JN untuk sekolah ini telah berusia {days} hari "
+                                 f"({days//365} tahun {days%365} hari). Skor SKPMG2 yang digunakan untuk mengira DI "
+                                 "mungkin tidak mencerminkan keadaan semasa sekolah. Audit semula disyorkan.")
+                    except Exception:
+                        title = "Data Audit Lapuk"
+                        desc  = "Rekod audit JN mungkin tidak terkini."
+                else:
+                    title, desc = _FLAG_MAP.get(raw_flag, (
+                        raw_flag.replace("_", " ").title(),
+                        "Bendera risiko automatik diaktifkan oleh algoritma Ejen B berdasarkan analisis data yang diterima."
+                    ))
+                st.markdown(f"""
+                <div class="flag-card">
+                    <div class="flag-card-raw">⚑ {raw_flag}</div>
+                    <div class="flag-card-title">🔴 {title}</div>
+                    <div class="flag-card-desc">{desc}</div>
+                </div>
+                """, unsafe_allow_html=True)
 
     enf = agent_c_data.get("enforcement", [])
     if enf:
@@ -1777,8 +2024,84 @@ def _render_brief_body():
 
     directive = agent_c_data.get("directive", "")
     if directive:
-        with st.expander(t("brief_directive")):
-            st.text(directive)
+        with st.expander(t("brief_directive"), expanded=True):
+            # Parse directive into paragraphs for clean rendering
+            _lines = [ln.strip() for ln in directive.split("\n") if ln.strip()]
+            _directive_html = "".join(
+                f"<p style='margin:0 0 12px'>{ln}</p>" for ln in _lines
+            )
+            _ref_num  = case["case_id"]
+            _date_str = case["timestamp"][:10]
+            try:
+                from datetime import date as _date
+                _d = _date.fromisoformat(_date_str)
+                _months = ["Januari","Februari","Mac","April","Mei","Jun",
+                           "Julai","Ogos","September","Oktober","November","Disember"]
+                _date_formal = f"{_d.day} {_months[_d.month-1]} {_d.year}"
+            except Exception:
+                _date_formal = _date_str
+
+            _alert_lbl = agent_c_data.get("alert_status", "—")
+            _school    = case["school_name"] or case["school_id"]
+            _state     = case["state"] or "—"
+            _di_cls    = case["di_classification"].replace("_", " ")
+
+            st.markdown(f"""
+            <div class="directive-doc">
+                <div class="directive-doc-header">
+                    <div class="directive-doc-agency">Kementerian Pendidikan Malaysia</div>
+                    <div class="directive-doc-dept">Jemaah Nazir dan Jaminan Kualiti</div>
+                    <div class="directive-doc-dept" style="font-size:11px;color:#64748B;margin-top:2px">
+                        PRESTIJ-25 · Agentic AI Programme · JN Resolusi Enjin
+                    </div>
+                    <div class="directive-doc-title">Arahan Eksekutif Audit</div>
+                </div>
+
+                <div class="directive-meta-row">
+                    <span class="directive-meta-label">NO. RUJUKAN</span>
+                    <span class="directive-meta-value">: {_ref_num}</span>
+                </div>
+                <div class="directive-meta-row">
+                    <span class="directive-meta-label">TARIKH</span>
+                    <span class="directive-meta-value">: {_date_formal}</span>
+                </div>
+                <div class="directive-meta-row">
+                    <span class="directive-meta-label">STATUS AMARAN</span>
+                    <span class="directive-meta-value">: <strong style="color:#F59E0B">{_alert_lbl}</strong></span>
+                </div>
+                <div class="directive-meta-row">
+                    <span class="directive-meta-label">SEKOLAH BERKENAAN</span>
+                    <span class="directive-meta-value">: {_school}</span>
+                </div>
+                <div class="directive-meta-row">
+                    <span class="directive-meta-label">NEGERI</span>
+                    <span class="directive-meta-value">: {_state}</span>
+                </div>
+                <div class="directive-meta-row">
+                    <span class="directive-meta-label">KLASIFIKASI DI</span>
+                    <span class="directive-meta-value">: <strong>{_di_cls}</strong>
+                        &nbsp;(DI = {case['discrepancy_index']:.4f})</span>
+                </div>
+
+                <div class="directive-section-label">Perkara: Arahan Eksekutif Berdasarkan Analisis AI</div>
+                <div class="directive-body-text">{_directive_html}</div>
+
+                <div class="directive-footer">
+                    <div style="font-size:11px;color:#64748B;margin-bottom:16px">
+                        Arahan ini dijana secara automatik oleh Ejen C — JN Resolusi Enjin pada {_date_formal}.
+                        Dokumen ini hendaklah dibaca bersama laporan audit penuh dan tidak menggantikan
+                        keputusan rasmi Jemaah Nazir.
+                    </div>
+                    <div class="directive-sig-block">
+                        <div class="directive-sig-line"></div>
+                        <div class="directive-sig-name">PENGARAH JEMAAH NAZIR</div>
+                        <div class="directive-sig-title">Kementerian Pendidikan Malaysia</div>
+                        <div class="directive-sig-title" style="margin-top:4px">PRESTIJ-25 | JN Resolusi AI Engine</div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            st.caption("💡 Gunakan Ctrl+P (Windows) atau Cmd+P (Mac) untuk cetak dokumen ini sebagai PDF.")
 
 # ---------------------------------------------------------------------------
 # USER MANAGEMENT (CRUD)
