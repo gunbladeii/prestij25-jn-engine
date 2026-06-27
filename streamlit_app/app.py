@@ -828,7 +828,8 @@ def render_admin():
                         "Peranan",
                         ["penyelaras_jn", "peneraju_sektor", "admin"],
                         index=["penyelaras_jn", "peneraju_sektor", "admin"].index(edit_target["role"])
-                        if edit_target["role"] in ["penyelaras_jn", "peneraju_sektor", "admin"] else 0
+                        if edit_target["role"] in ["penyelaras_jn", "peneraju_sektor", "admin"] else 0,
+                        format_func=lambda x: ROLE_LABELS.get(x, x)
                     )
                     upd_active = st.toggle("Akaun Aktif", value=bool(edit_target["is_active"]))
                     upd_password = st.text_input(
@@ -887,7 +888,8 @@ def render_admin():
         with st.form("create_user_form"):
             new_email = st.text_input("Email", placeholder="nama@moe.gov.my")
             new_password = st.text_input("Kata Laluan", type="password", placeholder="Min 6 aksara")
-            new_role = st.selectbox("Peranan", ["penyelaras_jn", "peneraju_sektor", "admin"])
+            new_role = st.selectbox("Peranan", ["penyelaras_jn", "peneraju_sektor", "admin"],
+                                    format_func=lambda x: ROLE_LABELS.get(x, x))
             submitted = st.form_submit_button("➕ Cipta Pengguna", type="primary", use_container_width=True)
 
             if submitted:
