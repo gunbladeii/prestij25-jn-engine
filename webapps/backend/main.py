@@ -37,7 +37,7 @@ ALLOWED_DOMAINS = {AUTH_DOMAIN_1, AUTH_DOMAIN_2}
 DEFAULT_ADMIN_EMAIL = os.environ.get("DEFAULT_ADMIN_EMAIL", "admin@moe.gov.my")
 DEFAULT_ADMIN_PASSWORD = os.environ.get("DEFAULT_ADMIN_PASSWORD", "admin1234")
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 bearer_scheme = HTTPBearer()
 
 _pool: asyncpg.Pool | None = None
