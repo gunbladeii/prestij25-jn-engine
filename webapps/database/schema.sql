@@ -9,6 +9,24 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
 -- =============================================================================
+-- TABLE 0: USER ACCOUNTS (RBAC)
+-- Stores authenticated users with role-based access control.
+-- Roles: admin | peneraju_sektor | penyelaras_jn
+-- Allowed domains: @moe.gov.my | @moe-dl.edu.my
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS users (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email           VARCHAR(255) UNIQUE NOT NULL,
+    password_hash   VARCHAR(255) NOT NULL,
+    role            VARCHAR(50)  NOT NULL DEFAULT 'penyelaras_jn'
+                        CHECK (role IN ('admin', 'peneraju_sektor', 'penyelaras_jn')),
+    is_active       BOOLEAN      NOT NULL DEFAULT TRUE,
+    created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
+
+-- =============================================================================
 -- TABLE 1: INTERNAL JEMAAH NAZIR AUDIT RECORDS
 -- Source of truth for all official inspection data. Immutable once committed.
 -- =============================================================================

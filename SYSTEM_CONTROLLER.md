@@ -190,18 +190,41 @@ prestijProject/
 
 Base URL: `https://prestij25-jn-engine.onrender.com`
 
+> ⚠️ All endpoints except `/api/v1/health` and `/api/v1/auth/login` require `Authorization: Bearer <JWT>` header.
+
+### Auth
+
+| Method | Path | Role Required | Description |
+|--------|------|--------------|-------------|
+| `POST` | `/api/v1/auth/login` | Public | Login → returns JWT + role |
+| `GET` | `/api/v1/auth/me` | Any | Current user info |
+| `POST` | `/api/v1/auth/users` | admin | Create a new user |
+| `GET` | `/api/v1/auth/users` | admin | List all users |
+
+**Login body:** `{"email": "name@moe.gov.my", "password": "..."}`  
+**Allowed domains:** `@moe.gov.my`, `@moe-dl.edu.my`
+
+### RBAC Roles
+
+| Role | Description | Write | CSV | Admin |
+|------|-------------|-------|-----|-------|
+| `admin` | Full control | ✅ | ✅ | ✅ |
+| `penyelaras_jn` | Inspector/coordinator | ✅ | ✅ | ❌ |
+| `peneraju_sektor` | Read-only viewer | ❌ | ❌ | ❌ |
+
 ### System
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/api/v1/health` | Health check + DB status |
+| `GET` | `/api/v1/health` | Health check + DB status (public) |
 | `GET` | `/api/docs` | Swagger UI |
 
 ### Matrix Ingestion
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/v1/matrix/ingest` | Submit payload → runs Agent A→B→C pipeline |
+| Method | Path | Role | Description |
+|--------|------|------|-------------|
+| `POST` | `/api/v1/matrix/ingest` | admin, penyelaras_jn | Submit JSON payload → runs Agent A→B→C pipeline |
+| `POST` | `/api/v1/matrix/ingest/csv` | admin, penyelaras_jn | Bulk CSV upload → processes each row through pipeline |
 
 **Request Body:**
 ```json
@@ -432,7 +455,7 @@ docker compose up -d
 
 ---
 
-## 14. CURRENT STATE (Last Updated: 2026-06-23)
+## 14. CURRENT STATE (Last Updated: 2026-06-27)
 
 | Item | Status |
 |------|--------|
@@ -440,11 +463,13 @@ docker compose up -d
 | Backend | ✅ Live at `prestij25-jn-engine.onrender.com` |
 | Database | ✅ PostgreSQL connected (`db_connected: true`) |
 | Data Persistence | ✅ Data survives Render spin-down |
-| Favicon | ✅ Shield crest SVG (navy + gold) |
-| Title | ✅ `AI-Complaint-MOE` |
-| URL | ✅ Renamed from `prestij25-jn` → `ai-agentic-complaint` |
+| Favicon | ✅ Shield crest SVG |
+| Title | ✅ `JN Resolusi — Sistem Audit Pintar MOE` |
 | 3 Agents | ✅ Agent A, B, C online |
-| Demo Payloads | ✅ 3 test cases in DB |
+| **JWT Auth** | ✅ Login + domain restriction (@moe.gov.my / @moe-dl.edu.my) |
+| **RBAC** | ✅ 3 roles: admin, peneraju_sektor, penyelaras_jn |
+| **CSV Bulk Upload** | ✅ POST /api/v1/matrix/ingest/csv |
+| **Default Admin** | ✅ `admin@moe.gov.my` / `admin1234` (change in prod!) |
 | Render Free Tier | ⚠️ Spins down after 15 min idle |
 
 ---

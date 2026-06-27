@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI-Aduan MOE — Sistem Pemantauan JN</title>
+<title>JN Resolusi — Sistem Audit Pintar MOE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -252,9 +252,79 @@ input[type=range]:focus{box-shadow:none}
 @media(max-width:1100px){.stat-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.app-shell{grid-template-columns:1fr}.sidebar{display:none}.app-body{margin-left:0}.form-grid{grid-template-columns:1fr}.brief-kv-grid{grid-template-columns:1fr}.res-kv-grid{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.status-dot-indicator,.spinner{animation:none}}
+
+/* ── LOGIN OVERLAY ── */
+.login-overlay{position:fixed;inset:0;background:var(--navy-dark);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.login-box{background:var(--surface);border-radius:12px;padding:40px;width:100%;max-width:420px;box-shadow:0 24px 64px rgba(0,0,0,.45)}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.login-logo-icon{width:44px;height:44px;background:var(--crimson);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.login-logo-icon svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.login-logo-text{}
+.login-logo-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:var(--text);line-height:1.2}
+.login-logo-sub{font-size:10px;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase}
+.login-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px}
+.login-subtitle{font-size:12px;color:var(--text-dim);margin-bottom:24px;padding:10px 12px;background:var(--ground);border-radius:6px;border-left:3px solid var(--navy);line-height:1.6}
+.login-error{display:none;color:var(--crimson);font-size:12px;background:var(--crimson-bg);padding:10px 12px;border-radius:6px;margin-bottom:14px;font-weight:500;border:1px solid rgba(196,30,58,.2)}
+.login-footer{margin-top:20px;font-size:11px;color:var(--text-muted);text-align:center}
+
+/* ── USER DISPLAY ── */
+.user-display{display:flex;align-items:center;gap:10px}
+.user-email{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.role-badge{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.05em;white-space:nowrap}
+.role-badge.admin{background:#EEF2FF;color:#4338CA}
+.role-badge.peneraju_sektor{background:var(--amber-bg);color:var(--amber)}
+.role-badge.penyelaras_jn{background:var(--blue-bg);color:var(--blue)}
+.logout-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--text-dim);transition:all .14s;white-space:nowrap}
+.logout-btn:hover{border-color:var(--crimson);color:var(--crimson);background:var(--crimson-bg)}
+
+/* ── CSV UPLOAD ── */
+.csv-drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:36px 20px;text-align:center;cursor:pointer;transition:all .14s;background:var(--ground)}
+.csv-drop-zone:hover{border-color:var(--navy);background:#F1F5FF}
+.csv-drop-zone.has-file{border-color:var(--green);background:var(--green-bg)}
+.csv-result-row{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px}
+.csv-result-row:last-child{border-bottom:none}
+.csv-result-row.error-row{background:#FEF2F2}
 </style>
 </head>
 <body>
+
+<!-- ══ LOGIN OVERLAY ══ -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3L4 7v6c0 5.25 3.5 10.15 8 11.35C16.5 23.15 20 18.25 20 13V7L12 3z"/><circle cx="12" cy="12" r="2.5"/><line x1="12" y1="14.5" x2="12" y2="18"/></svg>
+      </div>
+      <div class="login-logo-text">
+        <div class="login-logo-name">JN RESOLUSI</div>
+        <div class="login-logo-sub">Sistem Audit Pintar MOE</div>
+      </div>
+    </div>
+    <div class="login-title">Log Masuk</div>
+    <div class="login-subtitle">
+      Akses terhad kepada domain rasmi:<br>
+      <strong>@moe.gov.my</strong> &nbsp;·&nbsp; <strong>@moe-dl.edu.my</strong>
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="nama@moe.gov.my" required autocomplete="email">
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label>Kata Laluan</label>
+        <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;padding:10px 16px;font-size:14px">
+        Log Masuk
+      </button>
+    </form>
+    <div class="login-footer">PRESTIJ-25 &nbsp;·&nbsp; MoE Agentic AI &nbsp;·&nbsp; v2.0</div>
+  </div>
+</div>
+
+<!-- ══ APP SHELL (hidden until authenticated) ══ -->
+<div id="app-shell-wrap" style="display:none">
 <div class="app-shell">
 
   <!-- ══ SIDEBAR ══ -->
@@ -264,8 +334,8 @@ input[type=range]:focus{box-shadow:none}
         <svg viewBox="0 0 24 24"><path d="M12 3L4 7v6c0 5.25 3.5 10.15 8 11.35C16.5 23.15 20 18.25 20 13V7L12 3z"/><circle cx="12" cy="12" r="2.5"/><line x1="12" y1="14.5" x2="12" y2="18"/></svg>
       </div>
       <div>
-        <div class="sidebar-brand-name">AI-ADUAN MOE</div>
-        <div class="sidebar-brand-sub" data-i18n="brand_sub">Sistem Pemantauan JN</div>
+        <div class="sidebar-brand-name">JN RESOLUSI</div>
+        <div class="sidebar-brand-sub" data-i18n="brand_sub">Sistem Audit Pintar MOE</div>
       </div>
     </div>
 
@@ -297,7 +367,13 @@ input[type=range]:focus{box-shadow:none}
         <span data-i18n="nav_system">Maklumat Sistem</span>
       </button>
 
+      <button class="nav-item" id="nav-item-csv" onclick="showPage('csv')">
+        <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        <span data-i18n="nav_csv">Muat Naik CSV</span>
+      </button>
+
       <div class="nav-divider"></div>
+      <div id="quick-actions-section">
       <div class="nav-group-label" data-i18n="quick_label">Ingest Pantas</div>
 
       <button class="quick-btn" onclick="loadDemo('extreme')">
@@ -312,6 +388,7 @@ input[type=range]:focus{box-shadow:none}
         <span class="quick-dot" style="background:#4ADE80"></span>
         <span data-i18n="demo_aligned">Demo: Selaras</span>
       </button>
+      </div>
     </nav>
 
     <div class="sidebar-footer">
@@ -342,6 +419,11 @@ input[type=range]:focus{box-shadow:none}
         <span class="breadcrumb-current" id="breadcrumb-current" data-i18n="nav_dashboard">Papan Pemuka</span>
       </div>
       <div class="header-right">
+        <div class="user-display" id="user-display" style="display:none"></div>
+        <button class="logout-btn" id="logout-btn" onclick="logout()" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span data-i18n="btn_logout">Log Keluar</span>
+        </button>
         <div class="lang-toggle">
           <button class="lang-opt active" id="lang-bm" onclick="setLang('bm')">BM</button>
           <button class="lang-opt" id="lang-en" onclick="setLang('en')">EN</button>
@@ -512,7 +594,7 @@ input[type=range]:focus{box-shadow:none}
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
             <span data-i18n="btn_refresh">Segar Semula</span>
           </button>
-          <button class="btn btn-danger" onclick="clearAllCases()">
+          <button class="btn btn-danger" id="btn-clear-cases" onclick="clearAllCases()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
             <span data-i18n="btn_clear">Padam Semua</span>
           </button>
@@ -583,19 +665,169 @@ input[type=range]:focus{box-shadow:none}
         </div>
       </section>
 
+      <!-- ══ CSV UPLOAD ══ -->
+      <section class="page-section" id="page-csv">
+        <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_csv">MUAT NAIK CSV</span></div>
+        <div class="page-title" data-i18n="title_csv">Muat Naik CSV Pukal</div>
+        <p class="page-desc" data-i18n="desc_csv">Muat naik fail CSV dengan data sekolah untuk diproses secara pukal melalui pipeline Ejen A → B → C.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 268px;gap:20px">
+          <div class="card">
+            <div class="card-header"><span class="card-title" data-i18n="csv_select_file">Pilih Fail CSV</span></div>
+            <div class="card-body">
+              <div class="csv-drop-zone" id="csv-drop-zone" onclick="document.getElementById('csv-file-input').click()">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin:0 auto;display:block"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                <div style="margin-top:12px;font-weight:600;color:var(--text-dim);font-family:'Plus Jakarta Sans',sans-serif" data-i18n="csv_click_hint">Klik untuk pilih fail CSV</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px" data-i18n="csv_drag_hint">atau seret dan lepas di sini</div>
+                <div id="csv-file-name" style="font-size:12px;color:var(--navy);margin-top:8px;font-weight:600;font-family:'JetBrains Mono',monospace"></div>
+              </div>
+              <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCsvSelect(this)">
+              <div id="csv-preview" style="display:none;margin-top:16px"></div>
+              <div style="margin-top:16px;display:flex;gap:10px">
+                <button class="btn btn-primary" id="csv-submit-btn" onclick="handleCsvUpload()" style="display:none">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                  <span data-i18n="csv_process_btn">Proses CSV</span>
+                </button>
+                <button class="btn btn-outline" id="csv-reset-btn" onclick="resetCsv()" style="display:none" data-i18n="btn_reset">Tetapkan Semula</button>
+              </div>
+              <div id="csv-results" style="display:none;margin-top:20px"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="ref-card">
+              <div class="ref-card-title" data-i18n="csv_format_title">Format CSV</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);line-height:2;word-break:break-all">
+                school,cleanliness_reported,<br>cleanliness_actual,<br>ict_reported,ict_actual,<br>discipline_reported,discipline_actual<br><br>
+                <span style="color:var(--green)">SMK002,90,28,85,30,80,55</span>
+              </div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-card-title" data-i18n="csv_calc_title">Pengiraan</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);line-height:2.2">
+                Op Score =<br>purata <span style="color:var(--navy)">*_reported</span><br><br>
+                DI = |Audit − Op| / 100
+              </div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-card-title" data-i18n="csv_access_title">Akses</div>
+              <div style="font-size:12px;color:var(--text-dim);line-height:1.8">
+                <span class="role-badge admin" style="display:inline-block;margin-bottom:4px">Admin</span><br>
+                <span class="role-badge penyelaras_jn" style="display:inline-block">Penyelaras JN</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div><!-- /.app-body -->
 </div><!-- /.app-shell -->
+</div><!-- /#app-shell-wrap -->
 
 <div class="toast-container" id="toast-container"></div>
 
 <script>
 const API = '';
 
+// ── AUTH STATE ──
+function getToken() { return localStorage.getItem('jn_token'); }
+function getUser() { try { return JSON.parse(localStorage.getItem('jn_user')||'null'); } catch { return null; } }
+
+function authFetch(url, opts={}) {
+  const token = getToken();
+  const headers = Object.assign({}, opts.headers||{});
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  return fetch(url, Object.assign({}, opts, {headers})).then(r => {
+    if (r.status === 401) { logout(); throw new Error(t('session_expired')); }
+    return r;
+  });
+}
+
+function logout() {
+  localStorage.removeItem('jn_token');
+  localStorage.removeItem('jn_user');
+  document.getElementById('login-overlay').style.display = 'flex';
+  document.getElementById('app-shell-wrap').style.display = 'none';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-form').reset();
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+  errEl.style.display = 'none';
+  try {
+    const r = await fetch(API+'/api/v1/auth/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email: document.getElementById('login-email').value.trim(),
+        password: document.getElementById('login-password').value,
+      })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail || 'Log masuk gagal');
+    localStorage.setItem('jn_token', data.access_token);
+    localStorage.setItem('jn_user', JSON.stringify({email:data.email, role:data.role}));
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('app-shell-wrap').style.display = 'block';
+    applyRbac(data.role);
+    updateUserDisplay({email:data.email, role:data.role});
+    checkHealth();
+    refreshDashboard();
+  } catch(err) {
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Log Masuk';
+  }
+}
+
+function checkAuth() {
+  const token = getToken();
+  const user = getUser();
+  if (!token || !user) {
+    document.getElementById('login-overlay').style.display = 'flex';
+    document.getElementById('app-shell-wrap').style.display = 'none';
+    return false;
+  }
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('app-shell-wrap').style.display = 'block';
+  applyRbac(user.role);
+  updateUserDisplay(user);
+  return true;
+}
+
+function applyRbac(role) {
+  const canWrite = (role === 'admin' || role === 'penyelaras_jn');
+  const ingestItem = document.getElementById('nav-item-ingest');
+  const csvItem = document.getElementById('nav-item-csv');
+  const quickSec = document.getElementById('quick-actions-section');
+  if (ingestItem) ingestItem.style.display = canWrite ? '' : 'none';
+  if (csvItem) csvItem.style.display = canWrite ? '' : 'none';
+  if (quickSec) quickSec.style.display = canWrite ? '' : 'none';
+  const clearBtn = document.getElementById('btn-clear-cases');
+  if (clearBtn) clearBtn.style.display = (role === 'admin') ? '' : 'none';
+  document.getElementById('user-display').style.display = 'flex';
+  document.getElementById('logout-btn').style.display = 'flex';
+}
+
+function updateUserDisplay(user) {
+  const roleLabels = {admin:'Admin', peneraju_sektor:'Peneraju Sektor', penyelaras_jn:'Penyelaras JN'};
+  const roleClass = user.role || 'penyelaras_jn';
+  document.getElementById('user-display').innerHTML =
+    `<span class="user-email">${user.email}</span><span class="role-badge ${roleClass}">${roleLabels[roleClass]||roleClass}</span>`;
+}
+
 // ── TRANSLATIONS ──
 const TR = {
   bm: {
-    brand_sub:'Sistem Pemantauan JN',
+    brand_sub:'Sistem Audit Pintar MOE',
     nav_label:'Navigasi',
     nav_dashboard:'Papan Pemuka',
     nav_ingest:'Hantar Payload',
@@ -721,9 +953,34 @@ const TR = {
     di_chart_moderate:'Sederhana',
     di_chart_severe:'Teruk',
     di_chart_extreme:'Ekstrem',
+    btn_logout:'Log Keluar',
+    nav_csv:'Muat Naik CSV',
+    eyebrow_csv:'MUAT NAIK CSV',
+    title_csv:'Muat Naik CSV Pukal',
+    desc_csv:'Muat naik fail CSV dengan data sekolah untuk diproses secara pukal melalui pipeline Ejen A → B → C.',
+    csv_select_file:'Pilih Fail CSV',
+    csv_click_hint:'Klik untuk pilih fail CSV',
+    csv_drag_hint:'atau seret dan lepas di sini',
+    csv_format_title:'Format CSV',
+    csv_calc_title:'Pengiraan',
+    csv_access_title:'Akses',
+    csv_process_btn:'Proses CSV',
+    csv_processing:'Memproses...',
+    csv_success:'CSV berjaya diproses',
+    csv_error:'Ralat CSV',
+    csv_preview_title:'Pratonton (5 baris pertama)',
+    csv_results_title:'Keputusan Pemprosesan',
+    csv_col_row:'Baris',
+    csv_col_school:'Sekolah',
+    csv_col_op_score:'Skor Op',
+    csv_col_di:'Skor DI',
+    csv_col_class:'Klasifikasi',
+    csv_col_case:'ID Kes',
+    session_expired:'Sesi tamat. Sila log masuk semula.',
+    error_unknown:'Ralat tidak diketahui',
   },
   en: {
-    brand_sub:'JN Monitoring System',
+    brand_sub:'Smart Audit System MOE',
     nav_label:'Navigation',
     nav_dashboard:'Dashboard',
     nav_ingest:'Ingest Payload',
@@ -849,6 +1106,31 @@ const TR = {
     di_chart_moderate:'Moderate',
     di_chart_severe:'Severe',
     di_chart_extreme:'Extreme',
+    btn_logout:'Logout',
+    nav_csv:'CSV Upload',
+    eyebrow_csv:'CSV UPLOAD',
+    title_csv:'Bulk CSV Upload',
+    desc_csv:'Upload a CSV file with school data for bulk processing through the Agent A → B → C pipeline.',
+    csv_select_file:'Select CSV File',
+    csv_click_hint:'Click to select CSV file',
+    csv_drag_hint:'or drag and drop here',
+    csv_format_title:'CSV Format',
+    csv_calc_title:'Calculation',
+    csv_access_title:'Access',
+    csv_process_btn:'Process CSV',
+    csv_processing:'Processing...',
+    csv_success:'CSV processed successfully',
+    csv_error:'CSV error',
+    csv_preview_title:'Preview (first 5 rows)',
+    csv_results_title:'Processing Results',
+    csv_col_row:'Row',
+    csv_col_school:'School',
+    csv_col_op_score:'Op Score',
+    csv_col_di:'DI Score',
+    csv_col_class:'Classification',
+    csv_col_case:'Case ID',
+    session_expired:'Session expired. Please log in again.',
+    error_unknown:'Unknown error',
   }
 };
 
@@ -908,7 +1190,7 @@ function showPage(name) {
   const navEl = document.getElementById('nav-item-' + name);
   if (navEl) navEl.classList.add('active');
   const bc = document.getElementById('breadcrumb-current');
-  const keyMap = {dashboard:'nav_dashboard',ingest:'nav_ingest',cases:'nav_cases',brief:'nav_brief',about:'nav_system'};
+  const keyMap = {dashboard:'nav_dashboard',ingest:'nav_ingest',cases:'nav_cases',brief:'nav_brief',about:'nav_system',csv:'nav_csv'};
   if (bc && keyMap[name]) { bc.dataset.i18n = keyMap[name]; bc.textContent = t(keyMap[name]); }
   if (name === 'dashboard') refreshDashboard();
   if (name === 'cases') loadCases();
@@ -942,6 +1224,7 @@ async function checkHealth() {
     txt.textContent=t('status_offline');
   }
 }
+
 
 // ── AUDIT PREVIEW ──
 document.getElementById('f-school-id').addEventListener('change', function() {
@@ -993,9 +1276,9 @@ async function handleIngest(e) {
     raw_text: document.getElementById('f-raw-text').value,
   };
   try {
-    const r = await fetch(API+'/api/v1/matrix/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const r = await authFetch(API+'/api/v1/matrix/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data = await r.json();
-    if (!r.ok) throw new Error(data.detail?.message||t('error_unknown'));
+    if (!r.ok) throw new Error(data.detail?.message||data.detail||t('error_unknown'));
     showIngestResult(data);
     toast(t('payload_processed')+' '+data.case_id,'success');
     if (data.anomaly_detected) toast(t('anomaly_msg')+' '+data.discrepancy_index.toFixed(4),'error',6000);
@@ -1066,7 +1349,7 @@ async function viewBrief(caseId) {
   const el = document.getElementById('brief-content');
   el.innerHTML='<div style="padding:60px;display:flex;justify-content:center"><div class="spinner dark" style="width:28px;height:28px"></div></div>';
   try {
-    const r = await fetch(API+'/api/v1/matrix/executive-brief/'+caseId);
+    const r = await authFetch(API+'/api/v1/matrix/executive-brief/'+caseId);
     const d = await r.json();
     if (!r.ok) throw new Error(d.detail?.error||'Not found');
     renderBrief(d);
@@ -1179,7 +1462,7 @@ function renderBrief(d) {
 // ── CASES TABLE ──
 async function loadCases() {
   try {
-    const r = await fetch(API+'/api/v1/matrix/cases');
+    const r = await authFetch(API+'/api/v1/matrix/cases');
     const d = await r.json();
     allCases = d.cases||[];
     updateSidebarStats(d);
@@ -1226,7 +1509,7 @@ function renderCasesTable(cases) {
 async function clearAllCases() {
   if (!confirm(t('confirm_clear'))) return;
   try {
-    await fetch(API+'/api/v1/matrix/cases',{method:'DELETE'});
+    await authFetch(API+'/api/v1/matrix/cases',{method:'DELETE'});
     allCases=[];
     renderCasesTable([]);
     document.getElementById('sb-case-count').textContent='0';
@@ -1238,7 +1521,7 @@ async function clearAllCases() {
 // ── DASHBOARD ──
 async function refreshDashboard() {
   try {
-    const r = await fetch(API+'/api/v1/matrix/cases');
+    const r = await authFetch(API+'/api/v1/matrix/cases');
     const d = await r.json();
     const cases = d.cases||[];
     allCases = cases;
@@ -1343,10 +1626,106 @@ function drawDistChart(cases) {
   ctx.fillText(t('chart_label'),W/2,H-4);
 }
 
+// ── CSV UPLOAD ──
+let csvFile = null;
+
+function handleCsvSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  csvFile = file;
+  document.getElementById('csv-file-name').textContent = file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+  document.getElementById('csv-drop-zone').classList.add('has-file');
+  document.getElementById('csv-submit-btn').style.display = '';
+  document.getElementById('csv-reset-btn').style.display = '';
+  document.getElementById('csv-results').style.display = 'none';
+  // Preview first 5 rows
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const lines = e.target.result.split('\n').filter(l=>l.trim());
+    const preview = lines.slice(0, 6);
+    const headers = preview[0].split(',');
+    const rows = preview.slice(1);
+    const prevEl = document.getElementById('csv-preview');
+    prevEl.style.display = 'block';
+    prevEl.innerHTML = `<div style="font-size:12px;font-weight:700;color:var(--text-dim);margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif">${t('csv_preview_title')}</div>
+      <div class="data-table-wrap"><table class="data-table">
+        <thead><tr>${headers.map(h=>`<th>${h.trim()}</th>`).join('')}</tr></thead>
+        <tbody>${rows.map(r=>{const cells=r.split(',');return`<tr>${cells.map(c=>`<td>${c.trim()}</td>`).join('')}</tr>`;}).join('')}</tbody>
+      </table></div>`;
+  };
+  reader.readAsText(file);
+}
+
+async function handleCsvUpload() {
+  if (!csvFile) return;
+  const btn = document.getElementById('csv-submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner"></div>${t('csv_processing')}`;
+  const form = new FormData();
+  form.append('file', csvFile);
+  try {
+    const token = getToken();
+    const headers = {};
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    const r = await fetch(API+'/api/v1/matrix/ingest/csv', {method:'POST', headers, body:form});
+    if (r.status === 401) { logout(); throw new Error(t('session_expired')); }
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail||t('csv_error'));
+    showCsvResults(data);
+    toast(`${t('csv_success')}: ${data.processed}/${data.total_rows}`, 'success');
+    refreshDashboard();
+  } catch(err) {
+    toast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>${t('csv_process_btn')}`;
+  }
+}
+
+function showCsvResults(data) {
+  const el = document.getElementById('csv-results');
+  el.style.display = 'block';
+  const rows = data.results.map(r => `
+    <div class="csv-result-row">
+      <span class="mono" style="color:var(--text-muted);font-size:11px">#${r.row}</span>
+      <span style="font-weight:600;font-family:'Plus Jakarta Sans',sans-serif">${r.school}</span>
+      <span class="mono" style="font-size:12px;color:var(--text-dim)">${r.operational_score.toFixed(1)}</span>
+      <span class="mono" style="color:${diColor(r.di_classification)};font-weight:700">${r.discrepancy_index.toFixed(4)}</span>
+      <button class="btn btn-outline btn-sm" onclick="viewBrief('${r.case_id}')">${t('btn_brief')}</button>
+    </div>`).join('');
+  const errs = data.error_details.map(e => `
+    <div class="csv-result-row error-row">
+      <span class="mono" style="color:var(--crimson);font-size:11px">#${e.row}</span>
+      <span style="font-weight:600;font-family:'Plus Jakarta Sans',sans-serif">${e.school||'?'}</span>
+      <span style="color:var(--crimson);font-size:12px;grid-column:3/-1">${e.error}</span>
+    </div>`).join('');
+  el.innerHTML = `
+    <div style="font-size:12px;font-weight:700;color:var(--text-dim);margin-bottom:10px;font-family:'Plus Jakarta Sans',sans-serif">
+      ${t('csv_results_title')} — ${data.processed} berjaya, ${data.errors} ralat
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div style="padding:4px 0">${rows}${errs}</div>
+    </div>`;
+}
+
+function resetCsv() {
+  csvFile = null;
+  document.getElementById('csv-file-input').value = '';
+  document.getElementById('csv-file-name').textContent = '';
+  document.getElementById('csv-drop-zone').classList.remove('has-file');
+  document.getElementById('csv-preview').style.display = 'none';
+  document.getElementById('csv-results').style.display = 'none';
+  document.getElementById('csv-submit-btn').style.display = 'none';
+  document.getElementById('csv-reset-btn').style.display = 'none';
+}
+
 // ── INIT ──
-checkHealth();
-refreshDashboard();
-setInterval(checkHealth,30000);
+applyTranslations();
+if (checkAuth()) {
+  checkHealth();
+  refreshDashboard();
+}
+setInterval(checkHealth, 30000);
 </script>
 </body>
 </html>
