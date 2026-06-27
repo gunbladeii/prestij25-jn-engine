@@ -10,18 +10,7 @@
   status = 200
   force  = true
 
-# PWA assets — serve directly, don't SPA-route
-[[redirects]]
-  from   = "/sw.js"
-  to     = "/sw.js"
-  status = 200
-
-[[redirects]]
-  from   = "/manifest.json"
-  to     = "/manifest.json"
-  status = 200
-
-# SPA fallback — serve index.html for all non-asset routes (exclude files with extensions)
+# SPA fallback — serve index.html for all non-asset routes
 [[redirects]]
   from   = "/*"
   to     = "/index.html"

@@ -15,6 +15,18 @@ services:
         fromDatabase:
           name: prestij25-jn-db
           property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRE_HOURS
+        value: "24"
+      - key: AUTH_DOMAIN_1
+        value: "@moe.gov.my"
+      - key: AUTH_DOMAIN_2
+        value: "@moe-dl.edu.my"
+      - key: DEFAULT_ADMIN_EMAIL
+        value: "admin@moe.gov.my"
+      - key: DEFAULT_ADMIN_PASSWORD
+        value: "admin1234"
 
 databases:
   - name: prestij25-jn-db

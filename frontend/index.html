@@ -2,16 +2,8 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>JN Resolusi — Sistem Semakan Silang & Audit</title>
-<meta name="description" content="PRESTIJ-25 JN Resolusi — Enjin Semakan Silang & Audit Jemaah Nazir. Nod Kebenaran Tertinggi dalam ekosistem matrix 25×25.">
-<meta name="theme-color" content="#1A2744">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="JN Resolusi">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%231A2744'/%3E%3Cstop offset='100%25' stop-color='%23111C35'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%23C41E3A' stroke-width='1.5' opacity='0.5'/%3E%3Ccircle cx='32' cy='32' r='7' fill='none' stroke='%23C41E3A' stroke-width='2'/%3E%3Cline x1='14' y1='32' x2='25' y2='32' stroke='%23C41E3A' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='39' y1='32' x2='50' y2='32' stroke='%23C41E3A' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='32' y1='14' x2='32' y2='25' stroke='%23C41E3A' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='32' y1='39' x2='32' y2='50' stroke='%23C41E3A' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='3' fill='%23C41E3A'/%3E%3C/svg%3E">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%231A2744'/%3E%3Cstop offset='100%25' stop-color='%23111C35'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%23C41E3A' stroke-width='1.5' opacity='0.5'/%3E%3Ccircle cx='32' cy='32' r='7' fill='none' stroke='%23C41E3A' stroke-width='2'/%3E%3Cline x1='14' y1='32' x2='25' y2='32' stroke='%23C41E3A' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='39' y1='32' x2='50' y2='32' stroke='%23C41E3A' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='32' y1='14' x2='32' y2='25' stroke='%23C41E3A' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='32' y1='39' x2='32' y2='50' stroke='%23C41E3A' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='3' fill='%23C41E3A'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JN Resolusi — Sistem Audit Pintar MOE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -49,7 +41,7 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 .app-shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
 
 /* ── SIDEBAR ── */
-.sidebar{background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;width:260px;height:100vh;overflow-y:auto;z-index:100;grid-row:1;grid-column:1}
+.sidebar{background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;width:260px;height:100vh;overflow-y:auto;z-index:100}
 .sidebar-header{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px}
 .sidebar-logo{width:36px;height:36px;background:var(--crimson);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sidebar-logo svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -75,7 +67,7 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 .engine-val.warn{color:#F87171}
 
 /* ── APP BODY ── */
-.app-body{display:flex;flex-direction:column;min-height:100vh;grid-column:2;grid-row:1;min-width:0}
+.app-body{margin-left:260px;display:flex;flex-direction:column;min-height:100vh}
 
 /* ── HEADER ── */
 .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
@@ -97,34 +89,34 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
 /* ── CONTENT ── */
-.app-content{padding:32px 36px;flex:1}
+.app-content{padding:28px;flex:1}
 .page-section{display:none}
 .page-section.active{display:block}
 
 /* ── PAGE HEADER ── */
-.page-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--crimson);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif}
-.page-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--crimson)}
-.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:6px}
-.page-desc{font-size:14px;color:var(--text-dim);margin-bottom:28px}
+.page-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--crimson);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;font-family:'Plus Jakarta Sans',sans-serif}
+.page-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--crimson)}
+.page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:4px}
+.page-desc{font-size:13px;color:var(--text-dim);margin-bottom:24px}
 
 /* ── STAT CARDS ── */
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px}
-.stat-card{background:var(--surface);border-radius:var(--radius);padding:26px 28px 22px;box-shadow:var(--shadow-sm);border:1px solid var(--border);position:relative;overflow:hidden}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--s-color,var(--navy))}
-.stat-icon-box{width:48px;height:48px;border-radius:10px;background:var(--s-bg,#EEF2FF);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.stat-icon-box svg{width:22px;height:22px}
-.stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:40px;font-weight:800;color:var(--text);line-height:1;margin-bottom:6px}
-.stat-label{font-size:12px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:3px;white-space:normal;word-break:break-word;line-height:1.35}
-.stat-trend{font-size:13px;color:var(--text-muted);white-space:normal;word-break:break-word}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--s-color,var(--navy))}
+.stat-icon-box{width:40px;height:40px;border-radius:8px;background:var(--s-bg,#EEF2FF);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.stat-icon-box svg{width:18px;height:18px}
+.stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px}
+.stat-label{font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.07em;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+.stat-trend{font-size:12px;color:var(--text-muted)}
 
 /* ── CARDS ── */
-.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:22px;overflow:hidden}
-.card-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
-.card-body{padding:24px}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:20px;overflow:hidden}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text)}
+.card-body{padding:20px}
 
 /* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .14s;border:none;text-decoration:none;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .14s;border:none;text-decoration:none;white-space:nowrap}
 .btn-primary{background:var(--navy);color:#fff}
 .btn-primary:hover{background:var(--navy-mid)}
 .btn-primary:disabled{background:#94A3B8;cursor:not-allowed}
@@ -132,7 +124,7 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 .btn-outline:hover{border-color:var(--navy);color:var(--navy)}
 .btn-danger{background:transparent;color:var(--crimson);border:1px solid rgba(196,30,58,.28)}
 .btn-danger:hover{background:var(--crimson-bg)}
-.btn-sm{padding:6px 14px;font-size:13px}
+.btn-sm{padding:5px 12px;font-size:12px}
 
 /* ── BADGES ── */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.03em;white-space:nowrap}
@@ -152,28 +144,29 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 .mono{font-family:'JetBrains Mono',monospace}
 
 /* ── FORMS ── */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.form-group{display:flex;flex-direction:column;gap:6px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:5px}
 .form-group.full{grid-column:1/-1}
-label{font-size:13px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
-input,select,textarea{border:1.5px solid var(--border);border-radius:6px;padding:11px 14px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .14s,box-shadow .14s;width:100%}
+label{font-size:12px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
+input,select,textarea{border:1.5px solid var(--border);border-radius:6px;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border-color .14s,box-shadow .14s;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(26,39,68,.07)}
 select option{background:var(--surface)}
-textarea{resize:vertical;min-height:120px;font-family:'JetBrains Mono',monospace;font-size:13px}
+textarea{resize:vertical;min-height:100px;font-family:'JetBrains Mono',monospace;font-size:12px}
 input[type=range]{-webkit-appearance:none;height:5px;background:var(--border);border:none;border-radius:3px;cursor:pointer;padding:0;box-shadow:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--navy);cursor:pointer}
 input[type=range]:focus{box-shadow:none}
 
 /* ── CASE ROW (dashboard) ── */
-.case-row{display:grid;grid-template-columns:1fr auto auto;gap:20px;padding:16px 24px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;align-items:center;position:relative}
+.case-row{display:grid;grid-template-columns:1fr auto auto;gap:16px;padding:13px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;align-items:center;position:relative}
 .case-row:last-child{border-bottom:none}
 .case-row:hover{background:#F8FAFC}
-.case-row.is-anomaly{border-left:4px solid var(--crimson)}
+/* Aesthetic risk: diagonal red stripe = official rejected stamp language */
+.case-row.is-anomaly{border-left:3px solid var(--crimson)}
 .case-row.is-anomaly::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(196,30,58,.022) 10px,rgba(196,30,58,.022) 20px);pointer-events:none}
-.case-row.is-clean{border-left:4px solid var(--green)}
-.case-id-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--crimson);margin-bottom:3px;letter-spacing:.04em}
-.case-name-label{font-size:14px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
-.case-score-display{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;text-align:right}
+.case-row.is-clean{border-left:3px solid var(--green)}
+.case-id-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--crimson);margin-bottom:2px;letter-spacing:.04em}
+.case-name-label{font-size:13px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif}
+.case-score-display{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;text-align:right}
 
 /* ── DI COLOR CLASSES ── */
 .di-extreme{color:var(--crimson)}
@@ -213,12 +206,12 @@ input[type=range]:focus{box-shadow:none}
 .sig-name{font-size:12px;color:var(--text-dim);font-family:'Plus Jakarta Sans',sans-serif}
 
 /* ── INGEST REF CARDS ── */
-.ref-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
-.ref-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px}
-.cls-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:13px}
-.cls-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.cls-thr{color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:12px;min-width:42px}
-.cls-lbl{font-weight:600;font-size:12px}
+.ref-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.ref-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px}
+.cls-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12px}
+.cls-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cls-thr{color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:11px;min-width:36px}
+.cls-lbl{font-weight:600}
 
 /* ── SYSTEM PAGE ── */
 .api-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:6px;margin-bottom:6px;border:1px solid var(--border);background:var(--ground)}
@@ -236,12 +229,7 @@ input[type=range]:focus{box-shadow:none}
 .toast.info{background:#EFF6FF;border-color:#93C5FD;color:#1D4ED8}
 @keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── TOOLTIP SYSTEM ── */
-[data-tooltip]{cursor:help;border-bottom:1px dotted var(--text-muted)}
-.tooltip-global{position:fixed;background:var(--navy-dark);color:#E8EDF5;padding:7px 12px;border-radius:6px;font-size:11px;font-weight:400;font-family:'Inter',sans-serif;white-space:normal;max-width:280px;line-height:1.45;z-index:99999;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.12);text-align:left;letter-spacing:0;text-transform:none;word-break:break-word;opacity:0;transition:opacity .15s;display:none}
-.tooltip-global.show{display:block;opacity:1}
-.tooltip-arrow{position:fixed;width:0;height:0;border:5px solid transparent;border-top-color:var(--navy-dark);z-index:99999;pointer-events:none;opacity:0;transition:opacity .15s;display:none}
-.tooltip-arrow.show{display:block;opacity:1}
+/* ── SPINNER ── */
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0}
 .spinner.dark{border-color:var(--border);border-top-color:var(--navy)}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -260,126 +248,127 @@ input[type=range]:focus{box-shadow:none}
 .res-kv-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;line-height:1}
 .res-kv-val.sm{font-size:13px;font-weight:600;line-height:1.4}
 
-/* ── HAMBURGER (mobile sidebar toggle) ── */
-.hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;flex-shrink:0;z-index:110}
-.hamburger span{display:block;width:22px;height:2.5px;background:var(--text);margin:5px 0;border-radius:2px;transition:all .25s}
-.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99;grid-row:1;grid-column:1}
-.sidebar-backdrop.show{display:block}
-.sidebar.open{transform:translateX(0)}
-
-/* ── DASHBOARD & INGEST LAYOUTS (responsive overrides) ── */
-.dash-grid{display:grid;grid-template-columns:1fr 400px;gap:20px}
-.ingest-grid{display:grid;grid-template-columns:1fr 340px;gap:24px}
-.sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:1100px){
-  .dash-grid,.ingest-grid{grid-template-columns:1fr}
-}
-@media(max-width:900px){
-  .dash-grid,.ingest-grid{gap:16px}
-  .sys-grid{grid-template-columns:1fr}
-}
-
 /* ── RESPONSIVE ── */
-/* Laptop (up to 1500px): 2-col stats, stack dash/ingest sidebars */
-@media(max-width:1500px){
-  .stat-grid{grid-template-columns:repeat(2,1fr);gap:18px}
-  .stat-card{padding:28px 32px 24px}
-  .stat-val{font-size:42px}
-  .stat-icon-box{width:52px;height:52px;margin-bottom:18px}
-  .stat-icon-box svg{width:24px;height:24px}
-  .stat-label{font-size:13px}
-  .dash-grid{grid-template-columns:1fr}
-  .ingest-grid{grid-template-columns:1fr}
-}
-/* Small laptop / large tablet: tighten */
-@media(max-width:1100px){
-  .app-content{padding:24px 20px}
-  .page-title{font-size:26px}
-  .stat-card{padding:22px 24px 18px}
-  .stat-val{font-size:36px}
-  .stat-icon-box{width:46px;height:46px;margin-bottom:14px}
-  .stat-icon-box svg{width:21px;height:21px}
-  .card-header{padding:14px 18px}
-  .card-body{padding:18px}
-  .btn{padding:9px 16px;font-size:13px}
-}
-/* Tablet portrait: collapsible sidebar, 2-col stats, stack grids */
-@media(max-width:900px){
-  .app-shell{grid-template-columns:1fr}
-  .sidebar{position:fixed;transform:translateX(-100%);transition:transform .3s ease;box-shadow:4px 0 20px rgba(0,0,0,.3)}
-  .app-body{margin-left:0}
-  .hamburger{display:block}
-  .app-header{padding:0 16px;gap:12px}
-  .header-right{gap:8px}
-  .stat-grid{grid-template-columns:repeat(2,1fr);gap:12px}
-  .stat-card{padding:20px 16px 16px}
-  .stat-val{font-size:32px}
-  .stat-icon-box{width:38px;height:38px}
-  .stat-icon-box svg{width:17px;height:17px}
-  .stat-label{font-size:11px;letter-spacing:.03em}
-  .form-grid{grid-template-columns:1fr}
-  .brief-kv-grid{grid-template-columns:1fr}
-  .res-kv-grid{grid-template-columns:1fr 1fr}
-  .api-row{flex-wrap:wrap}
-  .api-path{font-size:11px}
-}
-/* Phone: 1-col stats, full-width buttons, compact */
-@media(max-width:600px){
-  .app-content{padding:16px 12px}
-  .stat-grid{grid-template-columns:1fr;gap:10px}
-  .stat-card{padding:18px 16px 14px}
-  .stat-val{font-size:34px}
-  .res-kv-grid{grid-template-columns:1fr}
-  .page-title{font-size:22px}
-  .page-eyebrow{font-size:10px}
-  .btn{width:100%;justify-content:center}
-  .case-row{grid-template-columns:1fr auto;gap:10px;padding:12px 16px}
-  .case-score-display{font-size:20px}
-  .data-table th,.data-table td{padding:8px 10px;font-size:11px}
-  .sig-row{grid-template-columns:1fr;gap:20px;padding:16px}
-  .brief-masthead{flex-direction:column;gap:12px;padding:16px}
-  .brief-section{padding:14px 16px}
-  .toast-container{left:12px;right:12px;bottom:12px}
-  .toast{max-width:100%}
-  .lang-toggle{display:none}
-}
+@media(max-width:1100px){.stat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.app-shell{grid-template-columns:1fr}.sidebar{display:none}.app-body{margin-left:0}.form-grid{grid-template-columns:1fr}.brief-kv-grid{grid-template-columns:1fr}.res-kv-grid{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.status-dot-indicator,.spinner{animation:none}}
+
+/* ── LOGIN OVERLAY ── */
+.login-overlay{position:fixed;inset:0;background:var(--navy-dark);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.login-box{background:var(--surface);border-radius:12px;padding:40px;width:100%;max-width:420px;box-shadow:0 24px 64px rgba(0,0,0,.45)}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.login-logo-icon{width:44px;height:44px;background:var(--crimson);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.login-logo-icon svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.login-logo-text{}
+.login-logo-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:var(--text);line-height:1.2}
+.login-logo-sub{font-size:10px;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase}
+.login-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px}
+.login-subtitle{font-size:12px;color:var(--text-dim);margin-bottom:24px;padding:10px 12px;background:var(--ground);border-radius:6px;border-left:3px solid var(--navy);line-height:1.6}
+.login-error{display:none;color:var(--crimson);font-size:12px;background:var(--crimson-bg);padding:10px 12px;border-radius:6px;margin-bottom:14px;font-weight:500;border:1px solid rgba(196,30,58,.2)}
+.login-footer{margin-top:20px;font-size:11px;color:var(--text-muted);text-align:center}
+
+/* ── USER DISPLAY ── */
+.user-display{display:flex;align-items:center;gap:10px}
+.user-email{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.role-badge{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.05em;white-space:nowrap}
+.role-badge.admin{background:#EEF2FF;color:#4338CA}
+.role-badge.peneraju_sektor{background:var(--amber-bg);color:var(--amber)}
+.role-badge.penyelaras_jn{background:var(--blue-bg);color:var(--blue)}
+.logout-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--text-dim);transition:all .14s;white-space:nowrap}
+.logout-btn:hover{border-color:var(--crimson);color:var(--crimson);background:var(--crimson-bg)}
+
+/* ── CSV UPLOAD ── */
+.csv-drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:36px 20px;text-align:center;cursor:pointer;transition:all .14s;background:var(--ground)}
+.csv-drop-zone:hover{border-color:var(--navy);background:#F1F5FF}
+.csv-drop-zone.has-file{border-color:var(--green);background:var(--green-bg)}
+.csv-result-row{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px}
+.csv-result-row:last-child{border-bottom:none}
+.csv-result-row.error-row{background:#FEF2F2}
+
+/* ── ADMIN PANEL ── */
+.admin-section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.user-row{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);font-size:13px}
+.user-row:last-child{border-bottom:none}
+.user-row:hover{background:#F8FAFC}
+.user-email-cell{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:5000;padding:20px}
+.modal-box{background:var(--surface);border-radius:10px;padding:32px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:var(--text);margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
 </style>
 </head>
 <body>
+
+<!-- ══ LOGIN OVERLAY ══ -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3L4 7v6c0 5.25 3.5 10.15 8 11.35C16.5 23.15 20 18.25 20 13V7L12 3z"/><circle cx="12" cy="12" r="2.5"/><line x1="12" y1="14.5" x2="12" y2="18"/></svg>
+      </div>
+      <div class="login-logo-text">
+        <div class="login-logo-name">JN RESOLUSI</div>
+        <div class="login-logo-sub">Sistem Audit Pintar MOE</div>
+      </div>
+    </div>
+    <div class="login-title">Log Masuk</div>
+    <div class="login-subtitle">
+      Akses terhad kepada domain rasmi:<br>
+      <strong>@moe.gov.my</strong> &nbsp;·&nbsp; <strong>@moe-dl.edu.my</strong>
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group" style="margin-bottom:14px">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="nama@moe.gov.my" required autocomplete="email">
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label>Kata Laluan</label>
+        <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;padding:10px 16px;font-size:14px">
+        Log Masuk
+      </button>
+    </form>
+    <div class="login-footer">PRESTIJ-25 &nbsp;·&nbsp; MoE Agentic AI &nbsp;·&nbsp; v2.0</div>
+  </div>
+</div>
+
+<!-- ══ APP SHELL (hidden until authenticated) ══ -->
+<div id="app-shell-wrap" style="display:none">
 <div class="app-shell">
 
   <!-- ══ SIDEBAR ══ -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8" opacity="0.5"/><circle cx="12" cy="12" r="3"/><line x1="4" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="20" y2="12"/><line x1="12" y1="4" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="20"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 3L4 7v6c0 5.25 3.5 10.15 8 11.35C16.5 23.15 20 18.25 20 13V7L12 3z"/><circle cx="12" cy="12" r="2.5"/><line x1="12" y1="14.5" x2="12" y2="18"/></svg>
       </div>
       <div>
         <div class="sidebar-brand-name">JN RESOLUSI</div>
-        <div class="sidebar-brand-sub" data-i18n="brand_sub">Semakan Silang & Audit</div>
+        <div class="sidebar-brand-sub" data-i18n="brand_sub">Sistem Audit Pintar MOE</div>
       </div>
     </div>
 
     <nav class="sidebar-nav">
       <div class="nav-group-label" data-i18n="nav_label">Navigasi</div>
 
-      <button class="nav-item active" id="nav-item-dashboard" onclick="showPage('dashboard')" data-tooltip="Papan Pemuka — pemantauan masa nyata ekosistem matrix 25×25. Lihat statistik, kes terkini, dan taburan DI.">
+      <button class="nav-item active" id="nav-item-dashboard" onclick="showPage('dashboard')">
         <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         <span data-i18n="nav_dashboard">Papan Pemuka</span>
       </button>
 
-      <button class="nav-item" id="nav-item-ingest" onclick="showPage('ingest')" data-tooltip="Hantar Payload — hantar data telemetri daripada sistem matrix luaran untuk dianalisis oleh Ejen A → B → C.">
+      <button class="nav-item" id="nav-item-ingest" onclick="showPage('ingest')">
         <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
         <span data-i18n="nav_ingest">Hantar Payload</span>
       </button>
 
-      <button class="nav-item" id="nav-item-cases" onclick="showPage('cases')" data-tooltip="Log Kes — senarai semua kes yang telah diproses oleh enjin. Klik mana-mana kes untuk lihat ringkasan eksekutif penuh.">
+      <button class="nav-item" id="nav-item-cases" onclick="showPage('cases')">
         <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         <span data-i18n="nav_cases">Log Kes</span>
       </button>
 
-      <button class="nav-item" id="nav-item-brief" onclick="showPage('brief')" data-tooltip="Ringkasan Eksekutif — paparan penuh output Ejen C termasuk analisis DI, bendera risiko, tindakan penguatkuasaan dan cadangan polisi.">
+      <button class="nav-item" id="nav-item-brief" onclick="showPage('brief')">
         <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         <span data-i18n="nav_brief">Ringkasan Eksekutif</span>
       </button>
@@ -389,7 +378,18 @@ input[type=range]:focus{box-shadow:none}
         <span data-i18n="nav_system">Maklumat Sistem</span>
       </button>
 
+      <button class="nav-item" id="nav-item-csv" onclick="showPage('csv')">
+        <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        <span data-i18n="nav_csv">Muat Naik CSV</span>
+      </button>
+
+      <button class="nav-item" id="nav-item-admin" onclick="showPage('admin')" style="display:none">
+        <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span data-i18n="nav_admin">Pengurusan Pengguna</span>
+      </button>
+
       <div class="nav-divider"></div>
+      <div id="quick-actions-section">
       <div class="nav-group-label" data-i18n="quick_label">Ingest Pantas</div>
 
       <button class="quick-btn" onclick="loadDemo('extreme')">
@@ -404,6 +404,7 @@ input[type=range]:focus{box-shadow:none}
         <span class="quick-dot" style="background:#4ADE80"></span>
         <span data-i18n="demo_aligned">Demo: Selaras</span>
       </button>
+      </div>
     </nav>
 
     <div class="sidebar-footer">
@@ -423,23 +424,22 @@ input[type=range]:focus{box-shadow:none}
     </div>
   </aside>
 
-  <!-- Sidebar backdrop for mobile -->
-  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
-
   <!-- ══ APP BODY ══ -->
   <div class="app-body">
 
     <!-- HEADER -->
     <header class="app-header">
-      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
       <div class="breadcrumb">
         <span data-i18n="home">Utama</span>
         <span class="breadcrumb-sep">›</span>
         <span class="breadcrumb-current" id="breadcrumb-current" data-i18n="nav_dashboard">Papan Pemuka</span>
       </div>
       <div class="header-right">
+        <div class="user-display" id="user-display" style="display:none"></div>
+        <button class="logout-btn" id="logout-btn" onclick="logout()" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span data-i18n="btn_logout">Log Keluar</span>
+        </button>
         <div class="lang-toggle">
           <button class="lang-opt active" id="lang-bm" onclick="setLang('bm')">BM</button>
           <button class="lang-opt" id="lang-en" onclick="setLang('en')">EN</button>
@@ -466,7 +466,7 @@ input[type=range]:focus{box-shadow:none}
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             </div>
             <div class="stat-val" id="stat-total">0</div>
-            <div class="stat-label" data-i18n="stat_total" data-tooltip="Jumlah keseluruhan kes yang telah diproses oleh enjin AI.">Jumlah Kes</div>
+            <div class="stat-label" data-i18n="stat_total">Jumlah Kes</div>
             <div class="stat-trend" data-i18n="stat_processed">Diproses</div>
           </div>
           <div class="stat-card" style="--s-color:var(--crimson);--s-bg:var(--crimson-bg)">
@@ -474,7 +474,7 @@ input[type=range]:focus{box-shadow:none}
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--crimson)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </div>
             <div class="stat-val" id="stat-anomaly" style="color:var(--crimson)">0</div>
-            <div class="stat-label" data-i18n="stat_anomaly" data-tooltip="Bilangan kes yang mempunyai Discrepancy Index (DI) melebihi ambang normal — menunjukkan potensi percanggahan data.">Anomali Dikesan</div>
+            <div class="stat-label" data-i18n="stat_anomaly">Anomali Dikesan</div>
             <div class="stat-trend" id="stat-anomaly-pct">—</div>
           </div>
           <div class="stat-card" style="--s-color:var(--orange);--s-bg:var(--orange-bg)">
@@ -482,7 +482,7 @@ input[type=range]:focus{box-shadow:none}
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
             </div>
             <div class="stat-val" id="stat-extreme" style="color:var(--orange)">0</div>
-            <div class="stat-label" data-i18n="stat_extreme" data-tooltip="Kes dengan klasifikasi Ekstrem (DI ≥ 0.75) atau Teruk (DI ≥ 0.50). Memerlukan tindakan segera pihak penguatkuasa.">Ekstrem / Teruk</div>
+            <div class="stat-label" data-i18n="stat_extreme">Ekstrem / Teruk</div>
             <div class="stat-trend" data-i18n="stat_action">Tindakan Segera</div>
           </div>
           <div class="stat-card" style="--s-color:var(--green);--s-bg:var(--green-bg)">
@@ -490,15 +490,15 @@ input[type=range]:focus{box-shadow:none}
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <div class="stat-val" id="stat-aligned" style="color:var(--green)">0</div>
-            <div class="stat-label" data-i18n="stat_aligned" data-tooltip="Kes dengan klasifikasi Selaras (DI < 0.10). Data yang dilaporkan adalah konsisten dengan rekod audit Jemaah Nazir.">Data Selaras</div>
+            <div class="stat-label" data-i18n="stat_aligned">Data Selaras</div>
             <div class="stat-trend" data-i18n="stat_consistent">Konsisten</div>
           </div>
         </div>
 
-        <div class="dash-grid">
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:16px">
           <div class="card">
             <div class="card-header">
-              <span class="card-title" data-i18n="recent_cases" data-tooltip="Senarai kes terkini yang telah diproses oleh pipeline Ejen A → B → C. Klik mana-mana kes untuk lihat Ringkasan Eksekutif penuh.">Kes Terkini</span>
+              <span class="card-title" data-i18n="recent_cases">Kes Terkini</span>
               <button class="btn btn-outline btn-sm" onclick="refreshDashboard()">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
                 <span data-i18n="refresh">Refresh</span>
@@ -514,9 +514,9 @@ input[type=range]:focus{box-shadow:none}
           </div>
 
           <div class="card">
-            <div class="card-header"><span class="card-title" data-i18n="di_distribution" data-tooltip="Discrepancy Index (DI) mengukur perbezaan antara skor audit Jemaah Nazir dengan skor operasi yang dilaporkan. Semakin tinggi DI, semakin besar percanggahan data.">Taburan Discrepancy Index (DI)</span></div>
+            <div class="card-header"><span class="card-title" data-i18n="di_distribution">Taburan DI</span></div>
             <div style="padding:16px">
-              <canvas id="dist-canvas" width="360" height="280" style="display:block;max-width:100%"></canvas>
+              <canvas id="dist-canvas" width="268" height="210" style="display:block;max-width:100%"></canvas>
             </div>
           </div>
         </div>
@@ -528,7 +528,7 @@ input[type=range]:focus{box-shadow:none}
         <div class="page-title" data-i18n="title_ingest">Hantar Payload</div>
         <p class="page-desc" data-i18n="desc_ingest">Hantar telemetri daripada sistem matrix luaran untuk dianalisis oleh pipeline Ejen A → B → C.</p>
 
-        <div class="ingest-grid">
+        <div style="display:grid;grid-template-columns:1fr 268px;gap:20px">
           <div class="card">
             <div class="card-header"><span class="card-title" data-i18n="nav_ingest">Hantar Payload</span></div>
             <div class="card-body">
@@ -577,14 +577,14 @@ input[type=range]:focus{box-shadow:none}
 
           <div>
             <div class="ref-card">
-              <div class="ref-card-title" data-i18n="ref_formula" data-tooltip="Discrepancy Index = |Skor Audit JN − Skor Operasi Dilapor| ÷ 100. Mengukur jurang antara rekod rasmi Nazir dengan data yang dilaporkan oleh sistem luaran.">Formula Discrepancy Index (DI)</div>
+              <div class="ref-card-title" data-i18n="ref_formula">Formula DI</div>
               <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);line-height:2">
                 <span style="color:var(--navy);font-weight:700">DI</span> = |Audit − Op| / 100<br>
                 <span style="font-size:10px">Julat: [0.0000, 1.0000]</span>
               </div>
             </div>
             <div class="ref-card">
-              <div class="ref-card-title" data-i18n="ref_classification" data-tooltip="Klasifikasi DI: ≥0.75 Ekstrem (Tindakan Segera), ≥0.50 Teruk, ≥0.25 Sederhana, ≥0.10 Minor, <0.10 Selaras (Data Konsisten).">Klasifikasi</div>
+              <div class="ref-card-title" data-i18n="ref_classification">Klasifikasi</div>
               <div class="cls-row"><span class="cls-dot" style="background:var(--crimson)"></span><span class="cls-thr">≥ 0.75</span><span class="cls-lbl di-extreme" data-i18n="cls_extreme">EKSTREM</span></div>
               <div class="cls-row"><span class="cls-dot" style="background:var(--orange)"></span><span class="cls-thr">≥ 0.50</span><span class="cls-lbl di-severe" data-i18n="cls_severe">TERUK</span></div>
               <div class="cls-row"><span class="cls-dot" style="background:var(--amber)"></span><span class="cls-thr">≥ 0.25</span><span class="cls-lbl di-moderate" data-i18n="cls_moderate">SEDERHANA</span></div>
@@ -592,7 +592,7 @@ input[type=range]:focus{box-shadow:none}
               <div class="cls-row"><span class="cls-dot" style="background:var(--green)"></span><span class="cls-thr">&lt; 0.10</span><span class="cls-lbl di-aligned" data-i18n="cls_aligned">SELARAS</span></div>
             </div>
             <div class="ref-card">
-              <div class="ref-card-title" data-i18n="ref_audit" data-tooltip="Rekod audit rasmi Jemaah Nazir (JN) untuk sekolah yang dipilih. Termasuk skor SKPMG2, gred kemudahan, skor kebersihan kantin, dan indeks risiko integriti.">Rekod Audit</div>
+              <div class="ref-card-title" data-i18n="ref_audit">Rekod Audit</div>
               <div id="audit-preview" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);line-height:1.8" data-i18n-placeholder="ref_select_hint">Pilih sekolah untuk lihat rekod audit JN.</div>
             </div>
           </div>
@@ -610,7 +610,7 @@ input[type=range]:focus{box-shadow:none}
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
             <span data-i18n="btn_refresh">Segar Semula</span>
           </button>
-          <button class="btn btn-danger" onclick="clearAllCases()">
+          <button class="btn btn-danger" id="btn-clear-cases" onclick="clearAllCases()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
             <span data-i18n="btn_clear">Padam Semua</span>
           </button>
@@ -645,9 +645,9 @@ input[type=range]:focus{box-shadow:none}
       <section class="page-section" id="page-about">
         <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_system">INFO SISTEM</span></div>
         <div class="page-title" data-i18n="title_system">Tentang Sistem</div>
-        <p class="page-desc" data-i18n="desc_system">PRESTIJ-25 JN Resolusi — Enjin Semakan Silang &amp; Audit Pintar. Nod Kebenaran Tertinggi &amp; Audit dalam ekosistem matrix 25×25.</p>
+        <p class="page-desc" data-i18n="desc_system">MoE AI-Complaint — Sistem Imbangan Semak Pintar. Supreme Truth &amp; Audit Node dalam ekosistem matrix 25×25.</p>
 
-        <div class="sys-grid">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
           <div class="card">
             <div class="card-header"><span class="card-title" data-i18n="sys_architecture">Seni Bina</span></div>
             <div class="card-body" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);line-height:2.2">
@@ -681,19 +681,240 @@ input[type=range]:focus{box-shadow:none}
         </div>
       </section>
 
+      <!-- ══ ADMIN PANEL ══ -->
+      <section class="page-section" id="page-admin">
+        <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_admin">PENTADBIR SISTEM</span></div>
+        <div class="page-title" data-i18n="title_admin">Pengurusan Pengguna</div>
+        <p class="page-desc" data-i18n="desc_admin">Urus akaun pengguna sistem. Hanya Admin boleh mengakses bahagian ini.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:20px">
+
+          <!-- User list -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" data-i18n="admin_user_list">Senarai Pengguna</span>
+              <button class="btn btn-outline btn-sm" onclick="loadUsers()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                <span data-i18n="refresh">Refresh</span>
+              </button>
+            </div>
+            <div id="users-list-wrap">
+              <div class="empty-state" style="padding:40px 20px">
+                <div class="empty-state-icon">👥</div>
+                <div class="empty-state-text" data-i18n="admin_load_hint">Klik Refresh untuk muatkan pengguna.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Create user form -->
+          <div>
+            <div class="card">
+              <div class="card-header"><span class="card-title" data-i18n="admin_add_user">Tambah Pengguna Baharu</span></div>
+              <div class="card-body">
+                <form id="create-user-form" onsubmit="handleCreateUser(event)">
+                  <div class="form-group" style="margin-bottom:12px">
+                    <label data-i18n="admin_email">Email</label>
+                    <input type="email" id="cu-email" placeholder="nama@moe.gov.my" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom:12px">
+                    <label data-i18n="admin_password">Kata Laluan</label>
+                    <input type="password" id="cu-password" placeholder="Min 6 aksara" required minlength="6">
+                  </div>
+                  <div class="form-group" style="margin-bottom:16px">
+                    <label data-i18n="admin_role">Peranan</label>
+                    <select id="cu-role">
+                      <option value="penyelaras_jn">Penyelaras JN</option>
+                      <option value="peneraju_sektor">Peneraju Sektor</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary" id="cu-btn" style="width:100%;justify-content:center">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span data-i18n="admin_add_btn">Cipta Pengguna</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div class="ref-card" style="margin-top:12px">
+              <div class="ref-card-title" data-i18n="admin_roles_title">Had Peranan</div>
+              <div style="font-size:12px;color:var(--text-dim);line-height:2">
+                <div><span class="role-badge admin" style="display:inline-block;margin-right:6px">Admin</span>Semua akses</div>
+                <div><span class="role-badge penyelaras_jn" style="display:inline-block;margin-right:6px">Penyelaras JN</span>Input + CSV</div>
+                <div><span class="role-badge peneraju_sektor" style="display:inline-block;margin-right:6px">Peneraju Sektor</span>Baca sahaja</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ CSV UPLOAD ══ -->
+      <section class="page-section" id="page-csv">
+        <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_csv">MUAT NAIK CSV</span></div>
+        <div class="page-title" data-i18n="title_csv">Muat Naik CSV Pukal</div>
+        <p class="page-desc" data-i18n="desc_csv">Muat naik fail CSV dengan data sekolah untuk diproses secara pukal melalui pipeline Ejen A → B → C.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 268px;gap:20px">
+          <div class="card">
+            <div class="card-header"><span class="card-title" data-i18n="csv_select_file">Pilih Fail CSV</span></div>
+            <div class="card-body">
+              <div class="csv-drop-zone" id="csv-drop-zone" onclick="document.getElementById('csv-file-input').click()">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin:0 auto;display:block"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                <div style="margin-top:12px;font-weight:600;color:var(--text-dim);font-family:'Plus Jakarta Sans',sans-serif" data-i18n="csv_click_hint">Klik untuk pilih fail CSV</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px" data-i18n="csv_drag_hint">atau seret dan lepas di sini</div>
+                <div id="csv-file-name" style="font-size:12px;color:var(--navy);margin-top:8px;font-weight:600;font-family:'JetBrains Mono',monospace"></div>
+              </div>
+              <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCsvSelect(this)">
+              <div id="csv-preview" style="display:none;margin-top:16px"></div>
+              <div style="margin-top:16px;display:flex;gap:10px">
+                <button class="btn btn-primary" id="csv-submit-btn" onclick="handleCsvUpload()" style="display:none">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                  <span data-i18n="csv_process_btn">Proses CSV</span>
+                </button>
+                <button class="btn btn-outline" id="csv-reset-btn" onclick="resetCsv()" style="display:none" data-i18n="btn_reset">Tetapkan Semula</button>
+              </div>
+              <div id="csv-results" style="display:none;margin-top:20px"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="ref-card">
+              <div class="ref-card-title" data-i18n="csv_format_title">Format CSV</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);line-height:2;word-break:break-all">
+                school,cleanliness_reported,<br>cleanliness_actual,<br>ict_reported,ict_actual,<br>discipline_reported,discipline_actual<br><br>
+                <span style="color:var(--green)">SMK002,90,28,85,30,80,55</span>
+              </div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-card-title" data-i18n="csv_calc_title">Pengiraan</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);line-height:2.2">
+                Op Score =<br>purata <span style="color:var(--navy)">*_reported</span><br><br>
+                DI = |Audit − Op| / 100
+              </div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-card-title" data-i18n="csv_access_title">Akses</div>
+              <div style="font-size:12px;color:var(--text-dim);line-height:1.8">
+                <span class="role-badge admin" style="display:inline-block;margin-bottom:4px">Admin</span><br>
+                <span class="role-badge penyelaras_jn" style="display:inline-block">Penyelaras JN</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div><!-- /.app-body -->
 </div><!-- /.app-shell -->
+</div><!-- /#app-shell-wrap -->
 
 <div class="toast-container" id="toast-container"></div>
 
 <script>
 const API = '';
 
+// ── AUTH STATE ──
+function getToken() { return localStorage.getItem('jn_token'); }
+function getUser() { try { return JSON.parse(localStorage.getItem('jn_user')||'null'); } catch { return null; } }
+
+function authFetch(url, opts={}) {
+  const token = getToken();
+  const headers = Object.assign({}, opts.headers||{});
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  return fetch(url, Object.assign({}, opts, {headers})).then(r => {
+    if (r.status === 401) { logout(); throw new Error(t('session_expired')); }
+    return r;
+  });
+}
+
+function logout() {
+  localStorage.removeItem('jn_token');
+  localStorage.removeItem('jn_user');
+  document.getElementById('login-overlay').style.display = 'flex';
+  document.getElementById('app-shell-wrap').style.display = 'none';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-form').reset();
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+  errEl.style.display = 'none';
+  try {
+    const r = await fetch(API+'/api/v1/auth/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email: document.getElementById('login-email').value.trim(),
+        password: document.getElementById('login-password').value,
+      })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail || 'Log masuk gagal');
+    localStorage.setItem('jn_token', data.access_token);
+    localStorage.setItem('jn_user', JSON.stringify({email:data.email, role:data.role}));
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('app-shell-wrap').style.display = 'block';
+    applyRbac(data.role);
+    updateUserDisplay({email:data.email, role:data.role});
+    checkHealth();
+    refreshDashboard();
+  } catch(err) {
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Log Masuk';
+  }
+}
+
+function checkAuth() {
+  const token = getToken();
+  const user = getUser();
+  if (!token || !user) {
+    document.getElementById('login-overlay').style.display = 'flex';
+    document.getElementById('app-shell-wrap').style.display = 'none';
+    return false;
+  }
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('app-shell-wrap').style.display = 'block';
+  applyRbac(user.role);
+  updateUserDisplay(user);
+  return true;
+}
+
+function applyRbac(role) {
+  const canWrite = (role === 'admin' || role === 'penyelaras_jn');
+  const isAdmin  = (role === 'admin');
+  const items = {
+    'nav-item-ingest': canWrite,
+    'nav-item-csv':    canWrite,
+    'nav-item-admin':  isAdmin,
+    'quick-actions-section': canWrite,
+    'btn-clear-cases': isAdmin,
+  };
+  Object.entries(items).forEach(([id, show]) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? '' : 'none';
+  });
+  document.getElementById('user-display').style.display = 'flex';
+  document.getElementById('logout-btn').style.display = 'flex';
+}
+
+function updateUserDisplay(user) {
+  const roleLabels = {admin:'Admin', peneraju_sektor:'Peneraju Sektor', penyelaras_jn:'Penyelaras JN'};
+  const roleClass = user.role || 'penyelaras_jn';
+  document.getElementById('user-display').innerHTML =
+    `<span class="user-email">${user.email}</span><span class="role-badge ${roleClass}">${roleLabels[roleClass]||roleClass}</span>`;
+}
+
 // ── TRANSLATIONS ──
 const TR = {
   bm: {
-    brand_sub:'Semakan Silang & Audit',
+    brand_sub:'Sistem Audit Pintar MOE',
     nav_label:'Navigasi',
     nav_dashboard:'Papan Pemuka',
     nav_ingest:'Hantar Payload',
@@ -725,7 +946,7 @@ const TR = {
     stat_consistent:'Konsisten',
     recent_cases:'Kes Terkini',
     refresh:'Refresh',
-    di_distribution:'Taburan Discrepancy Index (DI)',
+    di_distribution:'Taburan DI',
     no_cases:'Tiada kes diproses.',
     no_cases_hint:'Gunakan ',
     eyebrow_ingest:'PENGAMBILAN MATRIX',
@@ -739,7 +960,7 @@ const TR = {
     btn_submit:'Hantar ke Enjin',
     btn_reset:'Tetapkan Semula',
     btn_processing:'Memproses...',
-    ref_formula:'Formula Discrepancy Index (DI)',
+    ref_formula:'Formula DI',
     ref_classification:'Klasifikasi',
     ref_audit:'Rekod Audit',
     ref_select_hint:'Pilih sekolah untuk lihat rekod audit JN.',
@@ -772,7 +993,7 @@ const TR = {
     title_brief:'Ringkasan Eksekutif',
     desc_brief:'Paparan penuh Ringkasan Eksekutif yang dijana oleh Ejen C untuk kes yang dipilih.',
     brief_no_case:'Pilih kes daripada Log Kes atau ingest payload baharu untuk lihat ringkasan.',
-    brief_directive_label:'ARAHAN EKSEKUTIF — JN RESOLUSI',
+    brief_directive_label:'ARAHAN EKSEKUTIF — AI-COMPLAINT-MOE',
     brief_sec_a:'A. MAKLUMAT SEKOLAH',
     brief_sec_b:'B. ANALISIS DISCREPANCY INDEX',
     brief_sec_c:'C. TINDAKAN PENGUATKUASAAN',
@@ -798,7 +1019,7 @@ const TR = {
     sig_approved_name:'Pengarah, Bahagian Audit KPM',
     eyebrow_system:'INFO SISTEM',
     title_system:'Tentang Sistem',
-    desc_system:'PRESTIJ-25 JN Resolusi — Enjin Semakan Silang & Audit Pintar. Nod Kebenaran Tertinggi & Audit dalam ekosistem matrix 25×25.',
+    desc_system:'MoE AI-Complaint — Sistem Imbangan Semak Pintar. Supreme Truth & Audit Node dalam ekosistem matrix 25×25.',
     sys_architecture:'Seni Bina',
     sys_techstack:'Tindanan Teknologi',
     sys_api:'Endpoint API',
@@ -813,15 +1034,62 @@ const TR = {
     res_to_cases:'Ke Log Kes',
     payload_processed:'Payload diproses:',
     anomaly_msg:'⚠ ANOMALI DIKESAN — DI:',
-    chart_label:'TABURAN DISCREPANCY INDEX (DI)',
+    chart_label:'TABURAN KLASIFIKASI DI',
     di_chart_aligned:'Selaras',
     di_chart_minor:'Minor',
     di_chart_moderate:'Sederhana',
     di_chart_severe:'Teruk',
     di_chart_extreme:'Ekstrem',
+    btn_logout:'Log Keluar',
+    nav_csv:'Muat Naik CSV',
+    eyebrow_csv:'MUAT NAIK CSV',
+    title_csv:'Muat Naik CSV Pukal',
+    desc_csv:'Muat naik fail CSV dengan data sekolah untuk diproses secara pukal melalui pipeline Ejen A → B → C.',
+    csv_select_file:'Pilih Fail CSV',
+    csv_click_hint:'Klik untuk pilih fail CSV',
+    csv_drag_hint:'atau seret dan lepas di sini',
+    csv_format_title:'Format CSV',
+    csv_calc_title:'Pengiraan',
+    csv_access_title:'Akses',
+    csv_process_btn:'Proses CSV',
+    csv_processing:'Memproses...',
+    csv_success:'CSV berjaya diproses',
+    csv_error:'Ralat CSV',
+    csv_preview_title:'Pratonton (5 baris pertama)',
+    csv_results_title:'Keputusan Pemprosesan',
+    csv_col_row:'Baris',
+    csv_col_school:'Sekolah',
+    csv_col_op_score:'Skor Op',
+    csv_col_di:'Skor DI',
+    csv_col_class:'Klasifikasi',
+    csv_col_case:'ID Kes',
+    session_expired:'Sesi tamat. Sila log masuk semula.',
+    error_unknown:'Ralat tidak diketahui',
+    nav_admin:'Pengurusan Pengguna',
+    eyebrow_admin:'PENTADBIR SISTEM',
+    title_admin:'Pengurusan Pengguna',
+    desc_admin:'Urus akaun pengguna sistem. Hanya Admin boleh mengakses bahagian ini.',
+    admin_user_list:'Senarai Pengguna',
+    admin_load_hint:'Klik Refresh untuk muatkan pengguna.',
+    admin_add_user:'Tambah Pengguna Baharu',
+    admin_email:'Email',
+    admin_password:'Kata Laluan',
+    admin_role:'Peranan',
+    admin_add_btn:'Cipta Pengguna',
+    admin_roles_title:'Had Peranan',
+    admin_col_email:'Email',
+    admin_col_role:'Peranan',
+    admin_col_status:'Status',
+    admin_col_created:'Dicipta',
+    admin_col_action:'Tindakan',
+    admin_active:'Aktif',
+    admin_inactive:'Tidak Aktif',
+    admin_created:'Pengguna berjaya dicipta',
+    admin_create_error:'Gagal mencipta pengguna',
+    admin_load_error:'Gagal memuatkan pengguna',
   },
   en: {
-    brand_sub:'Cross-Reference & Audit',
+    brand_sub:'Smart Audit System MOE',
     nav_label:'Navigation',
     nav_dashboard:'Dashboard',
     nav_ingest:'Ingest Payload',
@@ -853,7 +1121,7 @@ const TR = {
     stat_consistent:'Consistent',
     recent_cases:'Recent Cases',
     refresh:'Refresh',
-    di_distribution:'Discrepancy Index (DI) Distribution',
+    di_distribution:'DI Distribution',
     no_cases:'No cases processed.',
     no_cases_hint:'Use ',
     eyebrow_ingest:'MATRIX INGESTION',
@@ -867,7 +1135,7 @@ const TR = {
     btn_submit:'Submit to Engine',
     btn_reset:'Reset',
     btn_processing:'Processing...',
-    ref_formula:'Discrepancy Index (DI) Formula',
+    ref_formula:'DI Formula',
     ref_classification:'Classification',
     ref_audit:'Audit Reference',
     ref_select_hint:'Select a school to view JN audit records.',
@@ -900,7 +1168,7 @@ const TR = {
     title_brief:'Executive Brief',
     desc_brief:'Full Executive Briefing generated by Agent C for the selected case.',
     brief_no_case:'Select a case from Case Log or ingest a new payload to view the brief.',
-    brief_directive_label:'EXECUTIVE DIRECTIVE — JN RESOLUSI',
+    brief_directive_label:'EXECUTIVE DIRECTIVE — AI-COMPLAINT-MOE',
     brief_sec_a:'A. SCHOOL INFORMATION',
     brief_sec_b:'B. DISCREPANCY INDEX ANALYSIS',
     brief_sec_c:'C. ENFORCEMENT ACTIONS',
@@ -926,7 +1194,7 @@ const TR = {
     sig_approved_name:'Director, Audit Division, KPM',
     eyebrow_system:'SYSTEM INFO',
     title_system:'About System',
-    desc_system:'PRESTIJ-25 JN Resolusi — Smart Cross-Reference & Audit Engine. Supreme Truth & Audit Node in the 25×25 matrix ecosystem.',
+    desc_system:'MoE AI-Complaint — Smart Checks & Balances System. Supreme Truth & Audit Node in the 25×25 matrix ecosystem.',
     sys_architecture:'Architecture',
     sys_techstack:'Tech Stack',
     sys_api:'API Endpoints',
@@ -941,12 +1209,59 @@ const TR = {
     res_to_cases:'To Case Log',
     payload_processed:'Payload processed:',
     anomaly_msg:'⚠ ANOMALY DETECTED — DI:',
-    chart_label:'DISCREPANCY INDEX (DI) DISTRIBUTION',
+    chart_label:'DI CLASSIFICATION DISTRIBUTION',
     di_chart_aligned:'Aligned',
     di_chart_minor:'Minor',
     di_chart_moderate:'Moderate',
     di_chart_severe:'Severe',
     di_chart_extreme:'Extreme',
+    btn_logout:'Logout',
+    nav_csv:'CSV Upload',
+    eyebrow_csv:'CSV UPLOAD',
+    title_csv:'Bulk CSV Upload',
+    desc_csv:'Upload a CSV file with school data for bulk processing through the Agent A → B → C pipeline.',
+    csv_select_file:'Select CSV File',
+    csv_click_hint:'Click to select CSV file',
+    csv_drag_hint:'or drag and drop here',
+    csv_format_title:'CSV Format',
+    csv_calc_title:'Calculation',
+    csv_access_title:'Access',
+    csv_process_btn:'Process CSV',
+    csv_processing:'Processing...',
+    csv_success:'CSV processed successfully',
+    csv_error:'CSV error',
+    csv_preview_title:'Preview (first 5 rows)',
+    csv_results_title:'Processing Results',
+    csv_col_row:'Row',
+    csv_col_school:'School',
+    csv_col_op_score:'Op Score',
+    csv_col_di:'DI Score',
+    csv_col_class:'Classification',
+    csv_col_case:'Case ID',
+    session_expired:'Session expired. Please log in again.',
+    error_unknown:'Unknown error',
+    nav_admin:'User Management',
+    eyebrow_admin:'ADMIN PANEL',
+    title_admin:'User Management',
+    desc_admin:'Manage system user accounts. Only Admin can access this section.',
+    admin_user_list:'User List',
+    admin_load_hint:'Click Refresh to load users.',
+    admin_add_user:'Add New User',
+    admin_email:'Email',
+    admin_password:'Password',
+    admin_role:'Role',
+    admin_add_btn:'Create User',
+    admin_roles_title:'Role Permissions',
+    admin_col_email:'Email',
+    admin_col_role:'Role',
+    admin_col_status:'Status',
+    admin_col_created:'Created',
+    admin_col_action:'Action',
+    admin_active:'Active',
+    admin_inactive:'Inactive',
+    admin_created:'User created successfully',
+    admin_create_error:'Failed to create user',
+    admin_load_error:'Failed to load users',
   }
 };
 
@@ -998,105 +1313,6 @@ const DEMO_PAYLOADS = {
 
 let allCases = [];
 
-// ── TOOLTIP ENGINE (Global, escapes all overflow) ──
-(function(){
-  const tip = document.createElement('div');
-  tip.className = 'tooltip-global';
-  const arrow = document.createElement('div');
-  arrow.className = 'tooltip-arrow';
-  document.body.appendChild(tip);
-  document.body.appendChild(arrow);
-
-  let activeEl = null;
-  let hideTimer = null;
-
-  function show(e) {
-    const el = e.currentTarget;
-    const text = el.getAttribute('data-tooltip');
-    if (!text) return;
-    activeEl = el;
-    clearTimeout(hideTimer);
-    tip.textContent = text;
-    tip.className = 'tooltip-global show';
-    arrow.className = 'tooltip-arrow show';
-    position(el);
-  }
-
-  function position(el) {
-    const r = el.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const gap = 10;
-
-    // Default: above element, centered
-    let left = r.left + r.width/2;
-    let top = r.top - gap;
-    let arrowTop = r.top - 2;
-
-    tip.style.transform = 'translate(-50%,-100%)';
-    tip.style.left = left + 'px';
-    tip.style.top = top + 'px';
-
-    // Arrow position
-    arrow.style.left = r.left + r.width/2 + 'px';
-    arrow.style.top = (r.top - 1) + 'px';
-
-    // If tooltip goes above viewport, flip below
-    const tipRect = tip.getBoundingClientRect();
-    if (tipRect.top < 4) {
-      tip.style.transform = 'translate(-50%,0)';
-      tip.style.top = (r.bottom + gap) + 'px';
-      arrow.style.top = (r.bottom - 0) + 'px';
-      arrow.style.borderTopColor = 'transparent';
-      arrow.style.borderBottomColor = 'var(--navy-dark)';
-    } else {
-      arrow.style.borderTopColor = 'var(--navy-dark)';
-      arrow.style.borderBottomColor = 'transparent';
-    }
-
-    // Keep within horizontal bounds
-    const afterRect = tip.getBoundingClientRect();
-    if (afterRect.left < 6) {
-      tip.style.transform = 'translate(0,' + (tip.style.transform.includes('-100%') ? '-100%' : '0') + ')';
-      tip.style.left = '6px';
-    }
-    if (afterRect.right > vw - 6) {
-      tip.style.transform = 'translate(-100%,' + (tip.style.transform.includes('-100%') ? '-100%' : '0') + ')';
-      tip.style.left = (vw - 6) + 'px';
-    }
-  }
-
-  function hide() {
-    hideTimer = setTimeout(() => {
-      tip.className = 'tooltip-global';
-      arrow.className = 'tooltip-arrow';
-      activeEl = null;
-    }, 150);
-  }
-
-  document.addEventListener('mouseover', e => {
-    const el = e.target.closest('[data-tooltip]');
-    if (el && el !== activeEl) show({ currentTarget: el });
-  }, true);
-
-  document.addEventListener('mouseout', e => {
-    const el = e.target.closest('[data-tooltip]');
-    if (el && el === activeEl) hide();
-  }, true);
-
-  // Reposition on scroll
-  window.addEventListener('scroll', () => {
-    if (activeEl) position(activeEl);
-  }, { passive: true });
-})();
-function toggleSidebar() {
-  const sidebar = document.querySelector('.sidebar');
-  const backdrop = document.getElementById('sidebar-backdrop');
-  sidebar.classList.toggle('open');
-  backdrop.classList.toggle('show');
-  document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
-}
-
 // ── NAVIGATION ──
 function showPage(name) {
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
@@ -1104,14 +1320,12 @@ function showPage(name) {
   document.getElementById('page-' + name).classList.add('active');
   const navEl = document.getElementById('nav-item-' + name);
   if (navEl) navEl.classList.add('active');
-  // Close mobile sidebar after nav
-  const sidebar = document.querySelector('.sidebar');
-  if (sidebar.classList.contains('open')) toggleSidebar();
   const bc = document.getElementById('breadcrumb-current');
-  const keyMap = {dashboard:'nav_dashboard',ingest:'nav_ingest',cases:'nav_cases',brief:'nav_brief',about:'nav_system'};
+  const keyMap = {dashboard:'nav_dashboard',ingest:'nav_ingest',cases:'nav_cases',brief:'nav_brief',about:'nav_system',csv:'nav_csv',admin:'nav_admin'};
   if (bc && keyMap[name]) { bc.dataset.i18n = keyMap[name]; bc.textContent = t(keyMap[name]); }
   if (name === 'dashboard') refreshDashboard();
   if (name === 'cases') loadCases();
+  if (name === 'admin') loadUsers();
 }
 
 // ── TOAST ──
@@ -1142,6 +1356,7 @@ async function checkHealth() {
     txt.textContent=t('status_offline');
   }
 }
+
 
 // ── AUDIT PREVIEW ──
 document.getElementById('f-school-id').addEventListener('change', function() {
@@ -1193,9 +1408,9 @@ async function handleIngest(e) {
     raw_text: document.getElementById('f-raw-text').value,
   };
   try {
-    const r = await fetch(API+'/api/v1/matrix/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const r = await authFetch(API+'/api/v1/matrix/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data = await r.json();
-    if (!r.ok) throw new Error(data.detail?.message||t('error_unknown'));
+    if (!r.ok) throw new Error(data.detail?.message||data.detail||t('error_unknown'));
     showIngestResult(data);
     toast(t('payload_processed')+' '+data.case_id,'success');
     if (data.anomaly_detected) toast(t('anomaly_msg')+' '+data.discrepancy_index.toFixed(4),'error',6000);
@@ -1266,7 +1481,7 @@ async function viewBrief(caseId) {
   const el = document.getElementById('brief-content');
   el.innerHTML='<div style="padding:60px;display:flex;justify-content:center"><div class="spinner dark" style="width:28px;height:28px"></div></div>';
   try {
-    const r = await fetch(API+'/api/v1/matrix/executive-brief/'+caseId);
+    const r = await authFetch(API+'/api/v1/matrix/executive-brief/'+caseId);
     const d = await r.json();
     if (!r.ok) throw new Error(d.detail?.error||'Not found');
     renderBrief(d);
@@ -1379,7 +1594,7 @@ function renderBrief(d) {
 // ── CASES TABLE ──
 async function loadCases() {
   try {
-    const r = await fetch(API+'/api/v1/matrix/cases');
+    const r = await authFetch(API+'/api/v1/matrix/cases');
     const d = await r.json();
     allCases = d.cases||[];
     updateSidebarStats(d);
@@ -1426,7 +1641,7 @@ function renderCasesTable(cases) {
 async function clearAllCases() {
   if (!confirm(t('confirm_clear'))) return;
   try {
-    await fetch(API+'/api/v1/matrix/cases',{method:'DELETE'});
+    await authFetch(API+'/api/v1/matrix/cases',{method:'DELETE'});
     allCases=[];
     renderCasesTable([]);
     document.getElementById('sb-case-count').textContent='0';
@@ -1438,7 +1653,7 @@ async function clearAllCases() {
 // ── DASHBOARD ──
 async function refreshDashboard() {
   try {
-    const r = await fetch(API+'/api/v1/matrix/cases');
+    const r = await authFetch(API+'/api/v1/matrix/cases');
     const d = await r.json();
     const cases = d.cases||[];
     allCases = cases;
@@ -1478,7 +1693,7 @@ function drawDistChart(cases) {
   const canvas = document.getElementById('dist-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W=360, H=280;
+  const W=268, H=210;
   ctx.clearRect(0,0,W,H);
 
   const counts={DATA_ALIGNED:0,MINOR_DISCREPANCY:0,MODERATE_DISCREPANCY:0,SEVERE_DISCREPANCY:0,EXTREME_DISCREPANCY:0};
@@ -1490,42 +1705,43 @@ function drawDistChart(cases) {
   const vals=Object.values(counts);
   const max=Math.max(...vals,1);
 
-  const bw=46, gap=14, startX=22, startY=224;
+  const bw=34, gap=10, startX=18, startY=168;
 
   vals.forEach((v,i)=>{
     const x=startX+i*(bw+gap);
-    const h=v>0?(v/max)*170:0;
+    const h=v>0?(v/max)*128:0;
     const y=startY-h;
 
     // Bar background
-    ctx.beginPath();
     ctx.fillStyle=bgs[i];
-    if(ctx.roundRect){ctx.roundRect(x,startY-170,bw,170,4);}else{ctx.rect(x,startY-170,bw,170);}
+    ctx.roundRect ? ctx.roundRect(x,startY-130,bw,130,3) : ctx.fillRect(x,startY-130,bw,130);
     ctx.fill();
 
     // Bar fill
+    ctx.fillStyle=colors[i]+'55';
+    ctx.beginPath();
+    if(ctx.roundRect){ctx.roundRect(x,y,bw,h,3);}else{ctx.rect(x,y,bw,h);}
+    ctx.fill();
+
+    // Top cap
     if(v>0){
-      ctx.beginPath();
-      ctx.fillStyle=colors[i]+'55';
-      if(ctx.roundRect){ctx.roundRect(x,y,bw,h,4);}else{ctx.rect(x,y,bw,h);}
-      ctx.fill();
-
-      // Top cap
       ctx.fillStyle=colors[i];
-      ctx.fillRect(x,y,bw,4);
+      ctx.fillRect(x,y,bw,3);
+    }
 
-      // Value label
+    // Value label
+    if(v>0){
       ctx.fillStyle=colors[i];
-      ctx.font='bold 15px Plus Jakarta Sans, sans-serif';
+      ctx.font='bold 13px Plus Jakarta Sans, sans-serif';
       ctx.textAlign='center';
-      ctx.fillText(v,x+bw/2,y-8);
+      ctx.fillText(v,x+bw/2,y-6);
     }
 
     // Bottom label
     ctx.fillStyle='#9DAFC5';
-    ctx.font='10px Plus Jakarta Sans, sans-serif';
+    ctx.font='9px Plus Jakarta Sans, sans-serif';
     ctx.textAlign='center';
-    ctx.fillText(labels[i],x+bw/2,startY+16);
+    ctx.fillText(labels[i],x+bw/2,startY+13);
   });
 
   // Baseline
@@ -1537,19 +1753,175 @@ function drawDistChart(cases) {
   ctx.stroke();
 
   ctx.fillStyle='#9DAFC5';
-  ctx.font='10px Plus Jakarta Sans, sans-serif';
+  ctx.font='9px Plus Jakarta Sans, sans-serif';
   ctx.textAlign='center';
-  ctx.fillText(t('chart_label'),W/2,H-6);
+  ctx.fillText(t('chart_label'),W/2,H-4);
+}
+
+// ── CSV UPLOAD ──
+let csvFile = null;
+
+function handleCsvSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  csvFile = file;
+  document.getElementById('csv-file-name').textContent = file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+  document.getElementById('csv-drop-zone').classList.add('has-file');
+  document.getElementById('csv-submit-btn').style.display = '';
+  document.getElementById('csv-reset-btn').style.display = '';
+  document.getElementById('csv-results').style.display = 'none';
+  // Preview first 5 rows
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const lines = e.target.result.split('\n').filter(l=>l.trim());
+    const preview = lines.slice(0, 6);
+    const headers = preview[0].split(',');
+    const rows = preview.slice(1);
+    const prevEl = document.getElementById('csv-preview');
+    prevEl.style.display = 'block';
+    prevEl.innerHTML = `<div style="font-size:12px;font-weight:700;color:var(--text-dim);margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif">${t('csv_preview_title')}</div>
+      <div class="data-table-wrap"><table class="data-table">
+        <thead><tr>${headers.map(h=>`<th>${h.trim()}</th>`).join('')}</tr></thead>
+        <tbody>${rows.map(r=>{const cells=r.split(',');return`<tr>${cells.map(c=>`<td>${c.trim()}</td>`).join('')}</tr>`;}).join('')}</tbody>
+      </table></div>`;
+  };
+  reader.readAsText(file);
+}
+
+async function handleCsvUpload() {
+  if (!csvFile) return;
+  const btn = document.getElementById('csv-submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner"></div>${t('csv_processing')}`;
+  const form = new FormData();
+  form.append('file', csvFile);
+  try {
+    const token = getToken();
+    const headers = {};
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    const r = await fetch(API+'/api/v1/matrix/ingest/csv', {method:'POST', headers, body:form});
+    if (r.status === 401) { logout(); throw new Error(t('session_expired')); }
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail||t('csv_error'));
+    showCsvResults(data);
+    toast(`${t('csv_success')}: ${data.processed}/${data.total_rows}`, 'success');
+    refreshDashboard();
+  } catch(err) {
+    toast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>${t('csv_process_btn')}`;
+  }
+}
+
+function showCsvResults(data) {
+  const el = document.getElementById('csv-results');
+  el.style.display = 'block';
+  const rows = data.results.map(r => `
+    <div class="csv-result-row">
+      <span class="mono" style="color:var(--text-muted);font-size:11px">#${r.row}</span>
+      <span style="font-weight:600;font-family:'Plus Jakarta Sans',sans-serif">${r.school}</span>
+      <span class="mono" style="font-size:12px;color:var(--text-dim)">${r.operational_score.toFixed(1)}</span>
+      <span class="mono" style="color:${diColor(r.di_classification)};font-weight:700">${r.discrepancy_index.toFixed(4)}</span>
+      <button class="btn btn-outline btn-sm" onclick="viewBrief('${r.case_id}')">${t('btn_brief')}</button>
+    </div>`).join('');
+  const errs = data.error_details.map(e => `
+    <div class="csv-result-row error-row">
+      <span class="mono" style="color:var(--crimson);font-size:11px">#${e.row}</span>
+      <span style="font-weight:600;font-family:'Plus Jakarta Sans',sans-serif">${e.school||'?'}</span>
+      <span style="color:var(--crimson);font-size:12px;grid-column:3/-1">${e.error}</span>
+    </div>`).join('');
+  el.innerHTML = `
+    <div style="font-size:12px;font-weight:700;color:var(--text-dim);margin-bottom:10px;font-family:'Plus Jakarta Sans',sans-serif">
+      ${t('csv_results_title')} — ${data.processed} berjaya, ${data.errors} ralat
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div style="padding:4px 0">${rows}${errs}</div>
+    </div>`;
+}
+
+function resetCsv() {
+  csvFile = null;
+  document.getElementById('csv-file-input').value = '';
+  document.getElementById('csv-file-name').textContent = '';
+  document.getElementById('csv-drop-zone').classList.remove('has-file');
+  document.getElementById('csv-preview').style.display = 'none';
+  document.getElementById('csv-results').style.display = 'none';
+  document.getElementById('csv-submit-btn').style.display = 'none';
+  document.getElementById('csv-reset-btn').style.display = 'none';
+}
+
+// ── ADMIN PANEL ──
+async function loadUsers() {
+  const wrap = document.getElementById('users-list-wrap');
+  wrap.innerHTML = '<div style="padding:30px;display:flex;justify-content:center"><div class="spinner dark" style="width:22px;height:22px"></div></div>';
+  try {
+    const r = await authFetch(API+'/api/v1/auth/users');
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail||t('admin_load_error'));
+    renderUsersList(data.users||[]);
+  } catch(err) {
+    wrap.innerHTML = `<div style="padding:20px;color:var(--crimson);font-size:13px">${err.message}</div>`;
+    toast(err.message, 'error');
+  }
+}
+
+function renderUsersList(users) {
+  const wrap = document.getElementById('users-list-wrap');
+  if (!users.length) {
+    wrap.innerHTML = '<div class="empty-state" style="padding:40px 20px"><div class="empty-state-icon">👥</div><div class="empty-state-text">Tiada pengguna.</div></div>';
+    return;
+  }
+  const roleLabels = {admin:'Admin', peneraju_sektor:'Peneraju Sektor', penyelaras_jn:'Penyelaras JN'};
+  const rows = users.map(u => `
+    <div class="user-row">
+      <div>
+        <div class="user-email-cell">${u.email}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${new Date(u.created_at).toLocaleString(currentLang==='bm'?'ms-MY':'en-MY')}</div>
+      </div>
+      <span class="role-badge ${u.role}">${roleLabels[u.role]||u.role}</span>
+      <span class="badge ${u.is_active?'badge-clean':'badge-anomaly'}">${u.is_active?t('admin_active'):t('admin_inactive')}</span>
+      <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace">${u.id.slice(0,8)}…</span>
+    </div>`).join('');
+  wrap.innerHTML = `<div>${rows}</div>`;
+}
+
+async function handleCreateUser(e) {
+  e.preventDefault();
+  const btn = document.getElementById('cu-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+  const body = {
+    email: document.getElementById('cu-email').value.trim(),
+    password: document.getElementById('cu-password').value,
+    role: document.getElementById('cu-role').value,
+  };
+  try {
+    const r = await authFetch(API+'/api/v1/auth/users', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail||t('admin_create_error'));
+    document.getElementById('create-user-form').reset();
+    toast(t('admin_created')+': '+data.email, 'success');
+    loadUsers();
+  } catch(err) {
+    toast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>${t('admin_add_btn')}`;
+  }
 }
 
 // ── INIT ──
-// Register PWA service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
+applyTranslations();
+if (checkAuth()) {
+  checkHealth();
+  refreshDashboard();
 }
-checkHealth();
-refreshDashboard();
-setInterval(checkHealth,30000);
+setInterval(checkHealth, 30000);
 </script>
 </body>
 </html>
