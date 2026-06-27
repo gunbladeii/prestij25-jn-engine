@@ -772,25 +772,115 @@ def render_admin():
     st.caption("Urus akaun pengguna sistem.")
 
     db = get_db()
+    current_user_email = st.session_state.user["email"]
 
     col_users, col_add = st.columns([2, 1])
 
     with col_users:
         st.subheader("Senarai Pengguna")
         users = db.execute("SELECT * FROM users ORDER BY created_at DESC").fetchall()
-        if users:
-            user_data = []
-            for u in users:
-                user_data.append({
-                    "Email": u["email"],
-                    "Peranan": ROLE_LABELS.get(u["role"], u["role"]),
-                    "Status": "Aktif" if u["is_active"] else "Tidak Aktif",
-                    "ID": u["id"][:8] + "…",
-                    # Hidden for action
-                })
-            st.dataframe(pd.DataFrame(user_data), use_container_width=True, hide_index=True)
-        else:
+
+        if not users:
             st.info("Tiada pengguna.")
+        else:
+            # Table header
+            hdr = st.columns([3, 2, 1, 1, 1])
+            hdr[0].markdown("**Email**")
+            hdr[1].markdown("**Peranan**")
+            hdr[2].markdown("**Status**")
+            hdr[3].markdown("**Edit**")
+            hdr[4].markdown("**Padam**")
+            st.divider()
+
+            for u in users:
+                is_self = u["email"] == current_user_email
+                row = st.columns([3, 2, 1, 1, 1])
+                status_badge = "🟢 Aktif" if u["is_active"] else "🔴 Tidak Aktif"
+                row[0].markdown(f"<span style='font-size:13px'>{u['email']}</span>", unsafe_allow_html=True)
+                row[1].markdown(ROLE_LABELS.get(u["role"], u["role"]))
+                row[2].markdown(status_badge)
+
+                # Edit button
+                if row[3].button("✏️", key=f"edit_btn_{u['id']}", help="Edit pengguna"):
+                    st.session_state.edit_user_id = u["id"]
+                    st.session_state.pop("delete_user_id", None)
+                    st.rerun()
+
+                # Delete button — cannot delete self
+                if is_self:
+                    row[4].markdown("—", help="Tidak boleh padam akaun sendiri")
+                else:
+                    if row[4].button("🗑️", key=f"del_btn_{u['id']}", help="Padam pengguna"):
+                        st.session_state.delete_user_id = u["id"]
+                        st.session_state.pop("edit_user_id", None)
+                        st.rerun()
+
+        # ── Edit Form ──────────────────────────────────────────────────────
+        edit_id = st.session_state.get("edit_user_id")
+        if edit_id:
+            edit_target = db.execute("SELECT * FROM users WHERE id=?", (edit_id,)).fetchone()
+            if edit_target:
+                st.divider()
+                st.markdown(f"#### ✏️ Edit Pengguna: `{edit_target['email']}`")
+                with st.form("edit_user_form"):
+                    upd_email = st.text_input("Email", value=edit_target["email"])
+                    upd_role = st.selectbox(
+                        "Peranan",
+                        ["penyelaras_jn", "peneraju_sektor", "admin"],
+                        index=["penyelaras_jn", "peneraju_sektor", "admin"].index(edit_target["role"])
+                        if edit_target["role"] in ["penyelaras_jn", "peneraju_sektor", "admin"] else 0
+                    )
+                    upd_active = st.toggle("Akaun Aktif", value=bool(edit_target["is_active"]))
+                    upd_password = st.text_input(
+                        "Kata Laluan Baharu (kosongkan jika tidak tukar)",
+                        type="password", placeholder="Min 6 aksara"
+                    )
+                    c_save, c_cancel = st.columns(2)
+                    save = c_save.form_submit_button("💾 Simpan", type="primary", use_container_width=True)
+                    cancel = c_cancel.form_submit_button("Batal", use_container_width=True)
+
+                if save:
+                    if not upd_email or "@" not in upd_email:
+                        st.error("Format email tidak sah.")
+                    elif upd_password and len(upd_password) < 6:
+                        st.error("Kata laluan min 6 aksara.")
+                    else:
+                        if upd_password:
+                            db.execute(
+                                "UPDATE users SET email=?, role=?, is_active=?, password_hash=? WHERE id=?",
+                                (upd_email, upd_role, int(upd_active), pwd_context.hash(upd_password), edit_id)
+                            )
+                        else:
+                            db.execute(
+                                "UPDATE users SET email=?, role=?, is_active=? WHERE id=?",
+                                (upd_email, upd_role, int(upd_active), edit_id)
+                            )
+                        db.commit()
+                        st.session_state.pop("edit_user_id", None)
+                        st.success(f"✅ Pengguna {upd_email} berjaya dikemaskini!")
+                        st.rerun()
+
+                if cancel:
+                    st.session_state.pop("edit_user_id", None)
+                    st.rerun()
+
+        # ── Delete Confirmation ────────────────────────────────────────────
+        del_id = st.session_state.get("delete_user_id")
+        if del_id:
+            del_target = db.execute("SELECT * FROM users WHERE id=?", (del_id,)).fetchone()
+            if del_target:
+                st.divider()
+                st.warning(f"⚠️ Padam pengguna **{del_target['email']}**? Tindakan ini tidak boleh dibuat asal.")
+                c_confirm, c_cancel = st.columns(2)
+                if c_confirm.button("🗑️ Ya, Padam", type="primary", use_container_width=True, key="confirm_delete"):
+                    db.execute("DELETE FROM users WHERE id=?", (del_id,))
+                    db.commit()
+                    st.session_state.pop("delete_user_id", None)
+                    st.success(f"✅ Pengguna {del_target['email']} dipadam.")
+                    st.rerun()
+                if c_cancel.button("Batal", use_container_width=True, key="cancel_delete"):
+                    st.session_state.pop("delete_user_id", None)
+                    st.rerun()
 
     with col_add:
         st.subheader("Tambah Pengguna")
