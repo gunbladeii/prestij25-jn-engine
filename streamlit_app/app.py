@@ -2032,21 +2032,36 @@ Tiada lajur wajib — sistem akan bagi pilihan untuk map lajur sebelum proses.
         sheet_name     = selected_file["name"]
 
         try:
-            import gspread
-            wb        = gc.open_by_key(sheet_id)
-            wsheets   = wb.worksheets()
-            ws_names  = [w.title for w in wsheets]
-            ws_sel    = st.selectbox("📋 Pilih Tab (Worksheet)", ws_names) if len(wsheets) > 1 else ws_names[0]
-            ws        = wb.worksheet(ws_sel)
+            file_mime = selected_file.get("mimeType", "")
+            _IS_SHEET = file_mime == "application/vnd.google-apps.spreadsheet"
 
-            with st.spinner("Memuatkan data..."):
-                records = ws.get_all_records()
+            with st.spinner("Memuatkan data dari Drive..."):
+                if _IS_SHEET:
+                    # Google Sheets — use gspread
+                    wb       = gc.open_by_key(sheet_id)
+                    wsheets  = wb.worksheets()
+                    ws_names = [w.title for w in wsheets]
+                    ws_sel   = st.selectbox("📋 Pilih Tab (Worksheet)", ws_names) if len(wsheets) > 1 else ws_names[0]
+                    ws       = wb.worksheet(ws_sel)
+                    records  = ws.get_all_records()
+                    if not records:
+                        st.warning("Worksheet ini kosong atau tiada data selepas header row.")
+                        return
+                    df = pd.DataFrame(records)
+                else:
+                    # CSV / Excel — download raw file via Drive API
+                    from googleapiclient.discovery import build as _build
+                    from google.oauth2.service_account import Credentials as _Creds
+                    import io as _io
+                    _info  = _parse_gdrive_secrets()
+                    _creds = _Creds.from_service_account_info(
+                        _info, scopes=["https://www.googleapis.com/auth/drive.readonly"]
+                    )
+                    _svc    = _build("drive", "v3", credentials=_creds, cache_discovery=False)
+                    _content = _svc.files().get_media(fileId=sheet_id).execute()
+                    ws_sel   = sheet_name  # no worksheet concept for CSV
+                    df       = pd.read_csv(_io.BytesIO(_content))
 
-            if not records:
-                st.warning("Worksheet ini kosong atau tiada data selepas header row.")
-                return
-
-            df   = pd.DataFrame(records)
             cols = list(df.columns)
 
             st.markdown(f"**{len(df)} baris** ditemui — pratonton 5 baris pertama:")
@@ -2133,8 +2148,9 @@ Tiada lajur wajib — sistem akan bagi pilihan untuk map lajur sebelum proses.
                         st.dataframe(pd.DataFrame(errors), use_container_width=True, hide_index=True)
 
             with col_last:
-                st.markdown(f"**Sheet:** `{sheet_name}`")
-                st.markdown(f"**Worksheet:** `{ws_sel}`")
+                st.markdown(f"**Fail:** `{sheet_name}`")
+                if _IS_SHEET:
+                    st.markdown(f"**Worksheet:** `{ws_sel}`")
                 st.markdown(f"**Jumlah baris:** `{len(df)}`")
 
         except Exception as e:
