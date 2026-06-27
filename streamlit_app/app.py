@@ -31,6 +31,7 @@ except ImportError:
 from agents.agent_a import run as agent_a_run, AgentAResult
 from agents.agent_b import run as agent_b_run, AgentBResult
 from agents.agent_c import run as agent_c_run, AgentCResult
+from database import JNDatabase
 
 # ---------------------------------------------------------------------------
 # PAGE CONFIG
@@ -984,98 +985,93 @@ def inject_css():
 # DATABASE
 # ---------------------------------------------------------------------------
 @st.cache_resource
-def init_db():
-    db_dir  = os.path.join(os.path.expanduser("~"), ".jn_engine")
-    os.makedirs(db_dir, exist_ok=True)
-    db_path = os.path.join(db_dir, "jn_engine.db")
+def init_db() -> JNDatabase:
+    db = JNDatabase()
 
-    conn = sqlite3.connect(db_path, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA foreign_keys=ON")
+    # DDL — only needed for SQLite (Supabase/PostgreSQL: run supabase_schema.sql once)
+    if db.backend == "sqlite":
+        db.executescript("""
+            CREATE TABLE IF NOT EXISTS users (
+                id              TEXT PRIMARY KEY,
+                email           TEXT UNIQUE NOT NULL,
+                password_hash   TEXT NOT NULL,
+                role            TEXT NOT NULL DEFAULT 'penyelaras_jn',
+                is_active       INTEGER NOT NULL DEFAULT 1,
+                created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+            CREATE TABLE IF NOT EXISTS jn_audit_records (
+                school_id             TEXT PRIMARY KEY,
+                school_name           TEXT NOT NULL,
+                school_type           TEXT NOT NULL,
+                district              TEXT NOT NULL,
+                state                 TEXT NOT NULL,
+                last_audit_date       TEXT NOT NULL,
+                skpmg2_score          REAL NOT NULL,
+                facility_gred         TEXT NOT NULL,
+                canteen_hygiene_score REAL NOT NULL,
+                integrity_risk_index  REAL NOT NULL,
+                created_at            TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+            CREATE TABLE IF NOT EXISTS matrix_payloads (
+                id                 TEXT PRIMARY KEY,
+                source_system_id   TEXT NOT NULL,
+                source_system_name TEXT NOT NULL,
+                source_version     TEXT,
+                school_id          TEXT NOT NULL,
+                raw_text_extracted TEXT,
+                operational_score  REAL,
+                mapped_category    TEXT,
+                severity_level     TEXT,
+                extracted_entities TEXT,
+                received_at        TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+            CREATE TABLE IF NOT EXISTS discrepancy_log (
+                id                         TEXT PRIMARY KEY,
+                case_id                    TEXT UNIQUE NOT NULL,
+                school_id                  TEXT NOT NULL,
+                school_name                TEXT,
+                state                      TEXT,
+                source_system_name         TEXT,
+                audit_score_reference      REAL,
+                operational_score_reported REAL,
+                score_delta                REAL,
+                discrepancy_index          REAL NOT NULL,
+                di_classification          TEXT NOT NULL,
+                flags                      TEXT NOT NULL DEFAULT '[]',
+                anomaly_detected           INTEGER NOT NULL DEFAULT 0,
+                confidence_score           REAL,
+                agent_a_result             TEXT,
+                agent_c_result             TEXT,
+                brief_content              TEXT,
+                timestamp                  TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_dl_case_id ON discrepancy_log(case_id);
+            CREATE INDEX IF NOT EXISTS idx_dl_anomaly  ON discrepancy_log(anomaly_detected);
+        """)
 
-    conn.executescript("""
-        CREATE TABLE IF NOT EXISTS users (
-            id              TEXT PRIMARY KEY,
-            email           TEXT UNIQUE NOT NULL,
-            password_hash   TEXT NOT NULL,
-            role            TEXT NOT NULL DEFAULT 'penyelaras_jn',
-            is_active       INTEGER NOT NULL DEFAULT 1,
-            created_at      TEXT NOT NULL DEFAULT (datetime('now'))
-        );
-        CREATE TABLE IF NOT EXISTS jn_audit_records (
-            school_id             TEXT PRIMARY KEY,
-            school_name           TEXT NOT NULL,
-            school_type           TEXT NOT NULL,
-            district              TEXT NOT NULL,
-            state                 TEXT NOT NULL,
-            last_audit_date       TEXT NOT NULL,
-            skpmg2_score          REAL NOT NULL,
-            facility_gred         TEXT NOT NULL,
-            canteen_hygiene_score REAL NOT NULL,
-            integrity_risk_index  REAL NOT NULL,
-            created_at            TEXT NOT NULL DEFAULT (datetime('now'))
-        );
-        CREATE TABLE IF NOT EXISTS matrix_payloads (
-            id                 TEXT PRIMARY KEY,
-            source_system_id   TEXT NOT NULL,
-            source_system_name TEXT NOT NULL,
-            source_version     TEXT,
-            school_id          TEXT NOT NULL,
-            raw_text_extracted TEXT,
-            operational_score  REAL,
-            mapped_category    TEXT,
-            severity_level     TEXT,
-            extracted_entities TEXT,
-            received_at        TEXT NOT NULL DEFAULT (datetime('now'))
-        );
-        CREATE TABLE IF NOT EXISTS discrepancy_log (
-            id                         TEXT PRIMARY KEY,
-            case_id                    TEXT UNIQUE NOT NULL,
-            school_id                  TEXT NOT NULL,
-            school_name                TEXT,
-            state                      TEXT,
-            source_system_name         TEXT,
-            audit_score_reference      REAL,
-            operational_score_reported REAL,
-            score_delta                REAL,
-            discrepancy_index          REAL NOT NULL,
-            di_classification          TEXT NOT NULL,
-            flags                      TEXT NOT NULL DEFAULT '[]',
-            anomaly_detected           INTEGER NOT NULL DEFAULT 0,
-            confidence_score           REAL,
-            agent_a_result             TEXT,
-            agent_c_result             TEXT,
-            brief_content              TEXT,
-            timestamp                  TEXT NOT NULL DEFAULT (datetime('now'))
-        );
-        CREATE INDEX IF NOT EXISTS idx_dl_case_id ON discrepancy_log(case_id);
-        CREATE INDEX IF NOT EXISTS idx_dl_anomaly  ON discrepancy_log(anomaly_detected);
-    """)
+        audit_data = [
+            ("SKB001","SK Bandar Baru Nilai","SK","Seremban","Negeri Sembilan","2023-03-15",85.50,"A",88.00,0.120),
+            ("SKB002","SK Bukit Jelutong","SK","Shah Alam","Selangor","2022-11-20",72.00,"B",65.00,0.350),
+            ("SMK001","SMK Tun Hussein Onn","SMK","Kuala Lumpur","W.P. Kuala Lumpur","2024-01-10",91.20,"A",92.00,0.080),
+            ("SMK002","SMK Pendang","SMK","Pendang","Kedah","2022-08-05",58.00,"C",45.00,0.680),
+            ("SBP001","Sekolah Berasrama Penuh Integrasi Gombak","SBP","Gombak","Selangor","2023-09-22",94.80,"A",95.50,0.040),
+            ("MRSM001","MRSM Kuala Klawang","MRSM","Jelebu","Negeri Sembilan","2023-06-14",88.30,"A",87.00,0.095),
+            ("SKK001","SK Kluang Utama","SK","Kluang","Johor","2022-05-30",63.50,"C",58.00,0.420),
+        ]
+        db.executemany(
+            "INSERT OR IGNORE INTO jn_audit_records VALUES (?,?,?,?,?,?,?,?,?,?,datetime('now'))",
+            audit_data
+        )
+        hashed = pwd_context.hash(DEFAULT_ADMIN_PASSWORD)
+        db.execute(
+            "INSERT OR IGNORE INTO users (id, email, password_hash, role) VALUES (?,?,?,?)",
+            (str(uuid.uuid4()), DEFAULT_ADMIN_EMAIL, hashed, "admin")
+        )
+        db.commit()
 
-    audit_data = [
-        ("SKB001","SK Bandar Baru Nilai","SK","Seremban","Negeri Sembilan","2023-03-15",85.50,"A",88.00,0.120),
-        ("SKB002","SK Bukit Jelutong","SK","Shah Alam","Selangor","2022-11-20",72.00,"B",65.00,0.350),
-        ("SMK001","SMK Tun Hussein Onn","SMK","Kuala Lumpur","W.P. Kuala Lumpur","2024-01-10",91.20,"A",92.00,0.080),
-        ("SMK002","SMK Pendang","SMK","Pendang","Kedah","2022-08-05",58.00,"C",45.00,0.680),
-        ("SBP001","Sekolah Berasrama Penuh Integrasi Gombak","SBP","Gombak","Selangor","2023-09-22",94.80,"A",95.50,0.040),
-        ("MRSM001","MRSM Kuala Klawang","MRSM","Jelebu","Negeri Sembilan","2023-06-14",88.30,"A",87.00,0.095),
-        ("SKK001","SK Kluang Utama","SK","Kluang","Johor","2022-05-30",63.50,"C",58.00,0.420),
-    ]
-    conn.executemany(
-        "INSERT OR IGNORE INTO jn_audit_records VALUES (?,?,?,?,?,?,?,?,?,?,datetime('now'))",
-        audit_data
-    )
+    return db
 
-    hashed = pwd_context.hash(DEFAULT_ADMIN_PASSWORD)
-    conn.execute(
-        "INSERT OR IGNORE INTO users (id, email, password_hash, role) VALUES (?,?,?,?)",
-        (str(uuid.uuid4()), DEFAULT_ADMIN_EMAIL, hashed, "admin")
-    )
-    conn.commit()
-    return conn
-
-def get_db() -> sqlite3.Connection:
+def get_db() -> JNDatabase:
     if "db_conn" not in st.session_state:
         st.session_state.db_conn = init_db()
     return st.session_state.db_conn
@@ -1235,6 +1231,7 @@ def _nav_btn(label_key: str, page_key: str, role_required=None, tooltip_key: str
     if st.sidebar.button(t(label_key), key=f"nav_{page_key}",
                          use_container_width=True, type=btn_type, help=tip):
         st.session_state.current_page = page_key
+        st.query_params["p"] = page_key  # persist page across refresh
         st.session_state.pop("edit_user_id",   None)
         st.session_state.pop("delete_user_id", None)
         st.rerun()
@@ -1292,8 +1289,8 @@ def _get_gdrive_client():
     except Exception:
         return None
 
-def _list_gdrive_sheets(folder_id: str) -> list:
-    """Return list of {id, name, modifiedTime} for Sheets in the folder."""
+def _list_gdrive_files(folder_id: str) -> list:
+    """Return list of {id, name, modifiedTime, mimeType} for Sheets and CSV files in the folder."""
     try:
         from googleapiclient.discovery import build
         from google.oauth2.service_account import Credentials
@@ -1304,14 +1301,19 @@ def _list_gdrive_sheets(folder_id: str) -> list:
         svc = build("drive", "v3", credentials=creds, cache_discovery=False)
         res = svc.files().list(
             q=(f"'{folder_id}' in parents "
-               "and mimeType='application/vnd.google-apps.spreadsheet' "
+               "and (mimeType='application/vnd.google-apps.spreadsheet' "
+               "or mimeType='text/csv' "
+               "or mimeType='application/vnd.ms-excel') "
                "and trashed=false"),
-            fields="files(id,name,modifiedTime)",
+            fields="files(id,name,modifiedTime,mimeType)",
             orderBy="modifiedTime desc",
         ).execute()
         return res.get("files", [])
     except Exception as exc:
         return [{"_error": str(exc)}]
+
+# Keep old name as alias for any code referencing it
+_list_gdrive_sheets = _list_gdrive_files
 
 # ---------------------------------------------------------------------------
 # LOGIN PAGE
@@ -1391,6 +1393,7 @@ def render_login():
                     user = login_user(email, password)
                     if user:
                         st.session_state.user = user
+                        st.query_params["tok"] = user["token"]  # persist JWT across F5
                         st.rerun()
                     else:
                         st.error(t("login_fail"))
@@ -1528,7 +1531,29 @@ def render_sidebar() -> None:
         if st.sidebar.button(f"🚪 {t('btn_logout')}", use_container_width=True, key="logout_btn"):
             st.session_state.user = None
             st.session_state.pop("db_conn", None)
+            st.query_params.clear()
             st.rerun()
+
+        # ── Auto-refresh toggle ──────────────────────
+        st.sidebar.divider()
+        auto_on = st.sidebar.toggle(
+            "🔄 Auto-Refresh Data",
+            value=st.session_state.get("_auto_refresh", False),
+            key="_auto_refresh",
+            help="Muat semula data secara automatik"
+        )
+        if auto_on:
+            interval_s = st.sidebar.select_slider(
+                "Selang (saat)", options=[30, 60, 120, 300],
+                value=st.session_state.get("_refresh_interval", 60),
+                key="_refresh_interval"
+            )
+            import streamlit.components.v1 as _comp
+            _comp.html(
+                f'<script>setTimeout(function(){{window.location.reload();}},{interval_s * 1000});</script>',
+                height=0
+            )
+            st.sidebar.caption(f"⏱ Refresh setiap {interval_s}s")
 
 # ---------------------------------------------------------------------------
 # DASHBOARD
@@ -1911,8 +1936,8 @@ def _render_gdrive_body():
                         '</div>', unsafe_allow_html=True)
 
         st.markdown("")
-        st.markdown("**📋 Format Sheet Disokong**")
-        st.caption("Google Sheets standard dalam folder Drive yang dikongsi dengan Service Account.")
+        st.markdown("**📋 Format Fail Disokong**")
+        st.caption("Google Sheets (.gsheet) dan CSV yang dimuat naik ke folder Drive dikongsi dengan Service Account.")
         st.markdown("**🔄 Jadual Pull**")
         st.caption("Manual trigger oleh Admin / Penyelaras JN. Setiap kes diproses melalui pipeline Ejen A → B → C.")
         st.markdown(f"**🔗 Folder Drive**")
@@ -1979,21 +2004,32 @@ Tiada lajur wajib — sistem akan bagi pilihan untuk map lajur sebelum proses.
         # ── API connected — show sheets ───────────────────────────────
         st.markdown(f"**📁 Folder:** `{GDRIVE_FOLDER_ID}`")
 
-        with st.spinner("Mendapatkan senarai sheets..."):
-            sheets = _list_gdrive_sheets(GDRIVE_FOLDER_ID)
+        with st.spinner("Mendapatkan senarai fail..."):
+            sheets = _list_gdrive_files(GDRIVE_FOLDER_ID)
 
         if sheets and "_error" in sheets[0]:
             st.error(f"Ralat Drive API: {sheets[0]['_error']}")
             return
 
         if not sheets:
-            st.info("Tiada Google Sheets dijumpai dalam folder ini.")
+            st.info("Tiada fail dijumpai dalam folder ini.")
             return
 
-        sheet_opts = {f"{s['name']}  [{s['modifiedTime'][:10]}]": s["id"] for s in sheets}
-        selected_label = st.selectbox("📊 Pilih Google Sheet untuk diingest", list(sheet_opts.keys()))
-        sheet_id       = sheet_opts[selected_label]
-        sheet_name     = selected_label.split("  [")[0]
+        def _file_icon(mime):
+            if mime == "application/vnd.google-apps.spreadsheet":
+                return "🟢"
+            if "csv" in mime or "excel" in mime:
+                return "📄"
+            return "📁"
+
+        sheet_opts = {
+            f"{_file_icon(s.get('mimeType',''))} {s['name']}  [{s['modifiedTime'][:10]}]": s
+            for s in sheets
+        }
+        selected_label = st.selectbox("📊 Pilih fail untuk diingest", list(sheet_opts.keys()))
+        selected_file  = sheet_opts[selected_label]
+        sheet_id       = selected_file["id"]
+        sheet_name     = selected_file["name"]
 
         try:
             import gspread
@@ -2607,6 +2643,23 @@ def main():
     if "current_page" not in st.session_state: st.session_state.current_page = "dashboard"
     if "cases_tab"    not in st.session_state: st.session_state.cases_tab    = "a"
     if "data_tab"     not in st.session_state: st.session_state.data_tab     = "a"
+
+    # Recover session from JWT in URL query params (survives F5 page refresh)
+    if not st.session_state.get("user"):
+        _tok = st.query_params.get("tok", "")
+        if _tok:
+            _payload = decode_jwt(_tok)
+            if _payload:
+                st.session_state["user"] = {
+                    "email": _payload["sub"],
+                    "role":  _payload["role"],
+                    "token": _tok,
+                }
+                # Restore last active page if present in URL
+                _saved_page = st.query_params.get("p", "")
+                _valid_pages = {"dashboard", "cases", "data_input", "user_management", "system_info"}
+                if _saved_page in _valid_pages:
+                    st.session_state["current_page"] = _saved_page
 
     # Initialise DB
     if "db_conn" not in st.session_state:
