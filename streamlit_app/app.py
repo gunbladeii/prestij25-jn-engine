@@ -64,6 +64,14 @@ DI_COLORS = {
 
 ROLE_KEYS = ["penyelaras_jn", "peneraju_sektor", "admin"]
 
+# Google Drive integration
+GDRIVE_FOLDER_ID   = "1Uum9rN7NnRAheFkGLwt1SDganainncAP"
+GDRIVE_FOLDER_URL  = "https://drive.google.com/drive/folders/1Uum9rN7NnRAheFkGLwt1SDganainncAP"
+GDRIVE_SCOPES      = [
+    "https://www.googleapis.com/auth/spreadsheets.readonly",
+    "https://www.googleapis.com/auth/drive.readonly",
+]
+
 AUDIT_SCHOOLS = [
     "SKB001", "SKB002", "SMK001", "SMK002",
     "SBP001", "MRSM001", "SKK001", "UNKNOWN99"
@@ -146,6 +154,7 @@ _TR = {
         "sub_caption":        "Hantar data melalui payload manual atau muat naik fail (CSV, TXT, DOCX, PDF).",
         "tab_payload":        "📤  Hantar Payload",
         "tab_csv":            "📁  Muat Naik Fail",
+        "tab_gdrive":         "📡  Google Drive API",
         "sub_src_id":         "ID Sistem Sumber",
         "sub_src_name":       "Nama Sistem",
         "sub_school":         "Kod Sekolah",
@@ -345,6 +354,7 @@ _TR = {
         "sub_caption":        "Submit data via manual payload or bulk file upload (CSV, TXT, DOCX, PDF).",
         "tab_payload":        "📤  Submit Payload",
         "tab_csv":            "📁  Upload File",
+        "tab_gdrive":         "📡  Google Drive API",
         "sub_src_id":         "Source System ID",
         "sub_src_name":       "System Name",
         "sub_school":         "School Code",
@@ -1243,6 +1253,59 @@ def _tab_radio(opt_a_key: str, opt_b_key: str, state_key: str) -> str:
     st.session_state[state_key] = new_val
     return new_val
 
+def _tab_radio_n(opt_keys: list, values: list, state_key: str) -> str:
+    """Generalised tab radio supporting N options. Returns the selected value string."""
+    opts    = [t(k) for k in opt_keys]
+    curr    = st.session_state.get(state_key, values[0])
+    idx     = values.index(curr) if curr in values else 0
+    st.markdown('<div class="tab-radio">', unsafe_allow_html=True)
+    chosen  = st.radio("", opts, index=idx, horizontal=True,
+                       label_visibility="collapsed",
+                       key=f"tab_radio_{state_key}")
+    st.markdown("</div>", unsafe_allow_html=True)
+    new_val = values[opts.index(chosen)]
+    st.session_state[state_key] = new_val
+    return new_val
+
+# ---------------------------------------------------------------------------
+# GOOGLE DRIVE HELPERS
+# ---------------------------------------------------------------------------
+def _get_gdrive_client():
+    """Return authenticated gspread client, or None if not configured."""
+    try:
+        import gspread
+        from google.oauth2.service_account import Credentials
+        raw = st.secrets.get("GDRIVE_SERVICE_ACCOUNT", {})
+        info = dict(raw) if raw else {}
+        if not info.get("private_key"):
+            return None
+        creds = Credentials.from_service_account_info(info, scopes=GDRIVE_SCOPES)
+        return gspread.authorize(creds)
+    except Exception:
+        return None
+
+def _list_gdrive_sheets(folder_id: str) -> list:
+    """Return list of {id, name, modifiedTime} for Sheets in the folder."""
+    try:
+        from googleapiclient.discovery import build
+        from google.oauth2.service_account import Credentials
+        raw  = st.secrets.get("GDRIVE_SERVICE_ACCOUNT", {})
+        info = dict(raw) if raw else {}
+        creds = Credentials.from_service_account_info(
+            info, scopes=["https://www.googleapis.com/auth/drive.readonly"]
+        )
+        svc = build("drive", "v3", credentials=creds, cache_discovery=False)
+        res = svc.files().list(
+            q=(f"'{folder_id}' in parents "
+               "and mimeType='application/vnd.google-apps.spreadsheet' "
+               "and trashed=false"),
+            fields="files(id,name,modifiedTime)",
+            orderBy="modifiedTime desc",
+        ).execute()
+        return res.get("files", [])
+    except Exception as exc:
+        return [{"_error": str(exc)}]
+
 # ---------------------------------------------------------------------------
 # LOGIN PAGE
 # ---------------------------------------------------------------------------
@@ -1526,20 +1589,26 @@ def render_dashboard():
         st.bar_chart(pd.DataFrame({"n": dist}), use_container_width=True)
 
 # ---------------------------------------------------------------------------
-# DATA SUBMISSION (Hantar Payload + Muat Naik CSV)
+# DATA SUBMISSION (Hantar Payload + Muat Naik Fail + Google Drive API)
 # ---------------------------------------------------------------------------
 def render_data_input():
     section_header(t("sub_section"))
     st.title(t("sub_title"))
     st.caption(t("sub_caption"))
 
-    tab = _tab_radio("tab_payload", "tab_csv", "data_tab")
+    tab = _tab_radio_n(
+        ["tab_payload", "tab_csv", "tab_gdrive"],
+        ["a", "b", "c"],
+        "data_tab",
+    )
 
     st.divider()
     if tab == "a":
         _render_ingest_body()
-    else:
+    elif tab == "b":
         _render_csv_body()
+    else:
+        _render_gdrive_body()
 
 def _render_ingest_body():
     if not require_role("admin", "penyelaras_jn"):
@@ -1804,6 +1873,230 @@ def _render_csv_body():
         st.divider()
         st.markdown(f"**{t('csv_access')}**")
         st.markdown(f"- {t('role_admin')}\n- {t('role_penyelaras')}")
+
+# ---------------------------------------------------------------------------
+# GOOGLE DRIVE API INGEST
+# ---------------------------------------------------------------------------
+def _render_gdrive_body():
+    if not require_role("admin", "penyelaras_jn"):
+        st.warning(t("sub_no_access"))
+        return
+
+    gc = _get_gdrive_client()
+
+    col_main, col_info = st.columns([2, 1])
+
+    with col_info:
+        if gc:
+            st.markdown('<div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);'
+                        'border-radius:10px;padding:14px 16px">'
+                        '<div style="color:#10B981;font-weight:700;font-size:12px;margin-bottom:8px">'
+                        '&#9679; GOOGLE DRIVE API — AKTIF</div>'
+                        f'<div style="font-size:11px;color:#64748B;margin-bottom:4px">Folder ID: <code>{GDRIVE_FOLDER_ID[:20]}...</code></div>'
+                        '<div style="font-size:11px;color:#64748B">Skop: Spreadsheets (baca sahaja)</div>'
+                        '</div>', unsafe_allow_html=True)
+        else:
+            st.markdown('<div style="background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.25);'
+                        'border-radius:10px;padding:14px 16px">'
+                        '<div style="color:#EAB308;font-weight:700;font-size:12px;margin-bottom:6px">'
+                        '&#9711; BELUM DIKONFIGURASI</div>'
+                        '<div style="font-size:11px;color:#64748B">Ikuti panduan setup di bawah.</div>'
+                        '</div>', unsafe_allow_html=True)
+
+        st.markdown("")
+        st.markdown("**📋 Format Sheet Disokong**")
+        st.caption("Google Sheets standard dalam folder Drive yang dikongsi dengan Service Account.")
+        st.markdown("**🔄 Jadual Pull**")
+        st.caption("Manual trigger oleh Admin / Penyelaras JN. Setiap kes diproses melalui pipeline Ejen A → B → C.")
+        st.markdown(f"**🔗 Folder Drive**")
+        st.markdown(f"[Buka Folder ↗]({GDRIVE_FOLDER_URL})")
+
+    with col_main:
+        if not gc:
+            # ── Setup guide ──────────────────────────────────────────
+            st.warning("⚙️ Google Drive API belum dikonfigurasi. Ikuti langkah berikut:")
+
+            with st.expander("**Langkah 1 — Cipta Google Cloud Project & Service Account**", expanded=True):
+                st.markdown("""
+1. Pergi ke [Google Cloud Console](https://console.cloud.google.com)
+2. Buat project baru atau pilih project sedia ada
+3. Aktifkan **Google Drive API** dan **Google Sheets API**:
+   - Menu kiri → *APIs & Services* → *Library*
+   - Cari "Google Drive API" → Enable
+   - Cari "Google Sheets API" → Enable
+4. Buat Service Account:
+   - *APIs & Services* → *Credentials* → *Create Credentials* → *Service Account*
+   - Beri nama (contoh: `jn-resolusi-reader`)
+   - Role: *Viewer* sudah cukup
+5. Jana JSON key:
+   - Klik Service Account → *Keys* → *Add Key* → *Create new key* → **JSON**
+   - Simpan fail JSON ini
+                """)
+
+            with st.expander("**Langkah 2 — Kongsi Google Drive Folder dengan Service Account**"):
+                st.markdown("""
+1. Buka fail JSON — salin nilai `client_email` (contoh: `jn-resolusi-reader@project.iam.gserviceaccount.com`)
+2. Pergi ke Google Drive folder ini: [Buka Folder](%s)
+3. Klik kanan folder → **Share** → tampal email Service Account → Role: **Viewer** → Done
+                """ % GDRIVE_FOLDER_URL)
+
+            with st.expander("**Langkah 3 — Masukkan Credentials ke Streamlit Secrets**"):
+                st.markdown("Pergi ke **Streamlit Cloud** → app → ⋮ → **Settings** → **Secrets** dan tampal format berikut:")
+                st.code("""[GDRIVE_SERVICE_ACCOUNT]
+type = "service_account"
+project_id = "your-project-id"
+private_key_id = "abc123"
+private_key = \"\"\"-----BEGIN RSA PRIVATE KEY-----
+...isi private key dari fail JSON...
+-----END RSA PRIVATE KEY-----\"\"\"
+client_email = "jn-resolusi-reader@project.iam.gserviceaccount.com"
+client_id = "123456789"
+auth_uri = "https://accounts.google.com/o/oauth2/auth"
+token_uri = "https://oauth2.googleapis.com/token"
+""", language="toml")
+                st.info("Selepas simpan secrets, reboot app dari Streamlit Cloud dashboard.")
+
+            with st.expander("**Langkah 4 — Format Standard Google Sheet**"):
+                st.markdown("""
+Sheet perlu ada header row. Lajur yang disyorkan (nama fleksibel — boleh map semasa ingest):
+
+| school_id | operational_score | report_text | source_system |
+|-----------|-------------------|-------------|---------------|
+| SMK002    | 92.0              | Laporan...  | SISTEM-A      |
+| SKB001    | 78.5              | Kemudahan...| SISTEM-B      |
+
+Tiada lajur wajib — sistem akan bagi pilihan untuk map lajur sebelum proses.
+                """)
+            return
+
+        # ── API connected — show sheets ───────────────────────────────
+        st.markdown(f"**📁 Folder:** `{GDRIVE_FOLDER_ID}`")
+
+        with st.spinner("Mendapatkan senarai sheets..."):
+            sheets = _list_gdrive_sheets(GDRIVE_FOLDER_ID)
+
+        if sheets and "_error" in sheets[0]:
+            st.error(f"Ralat Drive API: {sheets[0]['_error']}")
+            return
+
+        if not sheets:
+            st.info("Tiada Google Sheets dijumpai dalam folder ini.")
+            return
+
+        sheet_opts = {f"{s['name']}  [{s['modifiedTime'][:10]}]": s["id"] for s in sheets}
+        selected_label = st.selectbox("📊 Pilih Google Sheet untuk diingest", list(sheet_opts.keys()))
+        sheet_id       = sheet_opts[selected_label]
+        sheet_name     = selected_label.split("  [")[0]
+
+        try:
+            import gspread
+            wb        = gc.open_by_key(sheet_id)
+            wsheets   = wb.worksheets()
+            ws_names  = [w.title for w in wsheets]
+            ws_sel    = st.selectbox("📋 Pilih Tab (Worksheet)", ws_names) if len(wsheets) > 1 else ws_names[0]
+            ws        = wb.worksheet(ws_sel)
+
+            with st.spinner("Memuatkan data..."):
+                records = ws.get_all_records()
+
+            if not records:
+                st.warning("Worksheet ini kosong atau tiada data selepas header row.")
+                return
+
+            df   = pd.DataFrame(records)
+            cols = list(df.columns)
+
+            st.markdown(f"**{len(df)} baris** ditemui — pratonton 5 baris pertama:")
+            st.dataframe(df.head(5), use_container_width=True, hide_index=True)
+
+            st.divider()
+            st.markdown("**📋 Padankan Lajur ke Medan Sistem**")
+
+            none_opt  = "(tiada / guna lalai)"
+            col_opts  = [none_opt] + cols
+
+            def _best(kws):
+                for kw in kws:
+                    for c in cols:
+                        if kw in c.lower():
+                            return c
+                return none_opt
+
+            mc1, mc2, mc3, mc4 = st.columns(4)
+            school_col  = mc1.selectbox("Kod Sekolah *", col_opts,
+                                        index=col_opts.index(_best(["school","sekolah","kod","id"])))
+            score_col   = mc2.selectbox("Skor Operasi *", col_opts,
+                                        index=col_opts.index(_best(["score","skor","op","reported","nilai"])))
+            text_col    = mc3.selectbox("Teks Laporan", col_opts,
+                                        index=col_opts.index(_best(["text","laporan","report","notes","deskripsi"])))
+            src_col     = mc4.selectbox("Nama Sistem Sumber", col_opts,
+                                        index=col_opts.index(_best(["source","sistem","system","sumber"])))
+            default_score = st.slider("Skor lalai (jika tiada lajur skor)", 0.0, 100.0, 70.0, 0.5)
+
+            if school_col == none_opt or score_col == none_opt:
+                st.warning("⚠️ Sila pilih sekurang-kurangnya lajur **Kod Sekolah** dan **Skor Operasi**.")
+                return
+
+            # Preview mapped rows
+            st.divider()
+            st.markdown("**📊 Pratonton Padanan (5 baris pertama)**")
+            prev_rows = []
+            for _, row in df.head(5).iterrows():
+                sch = str(row[school_col]).strip()
+                try:    scr = float(row[score_col])
+                except: scr = default_score
+                txt  = str(row[text_col])[:60] + "…" if text_col != none_opt else "(auto dari semua lajur)"
+                src  = str(row[src_col]).strip() if src_col != none_opt else sheet_name
+                prev_rows.append({"Sekolah": sch, "Skor": f"{scr:.1f}", "Sistem": src, "Teks": txt})
+            st.dataframe(pd.DataFrame(prev_rows), use_container_width=True, hide_index=True)
+
+            st.divider()
+            col_btn, col_last = st.columns([2, 1])
+            with col_btn:
+                if st.button("🚀 Ingest Semua Baris ke Enjin", type="primary", use_container_width=True):
+                    results, errors = [], []
+                    prog   = st.progress(0)
+                    status = st.empty()
+                    for i, row in df.iterrows():
+                        try:
+                            sch = str(row[school_col]).strip() or "UNKNOWN99"
+                            if sch.lower() in ("nan", "none", ""):
+                                sch = "UNKNOWN99"
+                            try:    scr = float(row[score_col])
+                            except: scr = default_score
+                            if text_col != none_opt:
+                                txt = str(row[text_col])
+                            else:
+                                txt = "; ".join(f"{c}: {row[c]}" for c in cols if pd.notna(row.get(c)))
+                            src = str(row[src_col]).strip() if src_col != none_opt else sheet_name
+                            res = run_agent_pipeline(sch, f"GDRIVE-{i+1:04d}", src, txt, scr)
+                            results.append({
+                                "Baris": i+1, "Sekolah": sch, "Skor Op": f"{scr:.1f}",
+                                "DI": f"{res['discrepancy_index']:.4f}",
+                                "Klasifikasi": res["di_classification"].replace("_"," "),
+                                "ID Kes": res["case_id"],
+                            })
+                        except Exception as e:
+                            errors.append({"Baris": i+1, "Ralat": str(e)})
+                        prog.progress((i+1) / len(df))
+                        status.text(f"Memproses {i+1}/{len(df)}...")
+
+                    prog.empty(); status.empty()
+                    if results:
+                        st.success(f"✅ {len(results)} baris berjaya diingest melalui Ejen A → B → C")
+                        st.dataframe(pd.DataFrame(results), use_container_width=True, hide_index=True)
+                    if errors:
+                        st.error(f"❌ {len(errors)} ralat semasa pemprosesan")
+                        st.dataframe(pd.DataFrame(errors), use_container_width=True, hide_index=True)
+
+            with col_last:
+                st.markdown(f"**Sheet:** `{sheet_name}`")
+                st.markdown(f"**Worksheet:** `{ws_sel}`")
+                st.markdown(f"**Jumlah baris:** `{len(df)}`")
+
+        except Exception as e:
+            st.error(f"Ralat semasa membaca Google Sheet: {str(e)}")
+
 
 # ---------------------------------------------------------------------------
 # CASES & BRIEF (combined)
@@ -2096,9 +2389,9 @@ def _render_brief_body():
                 f'<div style="font-size:11px;color:#64748B;margin-bottom:16px">{_footer_note}</div>'
                 '<div class="directive-sig-block">'
                 '<div class="directive-sig-line"></div>'
-                '<div class="directive-sig-name">PENGARAH JEMAAH NAZIR</div>'
+                '<div class="directive-sig-name">Ketua Nazir Sekolah</div>'
                 '<div class="directive-sig-title">Kementerian Pendidikan Malaysia</div>'
-                '<div class="directive-sig-title" style="margin-top:4px">PRESTIJ-25 | JN Resolusi AI Engine</div>'
+                '<div class="directive-sig-title" style="margin-top:4px">JN Resolusi AI Engine</div>'
                 '</div></div></div>'
             )
             st.markdown(_doc, unsafe_allow_html=True)
