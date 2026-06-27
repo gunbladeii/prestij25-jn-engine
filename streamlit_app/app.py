@@ -176,6 +176,15 @@ _TR = {
         "csv_no_access":      "Anda tiada akses untuk muat naik fail.",
         "csv_format":         "Format CSV",
         "csv_access":         "Akses",
+        "csv_map_title":      "📋 Langkah 1 — Padankan Lajur CSV",
+        "csv_map_school":     "Lajur → Kod Sekolah",
+        "csv_map_score":      "Lajur → Skor Operasi",
+        "csv_map_text":       "Lajur → Teks Laporan (pilihan)",
+        "csv_map_none":       "(tiada / guna lalai)",
+        "csv_map_preview_title": "📊 Langkah 2 — Semak Pratonton Sebelum Hantar",
+        "csv_map_confirm":    "✅ Sahkan & Hantar ke Enjin",
+        "csv_map_warn":       "⚠️ Sila pilih lajur sekolah dan skor sebelum meneruskan.",
+        "csv_map_default_score": "Skor lalai (jika tiada lajur skor)",
         "file_doc_info":      "📄 Fail teks diekstrak sebagai **1 kes**. Lengkapi butiran di bawah sebelum hantar.",
         "file_doc_school":    "Kod Sekolah",
         "file_doc_score":     "Skor Operasi",
@@ -359,6 +368,15 @@ _TR = {
         "csv_no_access":      "You do not have access to upload files.",
         "csv_format":         "CSV Format",
         "csv_access":         "Access",
+        "csv_map_title":      "📋 Step 1 — Map CSV Columns",
+        "csv_map_school":     "Column → School Code",
+        "csv_map_score":      "Column → Operational Score",
+        "csv_map_text":       "Column → Report Text (optional)",
+        "csv_map_none":       "(none / use default)",
+        "csv_map_preview_title": "📊 Step 2 — Review Before Submitting",
+        "csv_map_confirm":    "✅ Confirm & Submit to Engine",
+        "csv_map_warn":       "⚠️ Please select a school column and a score column before continuing.",
+        "csv_map_default_score": "Default score (if no score column)",
         "file_doc_info":      "📄 Text extracted as **1 case**. Complete the details below before submitting.",
         "file_doc_school":    "School Code",
         "file_doc_score":     "Operational Score",
@@ -1230,29 +1248,82 @@ def _render_csv_body():
         if uploaded:
             fname = uploaded.name.lower()
 
-            # ---- CSV: multi-row → multi-case (original behaviour) ----
+            # ---- CSV: column mapper → preview → confirm → process ----
             if fname.endswith(".csv"):
                 df = pd.read_csv(uploaded)
-                st.markdown(f"**{t('csv_preview')}** — {len(df)} {t('csv_rows')}")
-                st.dataframe(df.head(), use_container_width=True, hide_index=True)
+                cols = list(df.columns)
+                none_opt = t("csv_map_none")
+                col_opts = [none_opt] + cols
 
-                if st.button(t("csv_process"), type="primary", use_container_width=True):
+                st.markdown(f"**{t('csv_preview')}** — {len(df)} {t('csv_rows')}")
+                st.dataframe(df.head(5), use_container_width=True, hide_index=True)
+                st.divider()
+
+                st.markdown(f"**{t('csv_map_title')}**")
+                mc1, mc2, mc3 = st.columns(3)
+
+                # auto-detect sensible defaults
+                def _best(keywords):
+                    for kw in keywords:
+                        for c in cols:
+                            if kw in c.lower():
+                                return c
+                    return none_opt
+
+                school_col  = mc1.selectbox(t("csv_map_school"), col_opts,
+                                            index=col_opts.index(_best(["school","sekolah","kod","id"])))
+                score_col   = mc2.selectbox(t("csv_map_score"), col_opts,
+                                            index=col_opts.index(_best(["score","skor","reported","op","math","reading","writing"])))
+                text_col    = mc3.selectbox(t("csv_map_text"), col_opts,
+                                            index=col_opts.index(_best(["text","laporan","report","notes","description","komen"])))
+                default_score = st.slider(t("csv_map_default_score"), 0.0, 100.0, 70.0, 0.5)
+
+                # ---- Step 2: preview mapped data ----
+                st.divider()
+                st.markdown(f"**{t('csv_map_preview_title')}**")
+
+                preview_rows = []
+                for _, row in df.head(5).iterrows():
+                    sch  = str(row[school_col]) if school_col != none_opt else "UNKNOWN99"
+                    try:
+                        scr = float(row[score_col]) if score_col != none_opt else default_score
+                    except (ValueError, TypeError):
+                        scr = default_score
+                    txt_preview = str(row[text_col])[:60] + "…" if text_col != none_opt else "(auto dari semua lajur)"
+                    preview_rows.append({"Sekolah": sch, "Skor Op": f"{scr:.1f}", "Teks": txt_preview})
+
+                st.dataframe(pd.DataFrame(preview_rows), use_container_width=True, hide_index=True)
+                st.caption(f"Pratonton 5 baris pertama sahaja — {len(df)} baris akan diproses.")
+
+                # ---- Step 3: confirm button ----
+                st.divider()
+                if st.button(t("csv_map_confirm"), type="primary", use_container_width=True):
                     results, errors = [], []
                     progress = st.progress(0)
                     status   = st.empty()
 
                     for i, row in df.iterrows():
                         try:
-                            school = str(row.get("school", "UNKNOWN99"))
-                            rep_cols = [c for c in df.columns if "_reported" in str(c)]
-                            vals     = [float(row[c]) for c in rep_cols if pd.notna(row.get(c))]
-                            op_score = sum(vals) / len(vals) if vals else 50.0
-                            raw_parts = [f"{c}: {row[c]}" for c in df.columns if c != "school" and pd.notna(row.get(c))]
-                            raw_text  = "; ".join(raw_parts[:5])
-                            result = run_agent_pipeline(school, f"CSV-UPLOAD-{i+1:04d}", "CSV Bulk Upload", raw_text, op_score)
+                            school = str(row[school_col]).strip() if school_col != none_opt else "UNKNOWN99"
+                            if not school or school.lower() in ("nan","none",""):
+                                school = "UNKNOWN99"
+
+                            try:
+                                op_score = float(row[score_col]) if score_col != none_opt else default_score
+                            except (ValueError, TypeError):
+                                op_score = default_score
+
+                            if text_col != none_opt:
+                                raw_text = str(row[text_col])
+                            else:
+                                raw_parts = [f"{c}: {row[c]}" for c in df.columns if pd.notna(row.get(c))]
+                                raw_text  = "; ".join(raw_parts[:8])
+
+                            result = run_agent_pipeline(school, f"CSV-{i+1:04d}", "CSV Bulk Upload", raw_text, op_score)
                             results.append({"Baris": i+1, "Sekolah": school,
                                             "Skor Op": f"{op_score:.1f}",
                                             "Skor DI": f"{result['discrepancy_index']:.4f}",
+                                            "Klasifikasi": result["di_classification"].replace("_"," "),
                                             "ID Kes": result["case_id"]})
                         except Exception as e:
                             errors.append({"Baris": i+1, "Ralat": str(e)})
@@ -1301,12 +1372,11 @@ def _render_csv_body():
 
     with col_info:
         st.markdown(f"**{t('csv_format')}**")
-        st.code("school,cleanliness_reported,cleanliness_actual,\nSMK002,90,28,85,30", language=None)
-        st.caption("Op Score = avg of *_reported columns")
-        st.caption("DI = |Audit − Op| / 100")
+        st.caption("CSV — setiap baris = 1 kes. Pilih lajur sendiri.")
+        st.code("school_id, op_score, report\nSMK002, 92, Laporan buli...\nSKB001, 78, Kemudahan rosak...", language=None)
         st.divider()
         st.markdown("**TXT / DOCX / PDF**")
-        st.caption("Whole file → 1 case. Agent A extracts entities from the text.")
+        st.caption("Seluruh fail = 1 kes. Isi maklumat sekolah sebelum hantar.")
         st.divider()
         st.markdown(f"**{t('csv_access')}**")
         st.markdown(f"- {t('role_admin')}\n- {t('role_penyelaras')}")
