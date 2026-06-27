@@ -2909,58 +2909,201 @@ def render_admin():
 # ---------------------------------------------------------------------------
 def render_system():
     section_header(t("sys_section"))
-    st.title(t("sys_title"))
-    st.caption(t("sys_caption"))
+    st.title("JN Resolusi")
+    st.caption("Platform Kecerdasan Buatan untuk mengesahkan keputusan pemeriksaan Jemaah Nazir sebelum sebarang tindakan disyorkan kepada YB Menteri Pendidikan.")
 
-    c1, c2 = st.columns(2)
-
-    with c1:
-        st.subheader(t("sys_arch"))
-        for title, key in [
-            ("**Ejen A** — Semantic Ingestion & Mapping",     "tip_agent_a"),
-            ("**Ejen B** — Cross-Examination & Anomaly",      "tip_agent_b"),
-            ("**Ejen C** — Executive Briefing & Policy",      "tip_agent_c"),
-        ]:
-            with st.container():
-                st.markdown(title)
-                st.caption(t(key))
-                st.markdown("")
-
-    with c2:
-        st.subheader(t("sys_stack"))
-        st.markdown("""
-        **Backend** — Python 3.9+ / Streamlit
-        **Database** — SQLite (`~/.jn_engine/jn_engine.db`)
-        **Auth** — JWT (python-jose) + sha256_crypt (passlib)
-        **Deploy** — Streamlit Cloud (auto-deploy on push)
-        """)
+    # ── OBJEKTIF ─────────────────────────────────────────────────────────
+    st.markdown("<div style='margin-top:8px'></div>", unsafe_allow_html=True)
+    st.markdown("""<div style='background:rgba(56,189,248,0.07);border-left:3px solid #38BDF8;
+padding:16px 20px;border-radius:0 6px 6px 0;margin-bottom:4px'>
+<div style='font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;
+color:#38BDF8;margin-bottom:6px'>Kenapa Sistem Ini Diperlukan</div>
+<div style='font-size:14px;color:#CBD5E1;line-height:1.65'>
+Sebelum ini, tiada mekanisme untuk mengesahkan sama ada laporan dari luar — aduan, data sistem KPM,
+laporan lapangan — selari dengan apa yang Jemaah Nazir sendiri telah dapati semasa pemeriksaan sebenar.
+Keputusan kepada YB Menteri boleh dibuat berdasarkan maklumat yang tidak tepat atau telah dimanipulasi.
+<br><br>
+<strong style='color:#F1F5F9'>JN Resolusi menyelesaikan masalah ini</strong> dengan membandingkan kedua-dua sumber secara automatik
+menggunakan AI, dan hanya mengeluarkan syor apabila perbezaan dapat dibuktikan dengan data.
+</div>
+</div>""", unsafe_allow_html=True)
 
     st.divider()
-    st.subheader(t("sys_deploy"))
-    st.markdown("""
-    🚀 Dijalankan di **Streamlit Cloud** — satu platform untuk backend + frontend.
 
-    | Layer | Platform | URL |
-    |-------|----------|-----|
-    | App (BE+FE+DB) | Streamlit Cloud | `prestij25-jn-engine.streamlit.app` |
-    | Source | GitHub | `gunbladeii/prestij25-jn-engine` (`main`) |
-    """)
+    # ── DUA SISI ──────────────────────────────────────────────────────────
+    st.subheader("Dua Sumber Data, Satu Keputusan")
+    st.caption("Sistem membandingkan apa yang JN dapati (Sisi A) berbanding apa yang dilaporkan oleh sumber luar (Sisi B).")
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("""<div style='border-top:3px solid #0C9980;background:rgba(12,153,128,0.07);
+padding:18px 16px;border-radius:0 0 6px 6px;height:100%'>
+<div style='font-size:9px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;
+color:#0C9980;margin-bottom:8px'>SISI A — Kebenaran Rujukan</div>
+<div style='font-size:14px;font-weight:700;color:#F1F5F9;margin-bottom:12px'>Dapatan Jemaah Nazir</div>
+<div style='font-size:12.5px;color:#94A3B8;line-height:1.6'>
+Rekod pemeriksaan fizikal oleh pegawai JN yang terlatih:<br><br>
+• <strong style='color:#CBD5E1'>Pemeriksaan (SKPMG2)</strong> — skor kualiti sekolah semasa lawatan fizikal<br>
+• <strong style='color:#CBD5E1'>SK@S</strong> — Standard Kualiti @ Sekolah, penilaian kendiri sekolah yang divalidasi JN<br>
+• <strong style='color:#CBD5E1'>SKPK</strong> — audit pengurusan dan kepimpinan sekolah
+</div>
+</div>""", unsafe_allow_html=True)
+
+    with col_b:
+        st.markdown("""<div style='border-top:3px solid #C97206;background:rgba(201,114,6,0.07);
+padding:18px 16px;border-radius:0 0 6px 6px;height:100%'>
+<div style='font-size:9px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;
+color:#C97206;margin-bottom:8px'>SISI B — Cabaran Luar</div>
+<div style='font-size:14px;font-weight:700;color:#F1F5F9;margin-bottom:12px'>Data dari Sumber Luar</div>
+<div style='font-size:12.5px;color:#94A3B8;line-height:1.6'>
+Maklumat yang masuk dari pelbagai saluran:<br><br>
+• <strong style='color:#CBD5E1'>Aduan awam &amp; dalaman</strong> — laporan ibu bapa, guru, staf dan orang awam<br>
+• <strong style='color:#CBD5E1'>Sistem KPM</strong> — data operasi dari EMIS, APDM, SISPAA<br>
+• <strong style='color:#CBD5E1'>Laporan lapangan &amp; CSV</strong> — data dari PPD, EMISONLINE atau muat naik manual
+</div>
+</div>""", unsafe_allow_html=True)
 
     st.divider()
-    st.subheader("DI Classification Thresholds")
-    for di_range, cls, color in [
-        ("≥ 0.75", "EXTREME DISCREPANCY",  "#C41E3A"),
-        ("≥ 0.50", "SEVERE DISCREPANCY",   "#C2410C"),
-        ("≥ 0.25", "MODERATE DISCREPANCY", "#B45309"),
-        ("≥ 0.10", "MINOR DISCREPANCY",    "#1D4ED8"),
-        ("< 0.10", "DATA ALIGNED",         "#0F6B3C"),
+
+    # ── 3 EJEN ────────────────────────────────────────────────────────────
+    st.subheader("Bagaimana AI Bekerja — 3 Ejen Berurutan")
+    st.caption("Setiap laporan yang masuk diproses secara automatik melalui tiga peringkat AI sebelum syor dihasilkan.")
+
+    ag1, ag2, ag3 = st.columns(3)
+    for col, agent_id, role, analogy, desc, output_lines in [
+        (ag1, "EJEN A", "Pembaca & Pengkelas",
+         "\"Seperti pegawai yang baca dan faham laporan\"",
+         "Baca laporan dari Sisi B. Kenal pasti isu apa, sekolah mana, dan serius ke tidak. Jana peta kategori dan tahap keterukan.",
+         ["→ Kategori isu", "→ Tahap keterukan", "→ Kod sekolah"]),
+        (ag2, "EJEN B", "Pengira & Pengesan",
+         "\"Seperti juruaudit yang bandingkan dua set rekod\"",
+         "Ambil dapatan JN untuk sekolah berkenaan. Kira Discrepancy Index (DI) — sejauh mana laporan luar berbeza dari apa JN dapati.",
+         ["→ Skor DI [0.0 – 1.0]", "→ Bendera risiko", "→ Anomali: Ya / Tidak"]),
+        (ag3, "EJEN C", "Penulis Syor",
+         "\"Seperti penasihat yang sediakan kertas dasar\"",
+         "Jana cadangan tindakan spesifik. Nyatakan dapatan JN mana yang terlibat, bukti apa, dan apa tindakan yang perlu diambil.",
+         ["→ Arahan eksekutif", "→ Cadangan polisi", "→ Asas undang-undang"]),
     ]:
+        output_html = "<br>".join(output_lines)
+        col.markdown(f"""<div style='background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+padding:16px 14px;border-radius:6px;height:100%'>
+<div style='font-size:9px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;
+color:#38BDF8;margin-bottom:5px'>{agent_id}</div>
+<div style='font-size:14px;font-weight:800;color:#F1F5F9;margin-bottom:4px'>{role}</div>
+<div style='font-size:11px;font-style:italic;color:rgba(255,255,255,0.35);margin-bottom:10px'>{analogy}</div>
+<div style='font-size:12px;color:#94A3B8;line-height:1.55;margin-bottom:12px'>{desc}</div>
+<div style='padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);
+font-size:10.5px;font-family:monospace;color:#0C9980;line-height:1.8'>{output_html}</div>
+</div>""", unsafe_allow_html=True)
+
+    st.divider()
+
+    # ── IMPAK ─────────────────────────────────────────────────────────────
+    st.subheader("Impak kepada Kementerian")
+    st.caption("Bukan sekadar sistem laporan — JN Resolusi mengubah cara keputusan dibuat di peringkat kementerian.")
+
+    i1, i2, i3 = st.columns(3)
+    for col, icon, title, desc, border_color in [
+        (i1, "✓", "Keputusan Berasaskan Bukti, Bukan Andaian",
+         "Setiap syor disertakan dengan nombor DI, dapatan JN yang dirujuk, dan sumber data yang dibandingkan. Tiada keputusan dibuat secara buta.",
+         "#0C9980"),
+        (i2, "⚑", "Penyelewengan Data Dikesan Sebelum Keputusan Dibuat",
+         "Sistem mengesan secara automatik apabila skor yang dilaporkan jauh berbeza dari dapatan JN sebenar — bukan selepas tindakan diambil, tetapi sebelumnya.",
+         "#C97206"),
+        (i3, "⏎", "Setiap Syor Boleh Ditelusuri Semula",
+         "Log audit lengkap menyimpan semua kes, dapatan, dan syor. Jika keputusan dipersoalkan, rekod lengkap tersedia untuk semakan semula.",
+         "#1A3A5C"),
+    ]:
+        col.markdown(f"""<div style='background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+border-top:3px solid {border_color};padding:18px 16px;border-radius:0 0 6px 6px;height:100%'>
+<div style='font-size:32px;font-weight:900;color:{border_color};line-height:1;margin-bottom:10px'>{icon}</div>
+<div style='font-size:13px;font-weight:700;color:#F1F5F9;margin-bottom:8px;line-height:1.3'>{title}</div>
+<div style='font-size:12px;color:#6B8BA8;line-height:1.55'>{desc}</div>
+</div>""", unsafe_allow_html=True)
+
+    # Early Warning card — full width
+    st.markdown("<div style='margin-top:10px'></div>", unsafe_allow_html=True)
+    st.markdown("""<div style='background:rgba(12,28,48,0.9);border:1px solid rgba(245,158,11,0.25);
+border-top:3px solid #F59E0B;padding:24px 28px;border-radius:0 0 8px 8px;
+display:grid;gap:0'>
+<div style='display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap'>
+<div style='min-width:160px'>
+<div style='font-size:8.5px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;
+background:rgba(245,158,11,0.15);color:#FBB040;padding:3px 9px;display:inline-block;
+border:1px solid rgba(245,158,11,0.25);margin-bottom:10px'>Keupayaan Baharu</div>
+<div style='font-size:28px;margin-bottom:8px'>🔔</div>
+<div style='font-size:15px;font-weight:800;color:#fff;line-height:1.25'>Sistem Amaran Awal Sebelum Pemeriksaan JN Dirancang</div>
+</div>
+<div style='flex:1;min-width:240px'>
+<div style='font-size:13.5px;color:rgba(255,255,255,0.80);line-height:1.55;margin-bottom:10px'>
+JN Resolusi bukan hanya bertindak balas — ia <strong style='color:#FBB040'>membantu JN merancang ke mana perlu pergi seterusnya.</strong>
+</div>
+<div style='font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;margin-bottom:14px'>
+Berdasarkan pola DI yang terkumpul, sistem dapat mengenal pasti sekolah yang menunjukkan tanda-tanda ketidakselarasan data
+<em>sebelum</em> mana-mana pemeriksaan fizikal dijadualkan.
+</div>
+<div style='display:flex;flex-direction:column;gap:8px'>
+<div style='display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.70)'>
+<span style='color:#F59E0B;margin-top:2px;flex-shrink:0'>●</span>
+<span><strong style='color:#fff'>Keutamaan pemeriksaan lebih tepat</strong> — JN fokus kepada sekolah berisiko tinggi, bukan berdasarkan giliran rutin semata-mata</span>
+</div>
+<div style='display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.70)'>
+<span style='color:#F59E0B;margin-top:2px;flex-shrink:0'>●</span>
+<span><strong style='color:#fff'>Bukti pra-pemeriksaan tersedia</strong> — pegawai JN tiba dengan maklumat DI dan bendera risiko, bukan dengan tangan kosong</span>
+</div>
+<div style='display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.70)'>
+<span style='color:#F59E0B;margin-top:2px;flex-shrink:0'>●</span>
+<span><strong style='color:#fff'>Tindakan pencegahan lebih awal</strong> — sekolah yang menunjukkan anomali boleh diberi intervensi sebelum masalah merebak ke peringkat kritikal</span>
+</div>
+</div>
+</div>
+</div>
+</div>""", unsafe_allow_html=True)
+
+    st.divider()
+
+    # ── DI SCALE ──────────────────────────────────────────────────────────
+    st.subheader("Skala Perbezaan — Discrepancy Index (DI)")
+    st.caption("DI mengukur sejauh mana perbezaan antara skor Jemaah Nazir dengan skor yang dilaporkan. Semakin tinggi DI, semakin besar kemungkinan data tidak tepat.")
+
+    di_data = [
+        ("< 0.10",  "DATA SELARAS",          "#0F6B3C", "Laporan luar selari dengan dapatan JN. Tiada tindakan diperlukan."),
+        ("≥ 0.10",  "PERBEZAAN KECIL",       "#1D4ED8", "Perbezaan wujud tetapi masih dalam had boleh diterima. Pantau sahaja."),
+        ("≥ 0.25",  "PERBEZAAN SEDERHANA",   "#B45309", "Perbezaan ketara. Siasatan lanjut disyorkan."),
+        ("≥ 0.50",  "PERBEZAAN SERIUS",      "#C2410C", "Perbezaan serius. Kemungkinan data dimanipulasi. Tindakan segera."),
+        ("≥ 0.75",  "PERBEZAAN MELAMPAU",    "#C41E3A", "Perbezaan melampau. Bendera merah — laporan terus kepada YB Menteri."),
+    ]
+    for di_range, label, color, desc in di_data:
         st.markdown(
-            f"<span style='font-family:monospace;font-size:13px'>`{di_range}`</span> "
-            f"<span style='background:{color};color:#fff;padding:2px 8px;border-radius:4px;"
-            f"font-size:11px;font-weight:700'>{cls}</span>",
+            f"<div style='display:flex;align-items:center;gap:14px;padding:10px 0;"
+            f"border-bottom:1px solid rgba(255,255,255,0.06)'>"
+            f"<span style='font-family:monospace;font-size:12px;color:#6B8BA8;width:44px;flex-shrink:0'>{di_range}</span>"
+            f"<span style='background:{color};color:#fff;padding:3px 10px;border-radius:4px;"
+            f"font-size:10px;font-weight:700;letter-spacing:0.08em;white-space:nowrap'>{label}</span>"
+            f"<span style='font-size:12px;color:#6B8BA8'>{desc}</span>"
+            f"</div>",
             unsafe_allow_html=True
         )
+
+    st.divider()
+
+    # ── TEKNIKAL (collapsed) ───────────────────────────────────────────────
+    with st.expander("ℹ️ Maklumat Teknikal (untuk pasukan IT)", expanded=False):
+        st.markdown("""
+**Platform:** Python 3.9+ · Streamlit ≥1.32.0 · Streamlit Cloud (auto-deploy on push to `main`)
+
+**AI Provider:** Groq API · Model: `llama-3.3-70b-versatile`
+
+**Database:** SQLite (`~/.jn_engine/jn_engine.db`) · Abstraction layer `JNDatabase` (PostgreSQL-ready)
+
+**Auth:** JWT (python-jose) · sha256\_crypt password hashing (passlib)
+
+**Integrasi:** Google Drive API · gspread · google-api-python-client
+
+**Source:** `github.com/gunbladeii/prestij25-jn-engine` (branch: `main`)
+
+**App URL:** `prestij25-jn-engine.streamlit.app`
+        """)
 
 # ---------------------------------------------------------------------------
 # LAPORAN MENTERI PAGE (Phase 3)
