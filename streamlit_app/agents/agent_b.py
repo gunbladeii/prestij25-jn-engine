@@ -173,6 +173,7 @@ def run(
     operational_score: Optional[float],
     agent_a_result: AgentAResult,
     source_system_id: str,
+    jn_record: Optional[dict] = None,
 ) -> AgentBResult:
     """
     Entry point for Agent B.
@@ -183,16 +184,24 @@ def run(
                             Pass None to use Agent A's AI-estimated score.
         agent_a_result:     Output from Agent A for this payload.
         source_system_id:   Source system identifier for the case ID namespace.
+        jn_record:          Live JN dapatan record from DB (jn_pemeriksaan).
+                            If provided, used instead of hardcoded JN_AUDIT_DATABASE.
 
     Returns:
         AgentBResult with computed DI, classification, flags, and anomaly verdict.
     """
     case_id = f"PRESTIJ-{datetime.utcnow().strftime('%Y%m%d')}-{str(uuid.uuid4())[:8].upper()}"
 
-    audit_record = JN_AUDIT_DATABASE.get(school_id.upper())
-    audit_found = audit_record is not None
-    if not audit_found:
-        audit_record = _DEFAULT_AUDIT_RECORD.copy()
+    if jn_record is not None:
+        # Live data from jn_pemeriksaan table — takes priority over hardcoded dict
+        audit_record = jn_record
+        audit_found  = True
+    else:
+        # Fallback to hardcoded simulation data (used when no jn_pemeriksaan record exists)
+        audit_record = JN_AUDIT_DATABASE.get(school_id.upper())
+        audit_found  = audit_record is not None
+        if not audit_found:
+            audit_record = _DEFAULT_AUDIT_RECORD.copy()
 
     audit_score = float(audit_record["skpmg2_score"])
 

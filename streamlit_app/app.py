@@ -73,6 +73,12 @@ GDRIVE_SCOPES      = [
     "https://www.googleapis.com/auth/drive.readonly",
 ]
 
+# External JN API endpoints — insert real keys in Streamlit secrets when ready
+MYSPAD_API_URL    = st.secrets.get("MYSPAD_API_URL", "")     # Covers Pemeriksaan SKPMG2 + SK@S
+MYSPAD_API_KEY    = st.secrets.get("MYSPAD_API_KEY", "")
+SKPK_API_URL      = st.secrets.get("SKPK_API_URL", "")      # SKPK (Standard Kualiti Pengurusan Kecemerlangan)
+SKPK_API_KEY      = st.secrets.get("SKPK_API_KEY", "")
+
 AUDIT_SCHOOLS = [
     "SKB001", "SKB002", "SMK001", "SMK002",
     "SBP001", "MRSM001", "SKK001", "UNKNOWN99"
@@ -299,6 +305,42 @@ _TR = {
         "tip_nav_data":       "Hantar payload baharu atau muat naik fail CSV / DOCX / PDF untuk dianalisis.",
         "tip_nav_users":      "Urus akaun pengguna sistem (hanya Admin).",
         "tip_nav_info":       "Lihat seni bina sistem, tindanan teknologi dan maklumat deployment.",
+        # Dapatan JN
+        "nav_dapatan_jn":     "DAPATAN JN",
+        "nav_dapatan":        "📂  Dapatan JN",
+        "tip_nav_dapatan":    "Urus dapatan Jemaah Nazir — Pemeriksaan, SK@S dan SKPK.",
+        "dapatan_section":    "DAPATAN JEMAAH NAZIR",
+        "dapatan_title":      "Dapatan JN",
+        "dapatan_caption":    "Rekod dapatan Jemaah Nazir — Pemeriksaan SKPMG2, SK@S dan SKPK. Data ini digunakan sebagai rujukan audit dalam perbandingan DI.",
+        "tab_pemeriksaan":    "🔍 Pemeriksaan",
+        "tab_skas":           "⭐ SK@S",
+        "tab_skpk":           "🏆 SKPK",
+        "api_status_aktif":   "✅ AKTIF",
+        "api_status_belum":   "⚙️ BELUM DIKONFIGURASI",
+        "api_myspad_title":   "MySPAD API (Pemeriksaan + SK@S)",
+        "api_skpk_title":     "SKPK API",
+        "api_pull_btn":       "🔄 Tarik Data dari API",
+        "api_not_configured": "API belum dikonfigurasi. Masukkan kunci API dalam Streamlit Secrets.",
+        "dapatan_records":    "Rekod Tersimpan",
+        "dapatan_no_records": "Tiada rekod. Tambah secara manual atau muat naik CSV.",
+        "dapatan_add_manual": "➕ Tambah Rekod Manual",
+        "dapatan_upload_csv": "📁 Muat Naik CSV",
+        "dapatan_school_id":  "Kod Sekolah",
+        "dapatan_school_nm":  "Nama Sekolah",
+        "dapatan_district":   "Daerah",
+        "dapatan_state":      "Negeri",
+        "dapatan_date":       "Tarikh Pemeriksaan",
+        "dapatan_score":      "Skor SKPMG2",
+        "dapatan_gred":       "Gred Kemudahan",
+        "dapatan_hygiene":    "Skor Kantin",
+        "dapatan_integrity":  "Indeks Risiko Integriti",
+        "dapatan_jenis":      "Jenis",
+        "dapatan_band":       "Band",
+        "dapatan_nilai":      "Nilai / Skor",
+        "dapatan_save_btn":   "💾 Simpan Rekod",
+        "dapatan_saved_ok":   "✅ Rekod berjaya disimpan.",
+        "dapatan_csv_cols":   "CSV mesti mengandungi lajur: school_id, school_name, district, state, date, score",
+        "dapatan_uploaded":   "rekod dimuat naik.",
         # Misc
         "anomaly_yes":        "🔴 ANOMALI",
         "anomaly_no":         "🟢 BERSIH",
@@ -499,6 +541,42 @@ _TR = {
         "tip_nav_data":       "Submit a new payload or upload CSV / DOCX / PDF for analysis.",
         "tip_nav_users":      "Manage system user accounts (Admin only).",
         "tip_nav_info":       "View system architecture, technology stack and deployment info.",
+        # Dapatan JN
+        "nav_dapatan_jn":     "JN FINDINGS",
+        "nav_dapatan":        "📂  JN Findings",
+        "tip_nav_dapatan":    "Manage Jemaah Nazir findings — Pemeriksaan, SK@S and SKPK.",
+        "dapatan_section":    "JEMAAH NAZIR FINDINGS",
+        "dapatan_title":      "JN Findings",
+        "dapatan_caption":    "Jemaah Nazir findings records — SKPMG2 Inspection, SK@S and SKPK. Used as audit reference in DI comparison.",
+        "tab_pemeriksaan":    "🔍 Pemeriksaan",
+        "tab_skas":           "⭐ SK@S",
+        "tab_skpk":           "🏆 SKPK",
+        "api_status_aktif":   "✅ ACTIVE",
+        "api_status_belum":   "⚙️ NOT CONFIGURED",
+        "api_myspad_title":   "MySPAD API (Pemeriksaan + SK@S)",
+        "api_skpk_title":     "SKPK API",
+        "api_pull_btn":       "🔄 Pull Data from API",
+        "api_not_configured": "API not configured. Add API key in Streamlit Secrets.",
+        "dapatan_records":    "Saved Records",
+        "dapatan_no_records": "No records. Add manually or upload CSV.",
+        "dapatan_add_manual": "➕ Add Record Manually",
+        "dapatan_upload_csv": "📁 Upload CSV",
+        "dapatan_school_id":  "School Code",
+        "dapatan_school_nm":  "School Name",
+        "dapatan_district":   "District",
+        "dapatan_state":      "State",
+        "dapatan_date":       "Inspection Date",
+        "dapatan_score":      "SKPMG2 Score",
+        "dapatan_gred":       "Facility Grade",
+        "dapatan_hygiene":    "Canteen Score",
+        "dapatan_integrity":  "Integrity Risk Index",
+        "dapatan_jenis":      "Type",
+        "dapatan_band":       "Band",
+        "dapatan_nilai":      "Value / Score",
+        "dapatan_save_btn":   "💾 Save Record",
+        "dapatan_saved_ok":   "✅ Record saved successfully.",
+        "dapatan_csv_cols":   "CSV must contain columns: school_id, school_name, district, state, date, score",
+        "dapatan_uploaded":   "records uploaded.",
         # Misc
         "anomaly_yes":        "🔴 ANOMALY",
         "anomaly_no":         "🟢 CLEAN",
@@ -1047,6 +1125,50 @@ def init_db() -> JNDatabase:
             );
             CREATE INDEX IF NOT EXISTS idx_dl_case_id ON discrepancy_log(case_id);
             CREATE INDEX IF NOT EXISTS idx_dl_anomaly  ON discrepancy_log(anomaly_detected);
+            CREATE TABLE IF NOT EXISTS jn_pemeriksaan (
+                id                    TEXT PRIMARY KEY,
+                school_id             TEXT NOT NULL,
+                school_name           TEXT NOT NULL,
+                school_type           TEXT NOT NULL DEFAULT '',
+                district              TEXT NOT NULL DEFAULT '',
+                state                 TEXT NOT NULL DEFAULT '',
+                tarikh_pemeriksaan    TEXT NOT NULL,
+                skpmg2_score          REAL NOT NULL,
+                facility_gred         TEXT NOT NULL DEFAULT 'B',
+                canteen_hygiene_score REAL NOT NULL DEFAULT 70.0,
+                integrity_risk_index  REAL NOT NULL DEFAULT 0.3,
+                sumber                TEXT NOT NULL DEFAULT 'manual',
+                created_at            TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_pem_school ON jn_pemeriksaan(school_id);
+            CREATE TABLE IF NOT EXISTS jn_skas (
+                id                TEXT PRIMARY KEY,
+                school_id         TEXT NOT NULL,
+                school_name       TEXT NOT NULL,
+                district          TEXT NOT NULL DEFAULT '',
+                state             TEXT NOT NULL DEFAULT '',
+                tarikh_skas       TEXT NOT NULL,
+                band              TEXT NOT NULL DEFAULT '',
+                skor_keseluruhan  REAL NOT NULL DEFAULT 0.0,
+                jenis_skas        TEXT NOT NULL DEFAULT '',
+                sumber            TEXT NOT NULL DEFAULT 'manual',
+                created_at        TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_skas_school ON jn_skas(school_id);
+            CREATE TABLE IF NOT EXISTS jn_skpk (
+                id                TEXT PRIMARY KEY,
+                school_id         TEXT NOT NULL,
+                school_name       TEXT NOT NULL,
+                district          TEXT NOT NULL DEFAULT '',
+                state             TEXT NOT NULL DEFAULT '',
+                tarikh_skpk       TEXT NOT NULL,
+                band              TEXT NOT NULL DEFAULT '',
+                skor_keseluruhan  REAL NOT NULL DEFAULT 0.0,
+                jenis_skpk        TEXT NOT NULL DEFAULT '',
+                sumber            TEXT NOT NULL DEFAULT 'manual',
+                created_at        TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_skpk_school ON jn_skpk(school_id);
         """)
 
         audit_data = [
@@ -1137,7 +1259,15 @@ def run_agent_pipeline(
     api_key = _get_api_key()
 
     result_a = agent_a_run(school_id, raw_text, source_system_id, api_key=api_key)
-    result_b = agent_b_run(school_id, operational_score, result_a, source_system_id)
+
+    # Fetch live JN dapatan from DB (most recent pemeriksaan record for this school)
+    _jn_row = db.execute(
+        "SELECT * FROM jn_pemeriksaan WHERE school_id=? ORDER BY tarikh_pemeriksaan DESC LIMIT 1",
+        (school_id.upper(),)
+    ).fetchone()
+    _jn_record = dict(_jn_row) if _jn_row else None
+
+    result_b = agent_b_run(school_id, operational_score, result_a, source_system_id, jn_record=_jn_record)
     result_c = agent_c_run(school_id, source_system_name, result_a, result_b, api_key=api_key)
 
     # Resolve the operational score actually used (AI-estimated or manual)
@@ -1472,6 +1602,10 @@ def render_sidebar() -> None:
         st.markdown(f'<div class="nav-group">{t("nav_data_input")}</div>', unsafe_allow_html=True)
         if require_role("admin", "penyelaras_jn"):
             _nav_btn("nav_data_sub", "data_input", tooltip_key="tip_nav_data")
+
+        # ── Nav: DAPATAN JN ─────────────────────────
+        st.markdown(f'<div class="nav-group">{t("nav_dapatan_jn")}</div>', unsafe_allow_html=True)
+        _nav_btn("nav_dapatan", "dapatan_jn", tooltip_key="tip_nav_dapatan")
 
         # ── Nav: SYSTEM ─────────────────────────────
         st.markdown(f'<div class="nav-group">{t("nav_system")}</div>', unsafe_allow_html=True)
@@ -2649,6 +2783,317 @@ def render_system():
         )
 
 # ---------------------------------------------------------------------------
+# DAPATAN JN PAGE
+# ---------------------------------------------------------------------------
+def _api_status_card(title: str, url: str, key: str):
+    """Render a small API status indicator card."""
+    aktif = bool(url and key)
+    status_label = t("api_status_aktif") if aktif else t("api_status_belum")
+    color = "#0F6B3C" if aktif else "#92400E"
+    bg    = "#ECFDF5" if aktif else "#FEF3C7"
+    st.markdown(
+        f"<div style='background:{bg};border-left:4px solid {color};"
+        f"padding:10px 14px;border-radius:6px;margin-bottom:12px'>"
+        f"<span style='font-weight:700;color:{color};font-size:13px'>{title}</span>&nbsp;&nbsp;"
+        f"<span style='background:{color};color:#fff;padding:2px 8px;border-radius:4px;"
+        f"font-size:11px;font-weight:700'>{status_label}</span></div>",
+        unsafe_allow_html=True,
+    )
+    return aktif
+
+
+def _render_dapatan_tab_pemeriksaan(db):
+    aktif = _api_status_card(t("api_myspad_title"), MYSPAD_API_URL, MYSPAD_API_KEY)
+    if aktif:
+        if st.button(t("api_pull_btn"), key="pem_pull"):
+            st.info("Integrasi API MySPAD belum aktif — masukkan URL dan kunci API dalam secrets.")
+    else:
+        st.caption(t("api_not_configured"))
+
+    st.markdown(f"**{t('dapatan_records')}**")
+    rows = db.execute("SELECT * FROM jn_pemeriksaan ORDER BY tarikh_pemeriksaan DESC").fetchall()
+    if rows:
+        import pandas as _pd
+        df = _pd.DataFrame([dict(r) for r in rows])
+        disp_cols = ["school_id", "school_name", "district", "state",
+                     "tarikh_pemeriksaan", "skpmg2_score", "facility_gred",
+                     "canteen_hygiene_score", "integrity_risk_index", "sumber"]
+        disp_cols = [c for c in disp_cols if c in df.columns]
+        st.dataframe(df[disp_cols], use_container_width=True)
+    else:
+        st.info(t("dapatan_no_records"))
+
+    with st.expander(t("dapatan_add_manual"), expanded=False):
+        with st.form("form_pem_add"):
+            c1, c2 = st.columns(2)
+            sid  = c1.text_input(t("dapatan_school_id"), placeholder="contoh: SMK001")
+            snm  = c2.text_input(t("dapatan_school_nm"))
+            c3, c4 = st.columns(2)
+            dist = c3.text_input(t("dapatan_district"))
+            state= c4.text_input(t("dapatan_state"))
+            c5, c6 = st.columns(2)
+            tdate= c5.date_input(t("dapatan_date"))
+            stype= c6.selectbox("Jenis Sekolah", ["SK","SMK","SBP","MRSM","SMA","SMJK","Lain"])
+            c7, c8, c9, c10 = st.columns(4)
+            score = c7.number_input(t("dapatan_score"), 0.0, 100.0, 70.0, 0.5)
+            gred  = c8.selectbox(t("dapatan_gred"), ["A","B","C","D"])
+            hyg   = c9.number_input(t("dapatan_hygiene"), 0.0, 100.0, 70.0, 0.5)
+            integ = c10.number_input(t("dapatan_integrity"), 0.0, 1.0, 0.3, 0.01)
+            submitted = st.form_submit_button(t("dapatan_save_btn"))
+            if submitted:
+                if not sid.strip() or not snm.strip():
+                    st.warning("Sila isi sekurang-kurangnya Kod Sekolah dan Nama Sekolah.")
+                else:
+                    db.execute(
+                        "INSERT INTO jn_pemeriksaan (id,school_id,school_name,school_type,district,state,"
+                        "tarikh_pemeriksaan,skpmg2_score,facility_gred,canteen_hygiene_score,"
+                        "integrity_risk_index,sumber) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                        (str(uuid.uuid4()), sid.strip().upper(), snm.strip(), stype,
+                         dist.strip(), state.strip(), str(tdate), score, gred, hyg, integ, "manual")
+                    )
+                    db.commit()
+                    st.success(t("dapatan_saved_ok"))
+                    st.rerun()
+
+    with st.expander(t("dapatan_upload_csv"), expanded=False):
+        st.caption(t("dapatan_csv_cols") + ": school_id, school_name, district, state, tarikh_pemeriksaan, skpmg2_score")
+        up = st.file_uploader("CSV Pemeriksaan", type=["csv"], key="up_pem")
+        if up:
+            import pandas as _pd
+            try:
+                df_up = _pd.read_csv(up)
+                st.dataframe(df_up.head(5), use_container_width=True)
+                if st.button("✅ Simpan CSV ke DB", key="pem_csv_save"):
+                    count = 0
+                    for _, row in df_up.iterrows():
+                        try:
+                            db.execute(
+                                "INSERT INTO jn_pemeriksaan (id,school_id,school_name,district,state,"
+                                "tarikh_pemeriksaan,skpmg2_score,sumber) VALUES (?,?,?,?,?,?,?,?)",
+                                (str(uuid.uuid4()),
+                                 str(row.get("school_id","")).upper(),
+                                 str(row.get("school_name","")),
+                                 str(row.get("district","")),
+                                 str(row.get("state","")),
+                                 str(row.get("tarikh_pemeriksaan", row.get("date",""))),
+                                 float(row.get("skpmg2_score", row.get("score", 0))),
+                                 "csv")
+                            )
+                            count += 1
+                        except Exception:
+                            pass
+                    db.commit()
+                    st.success(f"✅ {count} {t('dapatan_uploaded')}")
+                    st.rerun()
+            except Exception as exc:
+                st.error(f"Ralat baca CSV: {exc}")
+
+
+def _render_dapatan_tab_skas(db):
+    aktif = _api_status_card(t("api_myspad_title"), MYSPAD_API_URL, MYSPAD_API_KEY)
+    if aktif:
+        if st.button(t("api_pull_btn"), key="skas_pull"):
+            st.info("Integrasi API MySPAD (SK@S) belum aktif — masukkan URL dan kunci API dalam secrets.")
+    else:
+        st.caption(t("api_not_configured"))
+
+    st.markdown(f"**{t('dapatan_records')}**")
+    rows = db.execute("SELECT * FROM jn_skas ORDER BY tarikh_skas DESC").fetchall()
+    if rows:
+        import pandas as _pd
+        df = _pd.DataFrame([dict(r) for r in rows])
+        disp_cols = ["school_id","school_name","district","state","tarikh_skas",
+                     "jenis_skas","band","skor_keseluruhan","sumber"]
+        disp_cols = [c for c in disp_cols if c in df.columns]
+        st.dataframe(df[disp_cols], use_container_width=True)
+    else:
+        st.info(t("dapatan_no_records"))
+
+    with st.expander(t("dapatan_add_manual"), expanded=False):
+        with st.form("form_skas_add"):
+            c1, c2 = st.columns(2)
+            sid  = c1.text_input(t("dapatan_school_id"), placeholder="contoh: SMK001")
+            snm  = c2.text_input(t("dapatan_school_nm"))
+            c3, c4 = st.columns(2)
+            dist = c3.text_input(t("dapatan_district"))
+            state= c4.text_input(t("dapatan_state"))
+            c5, c6 = st.columns(2)
+            tdate   = c5.date_input(t("dapatan_date"))
+            jenis   = c6.text_input(t("dapatan_jenis"), placeholder="contoh: SK@S Semakan")
+            c7, c8  = st.columns(2)
+            band    = c7.selectbox(t("dapatan_band"), ["Band 1","Band 2","Band 3","Band 4","Band 5","Band 6"])
+            skor    = c8.number_input(t("dapatan_nilai"), 0.0, 100.0, 70.0, 0.5)
+            submitted = st.form_submit_button(t("dapatan_save_btn"))
+            if submitted:
+                if not sid.strip() or not snm.strip():
+                    st.warning("Sila isi sekurang-kurangnya Kod Sekolah dan Nama Sekolah.")
+                else:
+                    db.execute(
+                        "INSERT INTO jn_skas (id,school_id,school_name,district,state,"
+                        "tarikh_skas,band,skor_keseluruhan,jenis_skas,sumber) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                        (str(uuid.uuid4()), sid.strip().upper(), snm.strip(),
+                         dist.strip(), state.strip(), str(tdate), band, skor, jenis.strip(), "manual")
+                    )
+                    db.commit()
+                    st.success(t("dapatan_saved_ok"))
+                    st.rerun()
+
+    with st.expander(t("dapatan_upload_csv"), expanded=False):
+        st.caption("CSV: school_id, school_name, district, state, tarikh_skas, jenis_skas, band, skor_keseluruhan")
+        up = st.file_uploader("CSV SK@S", type=["csv"], key="up_skas")
+        if up:
+            import pandas as _pd
+            try:
+                df_up = _pd.read_csv(up)
+                st.dataframe(df_up.head(5), use_container_width=True)
+                if st.button("✅ Simpan CSV ke DB", key="skas_csv_save"):
+                    count = 0
+                    for _, row in df_up.iterrows():
+                        try:
+                            db.execute(
+                                "INSERT INTO jn_skas (id,school_id,school_name,district,state,"
+                                "tarikh_skas,band,skor_keseluruhan,jenis_skas,sumber) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                                (str(uuid.uuid4()),
+                                 str(row.get("school_id","")).upper(),
+                                 str(row.get("school_name","")),
+                                 str(row.get("district","")),
+                                 str(row.get("state","")),
+                                 str(row.get("tarikh_skas", row.get("date",""))),
+                                 str(row.get("band","")),
+                                 float(row.get("skor_keseluruhan", row.get("score", 0))),
+                                 str(row.get("jenis_skas","")),
+                                 "csv")
+                            )
+                            count += 1
+                        except Exception:
+                            pass
+                    db.commit()
+                    st.success(f"✅ {count} {t('dapatan_uploaded')}")
+                    st.rerun()
+            except Exception as exc:
+                st.error(f"Ralat baca CSV: {exc}")
+
+
+def _render_dapatan_tab_skpk(db):
+    aktif = _api_status_card(t("api_skpk_title"), SKPK_API_URL, SKPK_API_KEY)
+    if aktif:
+        if st.button(t("api_pull_btn"), key="skpk_pull"):
+            st.info("Integrasi API SKPK belum aktif — masukkan URL dan kunci API dalam secrets.")
+    else:
+        st.caption(t("api_not_configured"))
+
+    st.markdown(f"**{t('dapatan_records')}**")
+    rows = db.execute("SELECT * FROM jn_skpk ORDER BY tarikh_skpk DESC").fetchall()
+    if rows:
+        import pandas as _pd
+        df = _pd.DataFrame([dict(r) for r in rows])
+        disp_cols = ["school_id","school_name","district","state","tarikh_skpk",
+                     "jenis_skpk","band","skor_keseluruhan","sumber"]
+        disp_cols = [c for c in disp_cols if c in df.columns]
+        st.dataframe(df[disp_cols], use_container_width=True)
+    else:
+        st.info(t("dapatan_no_records"))
+
+    with st.expander(t("dapatan_add_manual"), expanded=False):
+        with st.form("form_skpk_add"):
+            c1, c2 = st.columns(2)
+            sid  = c1.text_input(t("dapatan_school_id"), placeholder="contoh: SMK001")
+            snm  = c2.text_input(t("dapatan_school_nm"))
+            c3, c4 = st.columns(2)
+            dist = c3.text_input(t("dapatan_district"))
+            state= c4.text_input(t("dapatan_state"))
+            c5, c6 = st.columns(2)
+            tdate   = c5.date_input(t("dapatan_date"))
+            jenis   = c6.text_input(t("dapatan_jenis"), placeholder="contoh: SKPK Penuh")
+            c7, c8  = st.columns(2)
+            band    = c7.selectbox(t("dapatan_band"), ["Band 1","Band 2","Band 3","Band 4","Band 5","Band 6"])
+            skor    = c8.number_input(t("dapatan_nilai"), 0.0, 100.0, 70.0, 0.5)
+            submitted = st.form_submit_button(t("dapatan_save_btn"))
+            if submitted:
+                if not sid.strip() or not snm.strip():
+                    st.warning("Sila isi sekurang-kurangnya Kod Sekolah dan Nama Sekolah.")
+                else:
+                    db.execute(
+                        "INSERT INTO jn_skpk (id,school_id,school_name,district,state,"
+                        "tarikh_skpk,band,skor_keseluruhan,jenis_skpk,sumber) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                        (str(uuid.uuid4()), sid.strip().upper(), snm.strip(),
+                         dist.strip(), state.strip(), str(tdate), band, skor, jenis.strip(), "manual")
+                    )
+                    db.commit()
+                    st.success(t("dapatan_saved_ok"))
+                    st.rerun()
+
+    with st.expander(t("dapatan_upload_csv"), expanded=False):
+        st.caption("CSV: school_id, school_name, district, state, tarikh_skpk, jenis_skpk, band, skor_keseluruhan")
+        up = st.file_uploader("CSV SKPK", type=["csv"], key="up_skpk")
+        if up:
+            import pandas as _pd
+            try:
+                df_up = _pd.read_csv(up)
+                st.dataframe(df_up.head(5), use_container_width=True)
+                if st.button("✅ Simpan CSV ke DB", key="skpk_csv_save"):
+                    count = 0
+                    for _, row in df_up.iterrows():
+                        try:
+                            db.execute(
+                                "INSERT INTO jn_skpk (id,school_id,school_name,district,state,"
+                                "tarikh_skpk,band,skor_keseluruhan,jenis_skpk,sumber) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                                (str(uuid.uuid4()),
+                                 str(row.get("school_id","")).upper(),
+                                 str(row.get("school_name","")),
+                                 str(row.get("district","")),
+                                 str(row.get("state","")),
+                                 str(row.get("tarikh_skpk", row.get("date",""))),
+                                 str(row.get("band","")),
+                                 float(row.get("skor_keseluruhan", row.get("score", 0))),
+                                 str(row.get("jenis_skpk","")),
+                                 "csv")
+                            )
+                            count += 1
+                        except Exception:
+                            pass
+                    db.commit()
+                    st.success(f"✅ {count} {t('dapatan_uploaded')}")
+                    st.rerun()
+            except Exception as exc:
+                st.error(f"Ralat baca CSV: {exc}")
+
+
+def render_dapatan_jn():
+    section_header(t("dapatan_section"))
+    st.title(t("dapatan_title"))
+    st.caption(t("dapatan_caption"))
+
+    db = get_db()
+
+    # Summary counts across all 3 types
+    cnt_pem  = (db.execute("SELECT COUNT(*) FROM jn_pemeriksaan").fetchone() or [0])[0]
+    cnt_skas = (db.execute("SELECT COUNT(*) FROM jn_skas").fetchone() or [0])[0]
+    cnt_skpk = (db.execute("SELECT COUNT(*) FROM jn_skpk").fetchone() or [0])[0]
+    m1, m2, m3 = st.columns(3)
+    m1.metric("📋 Pemeriksaan", cnt_pem)
+    m2.metric("⭐ SK@S",        cnt_skas)
+    m3.metric("🏆 SKPK",        cnt_skpk)
+
+    st.divider()
+
+    tab_pem, tab_skas, tab_skpk = st.tabs([
+        t("tab_pemeriksaan"),
+        t("tab_skas"),
+        t("tab_skpk"),
+    ])
+
+    with tab_pem:
+        _render_dapatan_tab_pemeriksaan(db)
+
+    with tab_skas:
+        _render_dapatan_tab_skas(db)
+
+    with tab_skpk:
+        _render_dapatan_tab_skpk(db)
+
+
+# ---------------------------------------------------------------------------
 # MAIN
 # ---------------------------------------------------------------------------
 def main():
@@ -2673,7 +3118,7 @@ def main():
                 }
                 # Restore last active page if present in URL
                 _saved_page = st.query_params.get("p", "")
-                _valid_pages = {"dashboard", "cases", "data_input", "user_management", "system_info"}
+                _valid_pages = {"dashboard", "cases", "data_input", "user_management", "system_info", "dapatan_jn"}
                 if _saved_page in _valid_pages:
                     st.session_state["current_page"] = _saved_page
 
@@ -2692,6 +3137,7 @@ def main():
         "dashboard":       render_dashboard,
         "cases":           render_cases_combined,
         "data_input":      render_data_input,
+        "dapatan_jn":      render_dapatan_jn,
         "user_management": render_admin,
         "system_info":     render_system,
     }

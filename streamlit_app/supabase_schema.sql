@@ -74,3 +74,54 @@ INSERT INTO jn_audit_records VALUES
 ('MRSM001','MRSM Kuala Klawang','MRSM','Jelebu','Negeri Sembilan','2023-06-14',88.30,'A',87.00,0.095,to_char(NOW(),'YYYY-MM-DD"T"HH24:MI:SS')),
 ('SKK001','SK Kluang Utama','SK','Kluang','Johor','2022-05-30',63.50,'C',58.00,0.420,to_char(NOW(),'YYYY-MM-DD"T"HH24:MI:SS'))
 ON CONFLICT DO NOTHING;
+
+-- ============================================================
+-- JN Dapatan Tables (Phase 1 — platform ready, API-ready)
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS jn_pemeriksaan (
+    id                    TEXT PRIMARY KEY,
+    school_id             TEXT NOT NULL,
+    school_name           TEXT NOT NULL,
+    school_type           TEXT NOT NULL DEFAULT '',
+    district              TEXT NOT NULL DEFAULT '',
+    state                 TEXT NOT NULL DEFAULT '',
+    tarikh_pemeriksaan    TEXT NOT NULL,
+    skpmg2_score          DOUBLE PRECISION NOT NULL,
+    facility_gred         TEXT NOT NULL DEFAULT 'B',
+    canteen_hygiene_score DOUBLE PRECISION NOT NULL DEFAULT 70.0,
+    integrity_risk_index  DOUBLE PRECISION NOT NULL DEFAULT 0.3,
+    sumber                TEXT NOT NULL DEFAULT 'manual',
+    created_at            TEXT NOT NULL DEFAULT (to_char(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS'))
+);
+CREATE INDEX IF NOT EXISTS idx_pem_school ON jn_pemeriksaan(school_id);
+
+CREATE TABLE IF NOT EXISTS jn_skas (
+    id                TEXT PRIMARY KEY,
+    school_id         TEXT NOT NULL,
+    school_name       TEXT NOT NULL,
+    district          TEXT NOT NULL DEFAULT '',
+    state             TEXT NOT NULL DEFAULT '',
+    tarikh_skas       TEXT NOT NULL,
+    band              TEXT NOT NULL DEFAULT '',
+    skor_keseluruhan  DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    jenis_skas        TEXT NOT NULL DEFAULT '',
+    sumber            TEXT NOT NULL DEFAULT 'manual',
+    created_at        TEXT NOT NULL DEFAULT (to_char(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS'))
+);
+CREATE INDEX IF NOT EXISTS idx_skas_school ON jn_skas(school_id);
+
+CREATE TABLE IF NOT EXISTS jn_skpk (
+    id                TEXT PRIMARY KEY,
+    school_id         TEXT NOT NULL,
+    school_name       TEXT NOT NULL,
+    district          TEXT NOT NULL DEFAULT '',
+    state             TEXT NOT NULL DEFAULT '',
+    tarikh_skpk       TEXT NOT NULL,
+    band              TEXT NOT NULL DEFAULT '',
+    skor_keseluruhan  DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    jenis_skpk        TEXT NOT NULL DEFAULT '',
+    sumber            TEXT NOT NULL DEFAULT 'manual',
+    created_at        TEXT NOT NULL DEFAULT (to_char(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS'))
+);
+CREATE INDEX IF NOT EXISTS idx_skpk_school ON jn_skpk(school_id);
