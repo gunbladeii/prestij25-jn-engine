@@ -284,6 +284,17 @@ input[type=range]:focus{box-shadow:none}
 .csv-result-row{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px}
 .csv-result-row:last-child{border-bottom:none}
 .csv-result-row.error-row{background:#FEF2F2}
+
+/* ── ADMIN PANEL ── */
+.admin-section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.user-row{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);font-size:13px}
+.user-row:last-child{border-bottom:none}
+.user-row:hover{background:#F8FAFC}
+.user-email-cell{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:5000;padding:20px}
+.modal-box{background:var(--surface);border-radius:10px;padding:32px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:var(--text);margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
 </style>
 </head>
 <body>
@@ -370,6 +381,11 @@ input[type=range]:focus{box-shadow:none}
       <button class="nav-item" id="nav-item-csv" onclick="showPage('csv')">
         <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
         <span data-i18n="nav_csv">Muat Naik CSV</span>
+      </button>
+
+      <button class="nav-item" id="nav-item-admin" onclick="showPage('admin')" style="display:none">
+        <svg class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span data-i18n="nav_admin">Pengurusan Pengguna</span>
       </button>
 
       <div class="nav-divider"></div>
@@ -665,6 +681,73 @@ input[type=range]:focus{box-shadow:none}
         </div>
       </section>
 
+      <!-- ══ ADMIN PANEL ══ -->
+      <section class="page-section" id="page-admin">
+        <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_admin">PENTADBIR SISTEM</span></div>
+        <div class="page-title" data-i18n="title_admin">Pengurusan Pengguna</div>
+        <p class="page-desc" data-i18n="desc_admin">Urus akaun pengguna sistem. Hanya Admin boleh mengakses bahagian ini.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:20px">
+
+          <!-- User list -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" data-i18n="admin_user_list">Senarai Pengguna</span>
+              <button class="btn btn-outline btn-sm" onclick="loadUsers()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                <span data-i18n="refresh">Refresh</span>
+              </button>
+            </div>
+            <div id="users-list-wrap">
+              <div class="empty-state" style="padding:40px 20px">
+                <div class="empty-state-icon">👥</div>
+                <div class="empty-state-text" data-i18n="admin_load_hint">Klik Refresh untuk muatkan pengguna.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Create user form -->
+          <div>
+            <div class="card">
+              <div class="card-header"><span class="card-title" data-i18n="admin_add_user">Tambah Pengguna Baharu</span></div>
+              <div class="card-body">
+                <form id="create-user-form" onsubmit="handleCreateUser(event)">
+                  <div class="form-group" style="margin-bottom:12px">
+                    <label data-i18n="admin_email">Email</label>
+                    <input type="email" id="cu-email" placeholder="nama@moe.gov.my" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom:12px">
+                    <label data-i18n="admin_password">Kata Laluan</label>
+                    <input type="password" id="cu-password" placeholder="Min 6 aksara" required minlength="6">
+                  </div>
+                  <div class="form-group" style="margin-bottom:16px">
+                    <label data-i18n="admin_role">Peranan</label>
+                    <select id="cu-role">
+                      <option value="penyelaras_jn">Penyelaras JN</option>
+                      <option value="peneraju_sektor">Peneraju Sektor</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary" id="cu-btn" style="width:100%;justify-content:center">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span data-i18n="admin_add_btn">Cipta Pengguna</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div class="ref-card" style="margin-top:12px">
+              <div class="ref-card-title" data-i18n="admin_roles_title">Had Peranan</div>
+              <div style="font-size:12px;color:var(--text-dim);line-height:2">
+                <div><span class="role-badge admin" style="display:inline-block;margin-right:6px">Admin</span>Semua akses</div>
+                <div><span class="role-badge penyelaras_jn" style="display:inline-block;margin-right:6px">Penyelaras JN</span>Input + CSV</div>
+                <div><span class="role-badge peneraju_sektor" style="display:inline-block;margin-right:6px">Peneraju Sektor</span>Baca sahaja</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ══ CSV UPLOAD ══ -->
       <section class="page-section" id="page-csv">
         <div class="page-eyebrow"><span class="page-eyebrow-dot"></span><span data-i18n="eyebrow_csv">MUAT NAIK CSV</span></div>
@@ -805,14 +888,18 @@ function checkAuth() {
 
 function applyRbac(role) {
   const canWrite = (role === 'admin' || role === 'penyelaras_jn');
-  const ingestItem = document.getElementById('nav-item-ingest');
-  const csvItem = document.getElementById('nav-item-csv');
-  const quickSec = document.getElementById('quick-actions-section');
-  if (ingestItem) ingestItem.style.display = canWrite ? '' : 'none';
-  if (csvItem) csvItem.style.display = canWrite ? '' : 'none';
-  if (quickSec) quickSec.style.display = canWrite ? '' : 'none';
-  const clearBtn = document.getElementById('btn-clear-cases');
-  if (clearBtn) clearBtn.style.display = (role === 'admin') ? '' : 'none';
+  const isAdmin  = (role === 'admin');
+  const items = {
+    'nav-item-ingest': canWrite,
+    'nav-item-csv':    canWrite,
+    'nav-item-admin':  isAdmin,
+    'quick-actions-section': canWrite,
+    'btn-clear-cases': isAdmin,
+  };
+  Object.entries(items).forEach(([id, show]) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? '' : 'none';
+  });
   document.getElementById('user-display').style.display = 'flex';
   document.getElementById('logout-btn').style.display = 'flex';
 }
@@ -978,6 +1065,28 @@ const TR = {
     csv_col_case:'ID Kes',
     session_expired:'Sesi tamat. Sila log masuk semula.',
     error_unknown:'Ralat tidak diketahui',
+    nav_admin:'Pengurusan Pengguna',
+    eyebrow_admin:'PENTADBIR SISTEM',
+    title_admin:'Pengurusan Pengguna',
+    desc_admin:'Urus akaun pengguna sistem. Hanya Admin boleh mengakses bahagian ini.',
+    admin_user_list:'Senarai Pengguna',
+    admin_load_hint:'Klik Refresh untuk muatkan pengguna.',
+    admin_add_user:'Tambah Pengguna Baharu',
+    admin_email:'Email',
+    admin_password:'Kata Laluan',
+    admin_role:'Peranan',
+    admin_add_btn:'Cipta Pengguna',
+    admin_roles_title:'Had Peranan',
+    admin_col_email:'Email',
+    admin_col_role:'Peranan',
+    admin_col_status:'Status',
+    admin_col_created:'Dicipta',
+    admin_col_action:'Tindakan',
+    admin_active:'Aktif',
+    admin_inactive:'Tidak Aktif',
+    admin_created:'Pengguna berjaya dicipta',
+    admin_create_error:'Gagal mencipta pengguna',
+    admin_load_error:'Gagal memuatkan pengguna',
   },
   en: {
     brand_sub:'Smart Audit System MOE',
@@ -1131,6 +1240,28 @@ const TR = {
     csv_col_case:'Case ID',
     session_expired:'Session expired. Please log in again.',
     error_unknown:'Unknown error',
+    nav_admin:'User Management',
+    eyebrow_admin:'ADMIN PANEL',
+    title_admin:'User Management',
+    desc_admin:'Manage system user accounts. Only Admin can access this section.',
+    admin_user_list:'User List',
+    admin_load_hint:'Click Refresh to load users.',
+    admin_add_user:'Add New User',
+    admin_email:'Email',
+    admin_password:'Password',
+    admin_role:'Role',
+    admin_add_btn:'Create User',
+    admin_roles_title:'Role Permissions',
+    admin_col_email:'Email',
+    admin_col_role:'Role',
+    admin_col_status:'Status',
+    admin_col_created:'Created',
+    admin_col_action:'Action',
+    admin_active:'Active',
+    admin_inactive:'Inactive',
+    admin_created:'User created successfully',
+    admin_create_error:'Failed to create user',
+    admin_load_error:'Failed to load users',
   }
 };
 
@@ -1190,10 +1321,11 @@ function showPage(name) {
   const navEl = document.getElementById('nav-item-' + name);
   if (navEl) navEl.classList.add('active');
   const bc = document.getElementById('breadcrumb-current');
-  const keyMap = {dashboard:'nav_dashboard',ingest:'nav_ingest',cases:'nav_cases',brief:'nav_brief',about:'nav_system',csv:'nav_csv'};
+  const keyMap = {dashboard:'nav_dashboard',ingest:'nav_ingest',cases:'nav_cases',brief:'nav_brief',about:'nav_system',csv:'nav_csv',admin:'nav_admin'};
   if (bc && keyMap[name]) { bc.dataset.i18n = keyMap[name]; bc.textContent = t(keyMap[name]); }
   if (name === 'dashboard') refreshDashboard();
   if (name === 'cases') loadCases();
+  if (name === 'admin') loadUsers();
 }
 
 // ── TOAST ──
@@ -1717,6 +1849,70 @@ function resetCsv() {
   document.getElementById('csv-results').style.display = 'none';
   document.getElementById('csv-submit-btn').style.display = 'none';
   document.getElementById('csv-reset-btn').style.display = 'none';
+}
+
+// ── ADMIN PANEL ──
+async function loadUsers() {
+  const wrap = document.getElementById('users-list-wrap');
+  wrap.innerHTML = '<div style="padding:30px;display:flex;justify-content:center"><div class="spinner dark" style="width:22px;height:22px"></div></div>';
+  try {
+    const r = await authFetch(API+'/api/v1/auth/users');
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail||t('admin_load_error'));
+    renderUsersList(data.users||[]);
+  } catch(err) {
+    wrap.innerHTML = `<div style="padding:20px;color:var(--crimson);font-size:13px">${err.message}</div>`;
+    toast(err.message, 'error');
+  }
+}
+
+function renderUsersList(users) {
+  const wrap = document.getElementById('users-list-wrap');
+  if (!users.length) {
+    wrap.innerHTML = '<div class="empty-state" style="padding:40px 20px"><div class="empty-state-icon">👥</div><div class="empty-state-text">Tiada pengguna.</div></div>';
+    return;
+  }
+  const roleLabels = {admin:'Admin', peneraju_sektor:'Peneraju Sektor', penyelaras_jn:'Penyelaras JN'};
+  const rows = users.map(u => `
+    <div class="user-row">
+      <div>
+        <div class="user-email-cell">${u.email}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${new Date(u.created_at).toLocaleString(currentLang==='bm'?'ms-MY':'en-MY')}</div>
+      </div>
+      <span class="role-badge ${u.role}">${roleLabels[u.role]||u.role}</span>
+      <span class="badge ${u.is_active?'badge-clean':'badge-anomaly'}">${u.is_active?t('admin_active'):t('admin_inactive')}</span>
+      <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace">${u.id.slice(0,8)}…</span>
+    </div>`).join('');
+  wrap.innerHTML = `<div>${rows}</div>`;
+}
+
+async function handleCreateUser(e) {
+  e.preventDefault();
+  const btn = document.getElementById('cu-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+  const body = {
+    email: document.getElementById('cu-email').value.trim(),
+    password: document.getElementById('cu-password').value,
+    role: document.getElementById('cu-role').value,
+  };
+  try {
+    const r = await authFetch(API+'/api/v1/auth/users', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail||t('admin_create_error'));
+    document.getElementById('create-user-form').reset();
+    toast(t('admin_created')+': '+data.email, 'success');
+    loadUsers();
+  } catch(err) {
+    toast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>${t('admin_add_btn')}`;
+  }
 }
 
 // ── INIT ──
