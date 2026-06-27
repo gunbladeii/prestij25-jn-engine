@@ -9,10 +9,24 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Optional
 
+import io
+
 import streamlit as st
 import pandas as pd
 from passlib.context import CryptContext
 from jose import jwt, JWTError
+
+try:
+    from docx import Document as DocxDocument
+    _DOCX_OK = True
+except ImportError:
+    _DOCX_OK = False
+
+try:
+    from pypdf import PdfReader
+    _PDF_OK = True
+except ImportError:
+    _PDF_OK = False
 
 from agents.agent_a import run as agent_a_run, AgentAResult
 from agents.agent_b import run as agent_b_run, AgentBResult
@@ -129,9 +143,9 @@ _TR = {
         # Data Submission
         "sub_section":        "PENGHANTARAN DATA",
         "sub_title":          "Penghantaran Data",
-        "sub_caption":        "Hantar data melalui payload manual atau muat naik CSV pukal.",
+        "sub_caption":        "Hantar data melalui payload manual atau muat naik fail (CSV, TXT, DOCX, PDF).",
         "tab_payload":        "📤  Hantar Payload",
-        "tab_csv":            "📁  Muat Naik CSV",
+        "tab_csv":            "📁  Muat Naik Fail",
         "sub_src_id":         "ID Sistem Sumber",
         "sub_src_name":       "Nama Sistem",
         "sub_school":         "Kod Sekolah",
@@ -152,16 +166,24 @@ _TR = {
         "sub_di_range":       "Julat: [0.0000, 1.0000]",
         "sub_classify":       "Klasifikasi",
         "sub_audit_ref":      "Rekod Audit",
-        "csv_select":         "Pilih fail CSV",
+        "csv_select":         "Pilih fail (CSV, TXT, DOCX, PDF)",
         "csv_preview":        "Pratonton",
         "csv_rows":           "baris",
         "csv_process":        "🚀 Proses CSV",
         "csv_processing":     "Memproses...",
         "csv_ok":             "berjaya diproses",
         "csv_err":            "ralat",
-        "csv_no_access":      "Anda tiada akses untuk muat naik CSV.",
+        "csv_no_access":      "Anda tiada akses untuk muat naik fail.",
         "csv_format":         "Format CSV",
         "csv_access":         "Akses",
+        "file_doc_info":      "📄 Fail teks diekstrak sebagai **1 kes**. Lengkapi butiran di bawah sebelum hantar.",
+        "file_doc_school":    "Kod Sekolah",
+        "file_doc_score":     "Skor Operasi",
+        "file_doc_src":       "ID Sistem Sumber",
+        "file_doc_btn":       "🚀 Hantar sebagai 1 Kes",
+        "file_doc_no_text":   "⚠️ Fail tidak mengandungi teks yang boleh diekstrak.",
+        "file_doc_chars":     "aksara diekstrak",
+        "file_doc_preview":   "Pratonton Teks",
         # Cases & Brief
         "cases_section":      "LOG KES & RINGKASAN",
         "cases_title":        "Log & Ringkasan Kes",
@@ -304,9 +326,9 @@ _TR = {
         # Data Submission
         "sub_section":        "DATA SUBMISSION",
         "sub_title":          "Data Submission",
-        "sub_caption":        "Submit data via manual payload or bulk CSV upload.",
+        "sub_caption":        "Submit data via manual payload or bulk file upload (CSV, TXT, DOCX, PDF).",
         "tab_payload":        "📤  Submit Payload",
-        "tab_csv":            "📁  Upload CSV",
+        "tab_csv":            "📁  Upload File",
         "sub_src_id":         "Source System ID",
         "sub_src_name":       "System Name",
         "sub_school":         "School Code",
@@ -327,16 +349,24 @@ _TR = {
         "sub_di_range":       "Range: [0.0000, 1.0000]",
         "sub_classify":       "Classification",
         "sub_audit_ref":      "Audit Reference",
-        "csv_select":         "Select CSV file",
+        "csv_select":         "Select file (CSV, TXT, DOCX, PDF)",
         "csv_preview":        "Preview",
         "csv_rows":           "rows",
         "csv_process":        "🚀 Process CSV",
         "csv_processing":     "Processing...",
         "csv_ok":             "successfully processed",
         "csv_err":            "errors",
-        "csv_no_access":      "You do not have access to upload CSV.",
+        "csv_no_access":      "You do not have access to upload files.",
         "csv_format":         "CSV Format",
         "csv_access":         "Access",
+        "file_doc_info":      "📄 Text extracted as **1 case**. Complete the details below before submitting.",
+        "file_doc_school":    "School Code",
+        "file_doc_score":     "Operational Score",
+        "file_doc_src":       "Source System ID",
+        "file_doc_btn":       "🚀 Submit as 1 Case",
+        "file_doc_no_text":   "⚠️ File contains no extractable text.",
+        "file_doc_chars":     "characters extracted",
+        "file_doc_preview":   "Text Preview",
         # Cases & Brief
         "cases_section":      "CASE LOG & BRIEFS",
         "cases_title":        "Cases & Executive Log",
@@ -1150,6 +1180,39 @@ def _render_ingest_body():
             st.session_state.cases_tab    = "b"
             st.rerun()
 
+def _extract_text_from_file(uploaded_file) -> str:
+    """Extract plain text from TXT, DOCX, or PDF uploaded file objects."""
+    name = uploaded_file.name.lower()
+    raw_bytes = uploaded_file.read()
+
+    if name.endswith(".txt"):
+        for enc in ("utf-8", "utf-8-sig", "cp1252", "latin-1"):
+            try:
+                return raw_bytes.decode(enc)
+            except UnicodeDecodeError:
+                continue
+        return raw_bytes.decode("utf-8", errors="replace")
+
+    if name.endswith(".docx"):
+        if not _DOCX_OK:
+            return ""
+        doc = DocxDocument(io.BytesIO(raw_bytes))
+        return "\n".join(p.text for p in doc.paragraphs if p.text.strip())
+
+    if name.endswith(".pdf"):
+        if not _PDF_OK:
+            return ""
+        reader = PdfReader(io.BytesIO(raw_bytes))
+        pages = []
+        for page in reader.pages:
+            txt = page.extract_text()
+            if txt:
+                pages.append(txt)
+        return "\n".join(pages)
+
+    return ""
+
+
 def _render_csv_body():
     if not require_role("admin", "penyelaras_jn"):
         st.warning(t("csv_no_access"))
@@ -1158,48 +1221,93 @@ def _render_csv_body():
     col_up, col_info = st.columns([2, 1])
 
     with col_up:
-        uploaded = st.file_uploader(t("csv_select"), type=["csv"], label_visibility="collapsed")
+        uploaded = st.file_uploader(
+            t("csv_select"),
+            type=["csv", "txt", "docx", "pdf"],
+            label_visibility="collapsed",
+        )
+
         if uploaded:
-            df = pd.read_csv(uploaded)
-            st.markdown(f"**{t('csv_preview')}** — {len(df)} {t('csv_rows')}")
-            st.dataframe(df.head(), use_container_width=True, hide_index=True)
+            fname = uploaded.name.lower()
 
-            if st.button(t("csv_process"), type="primary", use_container_width=True):
-                results, errors = [], []
-                progress = st.progress(0)
-                status   = st.empty()
+            # ---- CSV: multi-row → multi-case (original behaviour) ----
+            if fname.endswith(".csv"):
+                df = pd.read_csv(uploaded)
+                st.markdown(f"**{t('csv_preview')}** — {len(df)} {t('csv_rows')}")
+                st.dataframe(df.head(), use_container_width=True, hide_index=True)
 
-                for i, row in df.iterrows():
-                    try:
-                        school = str(row.get("school", ""))
-                        rep_cols = [c for c in df.columns if "_reported" in str(c)]
-                        vals     = [float(row[c]) for c in rep_cols if pd.notna(row.get(c))]
-                        op_score = sum(vals) / len(vals) if vals else 50.0
-                        raw_parts = [f"{c}: {row[c]}" for c in df.columns if c != "school" and pd.notna(row.get(c))]
-                        raw_text  = "; ".join(raw_parts[:5])
-                        result = run_agent_pipeline(school, f"CSV-UPLOAD-{i+1:04d}", "CSV Bulk Upload", raw_text, op_score)
-                        results.append({"Baris": i+1, "Sekolah": school,
-                                        "Skor Op": f"{op_score:.1f}",
-                                        "Skor DI": f"{result['discrepancy_index']:.4f}",
-                                        "ID Kes": result["case_id"]})
-                    except Exception as e:
-                        errors.append({"Baris": i+1, "Ralat": str(e)})
-                    progress.progress((i+1)/len(df))
-                    status.text(f"{t('csv_processing')} {i+1}/{len(df)}")
+                if st.button(t("csv_process"), type="primary", use_container_width=True):
+                    results, errors = [], []
+                    progress = st.progress(0)
+                    status   = st.empty()
 
-                progress.empty(); status.empty()
-                if results:
-                    st.success(f"✅ {len(results)} {t('csv_ok')}")
-                    st.dataframe(pd.DataFrame(results), use_container_width=True, hide_index=True)
-                if errors:
-                    st.error(f"❌ {len(errors)} {t('csv_err')}")
-                    st.dataframe(pd.DataFrame(errors), use_container_width=True, hide_index=True)
+                    for i, row in df.iterrows():
+                        try:
+                            school = str(row.get("school", "UNKNOWN99"))
+                            rep_cols = [c for c in df.columns if "_reported" in str(c)]
+                            vals     = [float(row[c]) for c in rep_cols if pd.notna(row.get(c))]
+                            op_score = sum(vals) / len(vals) if vals else 50.0
+                            raw_parts = [f"{c}: {row[c]}" for c in df.columns if c != "school" and pd.notna(row.get(c))]
+                            raw_text  = "; ".join(raw_parts[:5])
+                            result = run_agent_pipeline(school, f"CSV-UPLOAD-{i+1:04d}", "CSV Bulk Upload", raw_text, op_score)
+                            results.append({"Baris": i+1, "Sekolah": school,
+                                            "Skor Op": f"{op_score:.1f}",
+                                            "Skor DI": f"{result['discrepancy_index']:.4f}",
+                                            "ID Kes": result["case_id"]})
+                        except Exception as e:
+                            errors.append({"Baris": i+1, "Ralat": str(e)})
+                        progress.progress((i+1)/len(df))
+                        status.text(f"{t('csv_processing')} {i+1}/{len(df)}")
+
+                    progress.empty(); status.empty()
+                    if results:
+                        st.success(f"✅ {len(results)} {t('csv_ok')}")
+                        st.dataframe(pd.DataFrame(results), use_container_width=True, hide_index=True)
+                    if errors:
+                        st.error(f"❌ {len(errors)} {t('csv_err')}")
+                        st.dataframe(pd.DataFrame(errors), use_container_width=True, hide_index=True)
+
+            # ---- TXT / DOCX / PDF: whole file → 1 case ----
+            else:
+                raw_text = _extract_text_from_file(uploaded)
+
+                if not raw_text.strip():
+                    st.error(t("file_doc_no_text"))
+                else:
+                    st.info(t("file_doc_info"))
+                    st.caption(f"📊 {len(raw_text):,} {t('file_doc_chars')}")
+
+                    with st.expander(t("file_doc_preview")):
+                        st.text(raw_text[:1500] + ("…" if len(raw_text) > 1500 else ""))
+
+                    db_audit = get_db()
+                    schools  = db_audit.execute("SELECT school_id, school_name FROM jn_audit_records ORDER BY school_id").fetchall()
+                    sch_opts = {f"{s['school_id']} — {s['school_name']}": s["school_id"] for s in schools}
+                    sch_opts["UNKNOWN99 — Sekolah Tidak Dikenali"] = "UNKNOWN99"
+
+                    with st.form("doc_ingest_form"):
+                        src_id   = st.text_input(t("file_doc_src"), value=f"DOC-{uploaded.name[:20].upper()}")
+                        sel_lbl  = st.selectbox(t("file_doc_school"), list(sch_opts.keys()))
+                        school   = sch_opts[sel_lbl]
+                        op_score = st.slider(t("file_doc_score"), 0.0, 100.0, 70.0, 0.5)
+                        submitted = st.form_submit_button(t("file_doc_btn"), type="primary", use_container_width=True)
+
+                    if submitted:
+                        with st.spinner(t("csv_processing")):
+                            result = run_agent_pipeline(school, src_id, uploaded.name, raw_text, op_score)
+                        st.success(f"✅ {t('csv_ok')}: **{result['case_id']}**")
+                        if result["anomaly_detected"]:
+                            st.warning(f"⚠️ ANOMALI — DI: {result['discrepancy_index']:.4f}")
 
     with col_info:
         st.markdown(f"**{t('csv_format')}**")
         st.code("school,cleanliness_reported,cleanliness_actual,\nSMK002,90,28,85,30", language=None)
-        st.caption("Op Score = purata *_reported")
+        st.caption("Op Score = avg of *_reported columns")
         st.caption("DI = |Audit − Op| / 100")
+        st.divider()
+        st.markdown("**TXT / DOCX / PDF**")
+        st.caption("Whole file → 1 case. Agent A extracts entities from the text.")
+        st.divider()
         st.markdown(f"**{t('csv_access')}**")
         st.markdown(f"- {t('role_admin')}\n- {t('role_penyelaras')}")
 
