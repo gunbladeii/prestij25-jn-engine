@@ -305,6 +305,50 @@ _TR = {
         "tip_nav_data":       "Hantar payload baharu atau muat naik fail CSV / DOCX / PDF untuk dianalisis.",
         "tip_nav_users":      "Urus akaun pengguna sistem (hanya Admin).",
         "tip_nav_info":       "Lihat seni bina sistem, tindanan teknologi dan maklumat deployment.",
+        # Laporan Menteri
+        "nav_laporan":        "LAPORAN",
+        "nav_menteri":        "📜  Laporan Menteri",
+        "tip_nav_menteri":    "Syor kepada YB Menteri — kes anomali kritikal dengan dapatan JN.",
+        "laporan_section":    "SYOR KEPADA YB MENTERI",
+        "laporan_title":      "Laporan Menteri",
+        "laporan_caption":    "Kes anomali yang memerlukan perhatian YB Menteri. Dapatan JN cross-reference dengan data luar.",
+        "laporan_no_cases":   "Tiada kes anomali. Semua data selaras atau belum ada data untuk dibandingkan.",
+        "laporan_filter_di":  "Ambang DI Minimum",
+        "laporan_filter_type":"Jenis Dapatan JN",
+        "laporan_all_types":  "Semua Jenis",
+        "laporan_summary":    "Ringkasan Kes",
+        "laporan_total_anom": "Jumlah Anomali",
+        "laporan_extreme":    "Ekstrem / Teruk",
+        "laporan_jn_backed":  "Ada Dapatan JN",
+        "laporan_print_hint": "Untuk cetak: klik kanan → Print, atau Ctrl+P",
+        "laporan_col_school": "Sekolah",
+        "laporan_col_di":     "DI",
+        "laporan_col_class":  "Klasifikasi",
+        "laporan_col_jn":     "Dapatan JN",
+        "laporan_col_skor_jn":"Skor JN",
+        "laporan_col_skor_op":"Skor Dilaporkan",
+        "laporan_col_flags":  "Bendera",
+        "laporan_col_syor":   "Syor",
+        "laporan_no_jn":      "Tiada rekod JN",
+        # Dashboard per-school
+        "dash_sekolah_title": "Pemantauan Per Sekolah",
+        "dash_sekolah_caption":"Sekolah dengan rekod Dapatan JN. Klik baris untuk lihat kes.",
+        "dash_jn_coverage":   "Sekolah Ada Data JN",
+        "dash_jn_challenged": "Dicabar Data Luar",
+        "dash_col_school":    "Sekolah",
+        "dash_col_jn_score":  "Skor JN (SKPMG2)",
+        "dash_col_op_score":  "Skor Dilaporkan",
+        "dash_col_di":        "DI",
+        "dash_col_class":     "Status",
+        "dash_col_jn_type":   "Ref. JN",
+        "dash_no_jn_data":    "Tiada data Dapatan JN lagi. Tambah data di halaman Dapatan JN.",
+        # Cases filter
+        "cases_filter_jn":    "Tapis mengikut Dapatan JN",
+        "cases_jn_all":       "Semua",
+        "cases_jn_pem":       "Pemeriksaan",
+        "cases_jn_skas":      "SK@S",
+        "cases_jn_skpk":      "SKPK",
+        "cases_jn_none":      "Tiada Dapatan JN",
         # Dapatan JN
         "nav_dapatan_jn":     "DAPATAN JN",
         "nav_dapatan":        "📂  Dapatan JN",
@@ -541,6 +585,50 @@ _TR = {
         "tip_nav_data":       "Submit a new payload or upload CSV / DOCX / PDF for analysis.",
         "tip_nav_users":      "Manage system user accounts (Admin only).",
         "tip_nav_info":       "View system architecture, technology stack and deployment info.",
+        # Laporan Menteri
+        "nav_laporan":        "REPORTS",
+        "nav_menteri":        "📜  Ministerial Report",
+        "tip_nav_menteri":    "Recommendations to YB Minister — critical anomaly cases with JN findings.",
+        "laporan_section":    "RECOMMENDATIONS TO YB MINISTER",
+        "laporan_title":      "Ministerial Report",
+        "laporan_caption":    "Anomaly cases requiring YB Minister's attention. JN findings cross-referenced with external data.",
+        "laporan_no_cases":   "No anomaly cases. All data aligned or no comparison data yet.",
+        "laporan_filter_di":  "Minimum DI Threshold",
+        "laporan_filter_type":"JN Finding Type",
+        "laporan_all_types":  "All Types",
+        "laporan_summary":    "Cases Summary",
+        "laporan_total_anom": "Total Anomalies",
+        "laporan_extreme":    "Extreme / Severe",
+        "laporan_jn_backed":  "JN Data Backed",
+        "laporan_print_hint": "To print: right-click → Print, or Ctrl+P",
+        "laporan_col_school": "School",
+        "laporan_col_di":     "DI",
+        "laporan_col_class":  "Classification",
+        "laporan_col_jn":     "JN Finding",
+        "laporan_col_skor_jn":"JN Score",
+        "laporan_col_skor_op":"Reported Score",
+        "laporan_col_flags":  "Flags",
+        "laporan_col_syor":   "Recommendation",
+        "laporan_no_jn":      "No JN record",
+        # Dashboard per-school
+        "dash_sekolah_title": "Per-School Monitoring",
+        "dash_sekolah_caption":"Schools with JN Findings data. Click a row to view cases.",
+        "dash_jn_coverage":   "Schools with JN Data",
+        "dash_jn_challenged": "Challenged by External Data",
+        "dash_col_school":    "School",
+        "dash_col_jn_score":  "JN Score (SKPMG2)",
+        "dash_col_op_score":  "Reported Score",
+        "dash_col_di":        "DI",
+        "dash_col_class":     "Status",
+        "dash_col_jn_type":   "JN Ref.",
+        "dash_no_jn_data":    "No JN Findings data yet. Add data in the Dapatan JN page.",
+        # Cases filter
+        "cases_filter_jn":    "Filter by JN Finding",
+        "cases_jn_all":       "All",
+        "cases_jn_pem":       "Pemeriksaan",
+        "cases_jn_skas":      "SK@S",
+        "cases_jn_skpk":      "SKPK",
+        "cases_jn_none":      "No JN Finding",
         # Dapatan JN
         "nav_dapatan_jn":     "JN FINDINGS",
         "nav_dapatan":        "📂  JN Findings",
@@ -1121,6 +1209,8 @@ def init_db() -> JNDatabase:
                 agent_a_result             TEXT,
                 agent_c_result             TEXT,
                 brief_content              TEXT,
+                jn_reference_type          TEXT NOT NULL DEFAULT '',
+                jn_reference_id            TEXT NOT NULL DEFAULT '',
                 timestamp                  TEXT NOT NULL DEFAULT (datetime('now'))
             );
             CREATE INDEX IF NOT EXISTS idx_dl_case_id ON discrepancy_log(case_id);
@@ -1190,6 +1280,17 @@ def init_db() -> JNDatabase:
             (str(uuid.uuid4()), DEFAULT_ADMIN_EMAIL, hashed, "admin")
         )
         db.commit()
+
+    # Migrate existing discrepancy_log — add JN reference columns if not present
+    for _col_sql in [
+        "ALTER TABLE discrepancy_log ADD COLUMN jn_reference_type TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE discrepancy_log ADD COLUMN jn_reference_id   TEXT NOT NULL DEFAULT ''",
+    ]:
+        try:
+            db.execute(_col_sql)
+            db.commit()
+        except Exception:
+            pass  # column already exists
 
     return db
 
@@ -1300,18 +1401,23 @@ def run_agent_pipeline(
         "directive":     result_c.executive_directive_text,
     })
 
+    jn_ref_type = "pemeriksaan" if _jn_record else ""
+    jn_ref_id   = _jn_record.get("id", "") if _jn_record else ""
+
     db.execute("""INSERT INTO discrepancy_log
         (id, case_id, school_id, school_name, state, source_system_name,
          audit_score_reference, operational_score_reported, score_delta,
          discrepancy_index, di_classification, flags, anomaly_detected,
-         confidence_score, agent_a_result, agent_c_result)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+         confidence_score, agent_a_result, agent_c_result,
+         jn_reference_type, jn_reference_id)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (str(uuid.uuid4()), result_b.case_id, school_id,
          result_c.school_name, result_c.state, source_system_name,
          result_b.audit_data_snapshot.get("skpmg2_score", 0),
          resolved_op_score, result_b.score_delta, result_b.discrepancy_index,
          result_b.di_classification, flags_json, result_b.anomaly_detected,
-         result_b.confidence_score, agent_a_json, agent_c_json))
+         result_b.confidence_score, agent_a_json, agent_c_json,
+         jn_ref_type, jn_ref_id))
     db.commit()
 
     return {
@@ -1607,6 +1713,10 @@ def render_sidebar() -> None:
         st.markdown(f'<div class="nav-group">{t("nav_dapatan_jn")}</div>', unsafe_allow_html=True)
         _nav_btn("nav_dapatan", "dapatan_jn", tooltip_key="tip_nav_dapatan")
 
+        # ── Nav: LAPORAN ─────────────────────────────
+        st.markdown(f'<div class="nav-group">{t("nav_laporan")}</div>', unsafe_allow_html=True)
+        _nav_btn("nav_menteri", "laporan_menteri", tooltip_key="tip_nav_menteri")
+
         # ── Nav: SYSTEM ─────────────────────────────
         st.markdown(f'<div class="nav-group">{t("nav_system")}</div>', unsafe_allow_html=True)
         _nav_btn("nav_users", "user_management", role_required=("admin",), tooltip_key="tip_nav_users")
@@ -1753,6 +1863,54 @@ def render_dashboard():
     }
     if sum(dist.values()) > 0:
         st.bar_chart(pd.DataFrame({"n": dist}), use_container_width=True)
+
+    # ── Per-School Cross-Reference Section ────────────────────────────────
+    st.divider()
+    st.subheader(t("dash_sekolah_title"))
+    st.caption(t("dash_sekolah_caption"))
+
+    # Latest JN record per school
+    jn_rows = db.execute(
+        "SELECT school_id, school_name, MAX(tarikh_pemeriksaan) as tarikh, skpmg2_score "
+        "FROM jn_pemeriksaan GROUP BY school_id"
+    ).fetchall()
+
+    if not jn_rows:
+        st.info(t("dash_no_jn_data"))
+    else:
+        # Latest discrepancy case per school
+        case_map = {}
+        for cr in db.execute(
+            "SELECT school_id, operational_score_reported, discrepancy_index, "
+            "di_classification, anomaly_detected, case_id, jn_reference_type, MAX(timestamp) "
+            "FROM discrepancy_log GROUP BY school_id"
+        ).fetchall():
+            case_map[cr["school_id"]] = cr
+
+        jn_count      = len(jn_rows)
+        challenged    = sum(1 for r in jn_rows if r["school_id"] in case_map)
+        mc1, mc2 = st.columns(2)
+        mc1.metric(t("dash_jn_coverage"),   jn_count)
+        mc2.metric(t("dash_jn_challenged"), challenged)
+
+        table_data = []
+        for jr in jn_rows:
+            sid  = jr["school_id"]
+            cr   = case_map.get(sid)
+            di   = cr["discrepancy_index"] if cr else None
+            cls  = (cr["di_classification"].replace("_"," ") if cr else "—")
+            color = DI_COLORS.get(cr["di_classification"], "#6B7C93") if cr else "#6B7C93"
+            table_data.append({
+                t("dash_col_school"):   f"{sid} — {jr['school_name']}",
+                t("dash_col_jn_score"): f"{jr['skpmg2_score']:.1f}",
+                t("dash_col_op_score"): f"{cr['operational_score_reported']:.1f}" if cr and cr["operational_score_reported"] is not None else "—",
+                t("dash_col_di"):       f"{di:.4f}" if di is not None else "—",
+                t("dash_col_class"):    cls,
+                t("dash_col_jn_type"):  (cr["jn_reference_type"] or "—") if cr else "—",
+            })
+
+        import pandas as _pd
+        st.dataframe(_pd.DataFrame(table_data), use_container_width=True, hide_index=True)
 
 # ---------------------------------------------------------------------------
 # DATA SUBMISSION (Hantar Payload + Muat Naik Fail + Google Drive API)
@@ -2308,8 +2466,30 @@ def render_cases_combined():
         _render_brief_body()
 
 def _render_case_log_body():
-    db    = get_db()
-    cases = db.execute("SELECT * FROM discrepancy_log ORDER BY timestamp DESC").fetchall()
+    db = get_db()
+
+    # JN reference type filter
+    jn_filter_opts = {
+        t("cases_jn_all"):  None,
+        t("cases_jn_pem"):  "pemeriksaan",
+        t("cases_jn_skas"): "skas",
+        t("cases_jn_skpk"): "skpk",
+        t("cases_jn_none"): "__none__",
+    }
+    jn_sel_label = st.selectbox(t("cases_filter_jn"), list(jn_filter_opts.keys()), key="cases_jn_filter")
+    jn_filter    = jn_filter_opts[jn_sel_label]
+
+    if jn_filter is None:
+        cases = db.execute("SELECT * FROM discrepancy_log ORDER BY timestamp DESC").fetchall()
+    elif jn_filter == "__none__":
+        cases = db.execute(
+            "SELECT * FROM discrepancy_log WHERE jn_reference_type='' OR jn_reference_type IS NULL ORDER BY timestamp DESC"
+        ).fetchall()
+    else:
+        cases = db.execute(
+            "SELECT * FROM discrepancy_log WHERE jn_reference_type=? ORDER BY timestamp DESC",
+            (jn_filter,)
+        ).fetchall()
 
     c_refresh, c_del = st.columns([1, 5])
     with c_refresh:
@@ -2783,6 +2963,110 @@ def render_system():
         )
 
 # ---------------------------------------------------------------------------
+# LAPORAN MENTERI PAGE (Phase 3)
+# ---------------------------------------------------------------------------
+def render_laporan_menteri():
+    import json as _json
+    section_header(t("laporan_section"))
+    st.title(t("laporan_title"))
+    st.caption(t("laporan_caption"))
+
+    db = get_db()
+
+    # All anomaly cases
+    all_cases = db.execute(
+        "SELECT * FROM discrepancy_log WHERE anomaly_detected=1 ORDER BY discrepancy_index DESC"
+    ).fetchall()
+
+    # Metrics
+    total_anom   = len(all_cases)
+    extreme_cnt  = sum(1 for c in all_cases if c["di_classification"] in ("EXTREME_DISCREPANCY","SEVERE_DISCREPANCY"))
+    jn_backed    = sum(1 for c in all_cases if c.get("jn_reference_type",""))
+
+    m1, m2, m3 = st.columns(3)
+    m1.metric(t("laporan_total_anom"), total_anom)
+    m2.metric(t("laporan_extreme"),    extreme_cnt)
+    m3.metric(t("laporan_jn_backed"),  jn_backed)
+
+    st.divider()
+
+    # Filters
+    fc1, fc2 = st.columns(2)
+    di_min = fc1.slider(t("laporan_filter_di"), 0.0, 1.0, 0.25, 0.05, key="laporan_di_min")
+    jn_type_opts = {
+        t("laporan_all_types"):   None,
+        t("cases_jn_pem"):        "pemeriksaan",
+        t("cases_jn_skas"):       "skas",
+        t("cases_jn_skpk"):       "skpk",
+        t("cases_jn_none"):       "__none__",
+    }
+    jn_type_label = fc2.selectbox(t("laporan_filter_type"), list(jn_type_opts.keys()), key="laporan_jn_type")
+    jn_type_val   = jn_type_opts[jn_type_label]
+
+    # Apply filters
+    filtered = [c for c in all_cases if c["discrepancy_index"] >= di_min]
+    if jn_type_val == "__none__":
+        filtered = [c for c in filtered if not c.get("jn_reference_type","")]
+    elif jn_type_val:
+        filtered = [c for c in filtered if c.get("jn_reference_type","") == jn_type_val]
+
+    st.caption(t("laporan_print_hint"))
+
+    if not filtered:
+        st.info(t("laporan_no_cases"))
+        return
+
+    # Lookup JN scores for display
+    jn_score_map = {}
+    for jr in db.execute("SELECT school_id, skpmg2_score, MAX(tarikh_pemeriksaan) FROM jn_pemeriksaan GROUP BY school_id").fetchall():
+        jn_score_map[jr["school_id"]] = jr["skpmg2_score"]
+
+    for idx, c in enumerate(filtered):
+        color = DI_COLORS.get(c["di_classification"], "#6B7C93")
+        jn_ref  = c.get("jn_reference_type","") or t("laporan_no_jn")
+        jn_score = jn_score_map.get(c["school_id"])
+
+        # Compact header row
+        st.markdown(
+            f"<div style='background:#0F2040;border-left:4px solid {color};"
+            f"padding:12px 16px;border-radius:6px;margin-bottom:6px'>"
+            f"<span style='font-family:monospace;font-size:10px;color:#94A3B8'>{c['case_id']}</span>&nbsp;&nbsp;"
+            f"<span style='font-weight:700;color:#F1F5F9'>{c['school_id']} — {c['school_name'] or '—'}</span>&nbsp;&nbsp;"
+            f"<span style='background:{color};color:#fff;padding:2px 8px;border-radius:4px;"
+            f"font-size:11px;font-weight:700'>DI {c['discrepancy_index']:.4f}</span>&nbsp;&nbsp;"
+            f"<span style='font-size:11px;color:#94A3B8'>Ref: {jn_ref}</span></div>",
+            unsafe_allow_html=True
+        )
+
+        with st.expander(f"📋 {c['di_classification'].replace('_',' ')} — {c['school_id']} {c['school_name'] or ''}", expanded=(idx == 0)):
+            col_a, col_b, col_c, col_d = st.columns(4)
+            col_a.metric(t("laporan_col_skor_jn"), f"{jn_score:.1f}" if jn_score else "—")
+            col_b.metric(t("laporan_col_skor_op"), f"{c['operational_score_reported']:.1f}" if c['operational_score_reported'] else "—")
+            col_c.metric("DI", f"{c['discrepancy_index']:.4f}")
+            col_d.metric(t("laporan_col_jn"), jn_ref.capitalize())
+
+            flags = _json.loads(c["flags"]) if c.get("flags") else []
+            if flags:
+                st.markdown("**" + t("laporan_col_flags") + ":**")
+                for f in flags:
+                    st.markdown(f"- `{f}`")
+
+            agent_c = _json.loads(c["agent_c_result"]) if c.get("agent_c_result") else {}
+            directive = agent_c.get("directive","")
+            if directive:
+                st.markdown(f"**{t('laporan_col_syor')}:**")
+                st.info(directive)
+
+            policy = agent_c.get("policy", [])
+            if policy:
+                st.markdown("**Cadangan Polisi:**")
+                for p in policy:
+                    st.markdown(f"- **{p.get('flag','')}** — {p.get('recommended_action','')}  \n  _{p.get('legal_reference','')}_")
+
+        st.markdown("---")
+
+
+# ---------------------------------------------------------------------------
 # DAPATAN JN PAGE
 # ---------------------------------------------------------------------------
 def _api_status_card(title: str, url: str, key: str):
@@ -3118,7 +3402,7 @@ def main():
                 }
                 # Restore last active page if present in URL
                 _saved_page = st.query_params.get("p", "")
-                _valid_pages = {"dashboard", "cases", "data_input", "user_management", "system_info", "dapatan_jn"}
+                _valid_pages = {"dashboard", "cases", "data_input", "user_management", "system_info", "dapatan_jn", "laporan_menteri"}
                 if _saved_page in _valid_pages:
                     st.session_state["current_page"] = _saved_page
 
@@ -3134,12 +3418,13 @@ def main():
     render_sidebar()
 
     page_map = {
-        "dashboard":       render_dashboard,
-        "cases":           render_cases_combined,
-        "data_input":      render_data_input,
-        "dapatan_jn":      render_dapatan_jn,
-        "user_management": render_admin,
-        "system_info":     render_system,
+        "dashboard":        render_dashboard,
+        "cases":            render_cases_combined,
+        "data_input":       render_data_input,
+        "dapatan_jn":       render_dapatan_jn,
+        "laporan_menteri":  render_laporan_menteri,
+        "user_management":  render_admin,
+        "system_info":      render_system,
     }
 
     try:

@@ -58,6 +58,8 @@ CREATE TABLE IF NOT EXISTS discrepancy_log (
     agent_a_result             TEXT,
     agent_c_result             TEXT,
     brief_content              TEXT,
+    jn_reference_type          TEXT NOT NULL DEFAULT '',
+    jn_reference_id            TEXT NOT NULL DEFAULT '',
     timestamp                  TEXT NOT NULL DEFAULT (to_char(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS'))
 );
 
