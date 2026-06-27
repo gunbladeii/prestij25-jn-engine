@@ -2908,172 +2908,264 @@ def render_admin():
 # SYSTEM INFO
 # ---------------------------------------------------------------------------
 def render_system():
+    # ── Bilingual content dict — all user-visible text keyed by lang ──────
+    _C = {
+        "BM": {
+            "caption":       "Platform Kecerdasan Buatan untuk mengesahkan keputusan pemeriksaan Jemaah Nazir sebelum sebarang tindakan disyorkan kepada YB Menteri Pendidikan.",
+            "why_label":     "Kenapa Sistem Ini Diperlukan",
+            "why_body":      "Sebelum ini, tiada mekanisme untuk mengesahkan sama ada laporan dari luar — aduan, data sistem KPM, laporan lapangan — selari dengan apa yang Jemaah Nazir sendiri telah dapati semasa pemeriksaan sebenar. Keputusan kepada YB Menteri boleh dibuat berdasarkan maklumat yang tidak tepat atau telah dimanipulasi.",
+            "why_bold":      "JN Resolusi menyelesaikan masalah ini",
+            "why_bold2":     "dengan membandingkan kedua-dua sumber secara automatik menggunakan AI, dan hanya mengeluarkan syor apabila perbezaan dapat dibuktikan dengan data.",
+            "two_title":     "Dua Sumber Data, Satu Keputusan",
+            "two_caption":   "Sistem membandingkan apa yang JN dapati (Sisi A) berbanding apa yang dilaporkan oleh sumber luar (Sisi B).",
+            "sa_tag":        "SISI A — Kebenaran Rujukan",
+            "sa_title":      "Dapatan Jemaah Nazir",
+            "sa_intro":      "Rekod pemeriksaan fizikal oleh pegawai JN yang terlatih:",
+            "sa_p1":         "Pemeriksaan (SKPMG2) — skor kualiti sekolah semasa lawatan fizikal",
+            "sa_p2":         "SK@S — Standard Kualiti @ Sekolah, penilaian kendiri sekolah yang divalidasi JN",
+            "sa_p3":         "SKPK — audit pengurusan dan kepimpinan sekolah",
+            "sb_tag":        "SISI B — Cabaran Luar",
+            "sb_title":      "Data dari Sumber Luar",
+            "sb_intro":      "Maklumat yang masuk dari pelbagai saluran:",
+            "sb_p1":         "Aduan awam &amp; dalaman — laporan ibu bapa, guru, staf dan orang awam",
+            "sb_p2":         "Sistem KPM — data operasi dari EMIS, APDM, SISPAA",
+            "sb_p3":         "Laporan lapangan &amp; CSV — data dari PPD, EMISONLINE atau muat naik manual",
+            "ag_title":      "Bagaimana AI Bekerja — 3 Ejen Berurutan",
+            "ag_caption":    "Setiap laporan yang masuk diproses secara automatik melalui tiga peringkat AI sebelum syor dihasilkan.",
+            "agents": [
+                ("EJEN A", "Pembaca & Pengkelas",
+                 '"Seperti pegawai yang baca dan faham laporan"',
+                 "Baca laporan dari Sisi B. Kenal pasti isu apa, sekolah mana, dan serius ke tidak. Jana peta kategori dan tahap keterukan.",
+                 ["→ Kategori isu", "→ Tahap keterukan", "→ Kod sekolah"]),
+                ("EJEN B", "Pengira & Pengesan",
+                 '"Seperti juruaudit yang bandingkan dua set rekod"',
+                 "Ambil dapatan JN untuk sekolah berkenaan. Kira Discrepancy Index (DI) — sejauh mana laporan luar berbeza dari apa JN dapati.",
+                 ["→ Skor DI [0.0 – 1.0]", "→ Bendera risiko", "→ Anomali: Ya / Tidak"]),
+                ("EJEN C", "Penulis Syor",
+                 '"Seperti penasihat yang sediakan kertas dasar"',
+                 "Jana cadangan tindakan spesifik. Nyatakan dapatan JN mana yang terlibat, bukti apa, dan apa tindakan yang perlu diambil.",
+                 ["→ Arahan eksekutif", "→ Cadangan polisi", "→ Asas undang-undang"]),
+            ],
+            "imp_title":     "Impak kepada Kementerian",
+            "imp_caption":   "Bukan sekadar sistem laporan — JN Resolusi mengubah cara keputusan dibuat di peringkat kementerian.",
+            "impacts": [
+                ("✓", "Keputusan Berasaskan Bukti, Bukan Andaian",
+                 "Setiap syor disertakan dengan nombor DI, dapatan JN yang dirujuk, dan sumber data yang dibandingkan. Tiada keputusan dibuat secara buta.", "#0C9980"),
+                ("⚑", "Penyelewengan Data Dikesan Sebelum Keputusan Dibuat",
+                 "Sistem mengesan secara automatik apabila skor yang dilaporkan jauh berbeza dari dapatan JN sebenar — bukan selepas tindakan diambil, tetapi sebelumnya.", "#C97206"),
+                ("⏎", "Setiap Syor Boleh Ditelusuri Semula",
+                 "Log audit lengkap menyimpan semua kes, dapatan, dan syor. Jika keputusan dipersoalkan, rekod lengkap tersedia untuk semakan semula.", "#1A3A5C"),
+            ],
+            "ew_badge":      "Keupayaan Baharu",
+            "ew_title":      "Sistem Amaran Awal Sebelum Pemeriksaan JN Dirancang",
+            "ew_lead":       "JN Resolusi bukan hanya bertindak balas — ia",
+            "ew_lead_bold":  "membantu JN merancang ke mana perlu pergi seterusnya.",
+            "ew_sub":        "Berdasarkan pola DI yang terkumpul, sistem dapat mengenal pasti sekolah yang menunjukkan tanda-tanda ketidakselarasan data <em>sebelum</em> mana-mana pemeriksaan fizikal dijadualkan.",
+            "ew_pts": [
+                ("Keutamaan pemeriksaan lebih tepat", "JN fokus kepada sekolah berisiko tinggi, bukan berdasarkan giliran rutin semata-mata"),
+                ("Bukti pra-pemeriksaan tersedia", "pegawai JN tiba dengan maklumat DI dan bendera risiko, bukan dengan tangan kosong"),
+                ("Tindakan pencegahan lebih awal", "sekolah yang menunjukkan anomali boleh diberi intervensi sebelum masalah merebak ke peringkat kritikal"),
+            ],
+            "di_title":      "Skala Perbezaan — Discrepancy Index (DI)",
+            "di_caption":    "DI mengukur sejauh mana perbezaan antara skor Jemaah Nazir dengan skor yang dilaporkan. Semakin tinggi DI, semakin besar kemungkinan data tidak tepat.",
+            "di_rows": [
+                ("< 0.10", "DATA SELARAS",        "#0F6B3C", "Laporan luar selari dengan dapatan JN. Tiada tindakan diperlukan."),
+                ("≥ 0.10", "PERBEZAAN KECIL",     "#1D4ED8", "Perbezaan wujud tetapi masih dalam had boleh diterima. Pantau sahaja."),
+                ("≥ 0.25", "PERBEZAAN SEDERHANA", "#B45309", "Perbezaan ketara. Siasatan lanjut disyorkan."),
+                ("≥ 0.50", "PERBEZAAN SERIUS",    "#C2410C", "Perbezaan serius. Kemungkinan data dimanipulasi. Tindakan segera."),
+                ("≥ 0.75", "PERBEZAAN MELAMPAU",  "#C41E3A", "Perbezaan melampau. Bendera merah — laporan terus kepada YB Menteri."),
+            ],
+            "tech_expander": "ℹ️ Maklumat Teknikal (untuk pasukan IT)",
+        },
+        "EN": {
+            "caption":       "AI Platform to verify Jemaah Nazir inspection findings before any recommendation is made to the YB Minister of Education.",
+            "why_label":     "Why This System is Needed",
+            "why_body":      "Previously, there was no mechanism to verify whether external reports — complaints, KPM system data, field reports — were consistent with what Jemaah Nazir itself found during actual inspections. Decisions to the YB Minister could be made based on inaccurate or manipulated information.",
+            "why_bold":      "JN Resolusi solves this",
+            "why_bold2":     "by automatically cross-referencing both sources using AI, and only issuing recommendations when discrepancies can be proven with data.",
+            "two_title":     "Two Data Sources, One Evidence-Based Decision",
+            "two_caption":   "The system compares what JN found (Side A) against what external sources report (Side B).",
+            "sa_tag":        "SIDE A — Ground Truth",
+            "sa_title":      "Jemaah Nazir Findings",
+            "sa_intro":      "Physical inspection records by trained JN officers:",
+            "sa_p1":         "Pemeriksaan (SKPMG2) — school quality score from physical site visits",
+            "sa_p2":         "SK@S — Standard Kualiti @ Sekolah, school self-assessment validated by JN",
+            "sa_p3":         "SKPK — management and leadership audit by Jemaah Nazir",
+            "sb_tag":        "SIDE B — Incoming Challenge",
+            "sb_title":      "External Data Sources",
+            "sb_intro":      "Information arriving from multiple channels:",
+            "sb_p1":         "Public &amp; internal complaints — reports from parents, teachers, staff and the public",
+            "sb_p2":         "KPM Systems — operational data from EMIS, APDM, SISPAA",
+            "sb_p3":         "Field reports &amp; CSV — data from PPD, EMISONLINE or manual uploads",
+            "ag_title":      "How the AI Works — 3 Sequential Agents",
+            "ag_caption":    "Every incoming report is processed automatically through three AI stages before a recommendation is generated.",
+            "agents": [
+                ("AGENT A", "Reader & Classifier",
+                 '"Like an officer who reads and understands the report"',
+                 "Reads external reports (Side B). Identifies the issue, the school, and severity level. Generates a category map and severity rating.",
+                 ["→ Issue category", "→ Severity level", "→ School code"]),
+                ("AGENT B", "Calculator & Detector",
+                 '"Like an auditor comparing two sets of records"',
+                 "Retrieves the JN findings for the relevant school. Computes the Discrepancy Index (DI) — how far the external report deviates from JN's own findings.",
+                 ["→ DI score [0.0 – 1.0]", "→ Risk flags", "→ Anomaly: Yes / No"]),
+                ("AGENT C", "Recommendation Writer",
+                 '"Like an advisor preparing a policy brief"',
+                 "Generates specific action recommendations. States which JN finding is involved, what the evidence is, and what action needs to be taken.",
+                 ["→ Executive directive", "→ Policy recommendations", "→ Legal basis"]),
+            ],
+            "imp_title":     "Impact on the Ministry",
+            "imp_caption":   "More than a reporting system — JN Resolusi changes how decisions are made at the ministerial level.",
+            "impacts": [
+                ("✓", "Decisions Based on Evidence, Not Assumptions",
+                 "Every recommendation is accompanied by a DI score, the JN finding referenced, and the data source compared. No decision is made blindly.", "#0C9980"),
+                ("⚑", "Data Manipulation Detected Before Decisions Are Made",
+                 "The system automatically detects when a reported score differs significantly from JN's own findings — not after action is taken, but before.", "#C97206"),
+                ("⏎", "Every Recommendation is Fully Traceable",
+                 "A complete audit log stores all cases, findings, and recommendations. If any decision is questioned, the full record is available for review.", "#1A3A5C"),
+            ],
+            "ew_badge":      "New Capability",
+            "ew_title":      "Early Warning System Before JN Inspection Planning",
+            "ew_lead":       "JN Resolusi doesn't just react — it",
+            "ew_lead_bold":  "helps JN plan where to go next.",
+            "ew_sub":        "Based on accumulated DI patterns, the system can identify schools showing signs of data misalignment <em>before</em> any physical inspection is scheduled.",
+            "ew_pts": [
+                ("More targeted inspection priorities", "JN focuses resources on high-risk schools, not based on routine rotation alone"),
+                ("Pre-inspection evidence available", "JN officers arrive with DI information and risk flags — not empty-handed"),
+                ("Earlier preventive action", "Schools showing anomalies can be given intervention before problems escalate to a critical level"),
+            ],
+            "di_title":      "Discrepancy Index (DI) — The Scale",
+            "di_caption":    "DI measures how far the reported score differs from the Jemaah Nazir score. The higher the DI, the greater the likelihood that data is inaccurate.",
+            "di_rows": [
+                ("< 0.10", "DATA ALIGNED",         "#0F6B3C", "External report is consistent with JN findings. No action needed."),
+                ("≥ 0.10", "MINOR DISCREPANCY",    "#1D4ED8", "Discrepancy exists but within acceptable range. Monitor only."),
+                ("≥ 0.25", "MODERATE DISCREPANCY", "#B45309", "Notable discrepancy. Further investigation recommended."),
+                ("≥ 0.50", "SEVERE DISCREPANCY",   "#C2410C", "Serious discrepancy. Possible data manipulation. Immediate action."),
+                ("≥ 0.75", "EXTREME DISCREPANCY",  "#C41E3A", "Extreme discrepancy. Red flag — escalate directly to YB Minister."),
+            ],
+            "tech_expander": "ℹ️ Technical Information (for IT team)",
+        },
+    }
+    lang = st.session_state.get("lang", "BM")
+    c = _C.get(lang, _C["BM"])
+
     section_header(t("sys_section"))
     st.title("JN Resolusi")
-    st.caption("Platform Kecerdasan Buatan untuk mengesahkan keputusan pemeriksaan Jemaah Nazir sebelum sebarang tindakan disyorkan kepada YB Menteri Pendidikan.")
+    st.caption(c["caption"])
 
     # ── OBJEKTIF ─────────────────────────────────────────────────────────
     st.markdown("<div style='margin-top:8px'></div>", unsafe_allow_html=True)
-    st.markdown("""<div style='background:rgba(56,189,248,0.07);border-left:3px solid #38BDF8;
-padding:16px 20px;border-radius:0 6px 6px 0;margin-bottom:4px'>
-<div style='font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;
-color:#38BDF8;margin-bottom:6px'>Kenapa Sistem Ini Diperlukan</div>
-<div style='font-size:14px;color:#CBD5E1;line-height:1.65'>
-Sebelum ini, tiada mekanisme untuk mengesahkan sama ada laporan dari luar — aduan, data sistem KPM,
-laporan lapangan — selari dengan apa yang Jemaah Nazir sendiri telah dapati semasa pemeriksaan sebenar.
-Keputusan kepada YB Menteri boleh dibuat berdasarkan maklumat yang tidak tepat atau telah dimanipulasi.
-<br><br>
-<strong style='color:#F1F5F9'>JN Resolusi menyelesaikan masalah ini</strong> dengan membandingkan kedua-dua sumber secara automatik
-menggunakan AI, dan hanya mengeluarkan syor apabila perbezaan dapat dibuktikan dengan data.
-</div>
-</div>""", unsafe_allow_html=True)
+    st.markdown(
+"<div style='background:rgba(56,189,248,0.07);border-left:3px solid #38BDF8;"
+"padding:16px 20px;border-radius:0 6px 6px 0;margin-bottom:4px'>"
+f"<div style='font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;"
+f"color:#38BDF8;margin-bottom:6px'>{c['why_label']}</div>"
+f"<div style='font-size:14px;color:#CBD5E1;line-height:1.65'>{c['why_body']}<br><br>"
+f"<strong style='color:#F1F5F9'>{c['why_bold']}</strong> {c['why_bold2']}"
+"</div></div>", unsafe_allow_html=True)
 
     st.divider()
 
     # ── DUA SISI ──────────────────────────────────────────────────────────
-    st.subheader("Dua Sumber Data, Satu Keputusan")
-    st.caption("Sistem membandingkan apa yang JN dapati (Sisi A) berbanding apa yang dilaporkan oleh sumber luar (Sisi B).")
+    st.subheader(c["two_title"])
+    st.caption(c["two_caption"])
 
     col_a, col_b = st.columns(2)
     with col_a:
-        st.markdown("""<div style='border-top:3px solid #0C9980;background:rgba(12,153,128,0.07);
-padding:18px 16px;border-radius:0 0 6px 6px;height:100%'>
-<div style='font-size:9px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;
-color:#0C9980;margin-bottom:8px'>SISI A — Kebenaran Rujukan</div>
-<div style='font-size:14px;font-weight:700;color:#F1F5F9;margin-bottom:12px'>Dapatan Jemaah Nazir</div>
-<div style='font-size:12.5px;color:#94A3B8;line-height:1.6'>
-Rekod pemeriksaan fizikal oleh pegawai JN yang terlatih:<br><br>
-• <strong style='color:#CBD5E1'>Pemeriksaan (SKPMG2)</strong> — skor kualiti sekolah semasa lawatan fizikal<br>
-• <strong style='color:#CBD5E1'>SK@S</strong> — Standard Kualiti @ Sekolah, penilaian kendiri sekolah yang divalidasi JN<br>
-• <strong style='color:#CBD5E1'>SKPK</strong> — audit pengurusan dan kepimpinan sekolah
-</div>
-</div>""", unsafe_allow_html=True)
+        st.markdown(
+"<div style='border-top:3px solid #0C9980;background:rgba(12,153,128,0.07);"
+"padding:18px 16px;border-radius:0 0 6px 6px;height:100%'>"
+f"<div style='font-size:9px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;"
+f"color:#0C9980;margin-bottom:8px'>{c['sa_tag']}</div>"
+f"<div style='font-size:14px;font-weight:700;color:#F1F5F9;margin-bottom:12px'>{c['sa_title']}</div>"
+f"<div style='font-size:12.5px;color:#94A3B8;line-height:1.6'>{c['sa_intro']}<br><br>"
+f"• <strong style='color:#CBD5E1'>{c['sa_p1']}</strong><br>"
+f"• <strong style='color:#CBD5E1'>{c['sa_p2']}</strong><br>"
+f"• <strong style='color:#CBD5E1'>{c['sa_p3']}</strong>"
+"</div></div>", unsafe_allow_html=True)
 
     with col_b:
-        st.markdown("""<div style='border-top:3px solid #C97206;background:rgba(201,114,6,0.07);
-padding:18px 16px;border-radius:0 0 6px 6px;height:100%'>
-<div style='font-size:9px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;
-color:#C97206;margin-bottom:8px'>SISI B — Cabaran Luar</div>
-<div style='font-size:14px;font-weight:700;color:#F1F5F9;margin-bottom:12px'>Data dari Sumber Luar</div>
-<div style='font-size:12.5px;color:#94A3B8;line-height:1.6'>
-Maklumat yang masuk dari pelbagai saluran:<br><br>
-• <strong style='color:#CBD5E1'>Aduan awam &amp; dalaman</strong> — laporan ibu bapa, guru, staf dan orang awam<br>
-• <strong style='color:#CBD5E1'>Sistem KPM</strong> — data operasi dari EMIS, APDM, SISPAA<br>
-• <strong style='color:#CBD5E1'>Laporan lapangan &amp; CSV</strong> — data dari PPD, EMISONLINE atau muat naik manual
-</div>
-</div>""", unsafe_allow_html=True)
+        st.markdown(
+"<div style='border-top:3px solid #C97206;background:rgba(201,114,6,0.07);"
+"padding:18px 16px;border-radius:0 0 6px 6px;height:100%'>"
+f"<div style='font-size:9px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;"
+f"color:#C97206;margin-bottom:8px'>{c['sb_tag']}</div>"
+f"<div style='font-size:14px;font-weight:700;color:#F1F5F9;margin-bottom:12px'>{c['sb_title']}</div>"
+f"<div style='font-size:12.5px;color:#94A3B8;line-height:1.6'>{c['sb_intro']}<br><br>"
+f"• <strong style='color:#CBD5E1'>{c['sb_p1']}</strong><br>"
+f"• <strong style='color:#CBD5E1'>{c['sb_p2']}</strong><br>"
+f"• <strong style='color:#CBD5E1'>{c['sb_p3']}</strong>"
+"</div></div>", unsafe_allow_html=True)
 
     st.divider()
 
     # ── 3 EJEN ────────────────────────────────────────────────────────────
-    st.subheader("Bagaimana AI Bekerja — 3 Ejen Berurutan")
-    st.caption("Setiap laporan yang masuk diproses secara automatik melalui tiga peringkat AI sebelum syor dihasilkan.")
+    st.subheader(c["ag_title"])
+    st.caption(c["ag_caption"])
 
     ag1, ag2, ag3 = st.columns(3)
-    for col, agent_id, role, analogy, desc, output_lines in [
-        (ag1, "EJEN A", "Pembaca & Pengkelas",
-         "\"Seperti pegawai yang baca dan faham laporan\"",
-         "Baca laporan dari Sisi B. Kenal pasti isu apa, sekolah mana, dan serius ke tidak. Jana peta kategori dan tahap keterukan.",
-         ["→ Kategori isu", "→ Tahap keterukan", "→ Kod sekolah"]),
-        (ag2, "EJEN B", "Pengira & Pengesan",
-         "\"Seperti juruaudit yang bandingkan dua set rekod\"",
-         "Ambil dapatan JN untuk sekolah berkenaan. Kira Discrepancy Index (DI) — sejauh mana laporan luar berbeza dari apa JN dapati.",
-         ["→ Skor DI [0.0 – 1.0]", "→ Bendera risiko", "→ Anomali: Ya / Tidak"]),
-        (ag3, "EJEN C", "Penulis Syor",
-         "\"Seperti penasihat yang sediakan kertas dasar\"",
-         "Jana cadangan tindakan spesifik. Nyatakan dapatan JN mana yang terlibat, bukti apa, dan apa tindakan yang perlu diambil.",
-         ["→ Arahan eksekutif", "→ Cadangan polisi", "→ Asas undang-undang"]),
-    ]:
+    for col, (agent_id, role, analogy, desc, output_lines) in zip([ag1, ag2, ag3], c["agents"]):
         output_html = "<br>".join(output_lines)
-        col.markdown(f"""<div style='background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
-padding:16px 14px;border-radius:6px;height:100%'>
-<div style='font-size:9px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;
-color:#38BDF8;margin-bottom:5px'>{agent_id}</div>
-<div style='font-size:14px;font-weight:800;color:#F1F5F9;margin-bottom:4px'>{role}</div>
-<div style='font-size:11px;font-style:italic;color:rgba(255,255,255,0.35);margin-bottom:10px'>{analogy}</div>
-<div style='font-size:12px;color:#94A3B8;line-height:1.55;margin-bottom:12px'>{desc}</div>
-<div style='padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);
-font-size:10.5px;font-family:monospace;color:#0C9980;line-height:1.8'>{output_html}</div>
-</div>""", unsafe_allow_html=True)
+        col.markdown(
+f"<div style='background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);"
+f"padding:16px 14px;border-radius:6px;height:100%'>"
+f"<div style='font-size:9px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;"
+f"color:#38BDF8;margin-bottom:5px'>{agent_id}</div>"
+f"<div style='font-size:14px;font-weight:800;color:#F1F5F9;margin-bottom:4px'>{role}</div>"
+f"<div style='font-size:11px;font-style:italic;color:rgba(255,255,255,0.35);margin-bottom:10px'>{analogy}</div>"
+f"<div style='font-size:12px;color:#94A3B8;line-height:1.55;margin-bottom:12px'>{desc}</div>"
+f"<div style='padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);"
+f"font-size:10.5px;font-family:monospace;color:#0C9980;line-height:1.8'>{output_html}</div>"
+"</div>", unsafe_allow_html=True)
 
     st.divider()
 
     # ── IMPAK ─────────────────────────────────────────────────────────────
-    st.subheader("Impak kepada Kementerian")
-    st.caption("Bukan sekadar sistem laporan — JN Resolusi mengubah cara keputusan dibuat di peringkat kementerian.")
+    st.subheader(c["imp_title"])
+    st.caption(c["imp_caption"])
 
     i1, i2, i3 = st.columns(3)
-    for col, icon, title, desc, border_color in [
-        (i1, "✓", "Keputusan Berasaskan Bukti, Bukan Andaian",
-         "Setiap syor disertakan dengan nombor DI, dapatan JN yang dirujuk, dan sumber data yang dibandingkan. Tiada keputusan dibuat secara buta.",
-         "#0C9980"),
-        (i2, "⚑", "Penyelewengan Data Dikesan Sebelum Keputusan Dibuat",
-         "Sistem mengesan secara automatik apabila skor yang dilaporkan jauh berbeza dari dapatan JN sebenar — bukan selepas tindakan diambil, tetapi sebelumnya.",
-         "#C97206"),
-        (i3, "⏎", "Setiap Syor Boleh Ditelusuri Semula",
-         "Log audit lengkap menyimpan semua kes, dapatan, dan syor. Jika keputusan dipersoalkan, rekod lengkap tersedia untuk semakan semula.",
-         "#1A3A5C"),
-    ]:
-        col.markdown(f"""<div style='background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
-border-top:3px solid {border_color};padding:18px 16px;border-radius:0 0 6px 6px;height:100%'>
-<div style='font-size:32px;font-weight:900;color:{border_color};line-height:1;margin-bottom:10px'>{icon}</div>
-<div style='font-size:13px;font-weight:700;color:#F1F5F9;margin-bottom:8px;line-height:1.3'>{title}</div>
-<div style='font-size:12px;color:#6B8BA8;line-height:1.55'>{desc}</div>
-</div>""", unsafe_allow_html=True)
+    for col, (icon, title, desc, border_color) in zip([i1, i2, i3], c["impacts"]):
+        col.markdown(
+f"<div style='background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);"
+f"border-top:3px solid {border_color};padding:18px 16px;border-radius:0 0 6px 6px;height:100%'>"
+f"<div style='font-size:32px;font-weight:900;color:{border_color};line-height:1;margin-bottom:10px'>{icon}</div>"
+f"<div style='font-size:13px;font-weight:700;color:#F1F5F9;margin-bottom:8px;line-height:1.3'>{title}</div>"
+f"<div style='font-size:12px;color:#6B8BA8;line-height:1.55'>{desc}</div>"
+"</div>", unsafe_allow_html=True)
 
     # Early Warning card — full width
     st.markdown("<div style='margin-top:10px'></div>", unsafe_allow_html=True)
-    st.markdown("""<div style='background:rgba(12,28,48,0.9);border:1px solid rgba(245,158,11,0.25);
-border-top:3px solid #F59E0B;padding:24px 28px;border-radius:0 0 8px 8px;
-display:grid;gap:0'>
-<div style='display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap'>
-<div style='min-width:160px'>
-<div style='font-size:8.5px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;
-background:rgba(245,158,11,0.15);color:#FBB040;padding:3px 9px;display:inline-block;
-border:1px solid rgba(245,158,11,0.25);margin-bottom:10px'>Keupayaan Baharu</div>
-<div style='font-size:28px;margin-bottom:8px'>🔔</div>
-<div style='font-size:15px;font-weight:800;color:#fff;line-height:1.25'>Sistem Amaran Awal Sebelum Pemeriksaan JN Dirancang</div>
-</div>
-<div style='flex:1;min-width:240px'>
-<div style='font-size:13.5px;color:rgba(255,255,255,0.80);line-height:1.55;margin-bottom:10px'>
-JN Resolusi bukan hanya bertindak balas — ia <strong style='color:#FBB040'>membantu JN merancang ke mana perlu pergi seterusnya.</strong>
-</div>
-<div style='font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;margin-bottom:14px'>
-Berdasarkan pola DI yang terkumpul, sistem dapat mengenal pasti sekolah yang menunjukkan tanda-tanda ketidakselarasan data
-<em>sebelum</em> mana-mana pemeriksaan fizikal dijadualkan.
-</div>
-<div style='display:flex;flex-direction:column;gap:8px'>
-<div style='display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.70)'>
-<span style='color:#F59E0B;margin-top:2px;flex-shrink:0'>●</span>
-<span><strong style='color:#fff'>Keutamaan pemeriksaan lebih tepat</strong> — JN fokus kepada sekolah berisiko tinggi, bukan berdasarkan giliran rutin semata-mata</span>
-</div>
-<div style='display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.70)'>
-<span style='color:#F59E0B;margin-top:2px;flex-shrink:0'>●</span>
-<span><strong style='color:#fff'>Bukti pra-pemeriksaan tersedia</strong> — pegawai JN tiba dengan maklumat DI dan bendera risiko, bukan dengan tangan kosong</span>
-</div>
-<div style='display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.70)'>
-<span style='color:#F59E0B;margin-top:2px;flex-shrink:0'>●</span>
-<span><strong style='color:#fff'>Tindakan pencegahan lebih awal</strong> — sekolah yang menunjukkan anomali boleh diberi intervensi sebelum masalah merebak ke peringkat kritikal</span>
-</div>
-</div>
-</div>
-</div>
-</div>""", unsafe_allow_html=True)
+    ew_pts_html = "".join([
+        f"<div style='display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.70)'>"
+        f"<span style='color:#F59E0B;margin-top:2px;flex-shrink:0'>●</span>"
+        f"<span><strong style='color:#fff'>{bold}</strong> — {rest}</span></div>"
+        for bold, rest in c["ew_pts"]
+    ])
+    st.markdown(
+"<div style='background:rgba(12,28,48,0.9);border:1px solid rgba(245,158,11,0.25);"
+"border-top:3px solid #F59E0B;padding:24px 28px;border-radius:0 0 8px 8px'>"
+"<div style='display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap'>"
+"<div style='min-width:160px'>"
+f"<div style='font-size:8.5px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;"
+f"background:rgba(245,158,11,0.15);color:#FBB040;padding:3px 9px;display:inline-block;"
+f"border:1px solid rgba(245,158,11,0.25);margin-bottom:10px'>{c['ew_badge']}</div>"
+"<div style='font-size:28px;margin-bottom:8px'>🔔</div>"
+f"<div style='font-size:15px;font-weight:800;color:#fff;line-height:1.25'>{c['ew_title']}</div>"
+"</div>"
+"<div style='flex:1;min-width:240px'>"
+f"<div style='font-size:13.5px;color:rgba(255,255,255,0.80);line-height:1.55;margin-bottom:10px'>"
+f"{c['ew_lead']} <strong style='color:#FBB040'>{c['ew_lead_bold']}</strong></div>"
+f"<div style='font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;margin-bottom:14px'>{c['ew_sub']}</div>"
+f"<div style='display:flex;flex-direction:column;gap:8px'>{ew_pts_html}</div>"
+"</div></div></div>", unsafe_allow_html=True)
 
     st.divider()
 
     # ── DI SCALE ──────────────────────────────────────────────────────────
-    st.subheader("Skala Perbezaan — Discrepancy Index (DI)")
-    st.caption("DI mengukur sejauh mana perbezaan antara skor Jemaah Nazir dengan skor yang dilaporkan. Semakin tinggi DI, semakin besar kemungkinan data tidak tepat.")
+    st.subheader(c["di_title"])
+    st.caption(c["di_caption"])
 
-    di_data = [
-        ("< 0.10",  "DATA SELARAS",          "#0F6B3C", "Laporan luar selari dengan dapatan JN. Tiada tindakan diperlukan."),
-        ("≥ 0.10",  "PERBEZAAN KECIL",       "#1D4ED8", "Perbezaan wujud tetapi masih dalam had boleh diterima. Pantau sahaja."),
-        ("≥ 0.25",  "PERBEZAAN SEDERHANA",   "#B45309", "Perbezaan ketara. Siasatan lanjut disyorkan."),
-        ("≥ 0.50",  "PERBEZAAN SERIUS",      "#C2410C", "Perbezaan serius. Kemungkinan data dimanipulasi. Tindakan segera."),
-        ("≥ 0.75",  "PERBEZAAN MELAMPAU",    "#C41E3A", "Perbezaan melampau. Bendera merah — laporan terus kepada YB Menteri."),
-    ]
-    for di_range, label, color, desc in di_data:
+    for di_range, label, color, desc in c["di_rows"]:
         st.markdown(
             f"<div style='display:flex;align-items:center;gap:14px;padding:10px 0;"
             f"border-bottom:1px solid rgba(255,255,255,0.06)'>"
@@ -3088,7 +3180,7 @@ Berdasarkan pola DI yang terkumpul, sistem dapat mengenal pasti sekolah yang men
     st.divider()
 
     # ── TEKNIKAL (collapsed) ───────────────────────────────────────────────
-    with st.expander("ℹ️ Maklumat Teknikal (untuk pasukan IT)", expanded=False):
+    with st.expander(c["tech_expander"], expanded=False):
         st.markdown("""
 **Platform:** Python 3.9+ · Streamlit ≥1.32.0 · Streamlit Cloud (auto-deploy on push to `main`)
 
