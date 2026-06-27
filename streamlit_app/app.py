@@ -52,7 +52,12 @@ pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 @st.cache_resource
 def init_db():
     """Create SQLite database and tables. Seed defaults on first run."""
-    conn = sqlite3.connect(DB_PATH)
+    import os as _os
+    db_dir = _os.path.join(_os.path.expanduser("~"), ".jn_engine")
+    _os.makedirs(db_dir, exist_ok=True)
+    db_path = _os.path.join(db_dir, "jn_engine.db")
+
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
@@ -952,32 +957,36 @@ def render_system():
 # MAIN APP
 # ---------------------------------------------------------------------------
 def main():
-    # Init DB on first load
-    if "db_conn" not in st.session_state:
-        st.session_state.db_conn = init_db()
+    try:
+        # Init DB on first load
+        if "db_conn" not in st.session_state:
+            st.session_state.db_conn = init_db()
 
-    # Auth check
-    if "user" not in st.session_state or not st.session_state.user:
-        render_login()
-        return
+        # Auth check
+        if "user" not in st.session_state or not st.session_state.user:
+            render_login()
+            return
 
-    # Render sidebar and get current page
-    page = render_sidebar()
+        # Render sidebar and get current page
+        page = render_sidebar()
 
-    # Route to page
-    page_map = {
-        "📊 Papan Pemuka": render_dashboard,
-        "📤 Hantar Payload": render_ingest,
-        "📋 Log Kes": render_cases,
-        "📄 Ringkasan Eksekutif": render_brief,
-        "ℹ️ Maklumat Sistem": render_system,
-        "📁 Muat Naik CSV": render_csv_upload,
-        "👥 Pengurusan Pengguna": render_admin,
-    }
+        # Route to page
+        page_map = {
+            "📊 Papan Pemuka": render_dashboard,
+            "📤 Hantar Payload": render_ingest,
+            "📋 Log Kes": render_cases,
+            "📄 Ringkasan Eksekutif": render_brief,
+            "ℹ️ Maklumat Sistem": render_system,
+            "📁 Muat Naik CSV": render_csv_upload,
+            "👥 Pengurusan Pengguna": render_admin,
+        }
 
-    render_fn = page_map.get(page)
-    if render_fn:
-        render_fn()
+        render_fn = page_map.get(page)
+        if render_fn:
+            render_fn()
+    except Exception as e:
+        st.error(f"⚠️ Ralat sistem: {str(e)}")
+        st.info("Refresh halaman atau hubungi admin.")
 
 if __name__ == "__main__":
     main()
