@@ -67,7 +67,7 @@ body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;background:va
 .engine-val.warn{color:#F87171}
 
 /* ── APP BODY ── */
-.app-body{margin-left:260px;display:flex;flex-direction:column;min-height:100vh}
+.app-body{grid-column:2;display:flex;flex-direction:column;min-height:100vh}
 
 /* ── HEADER ── */
 .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
@@ -249,8 +249,8 @@ input[type=range]:focus{box-shadow:none}
 .res-kv-val.sm{font-size:13px;font-weight:600;line-height:1.4}
 
 /* ── RESPONSIVE ── */
-@media(max-width:1100px){.stat-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:768px){.app-shell{grid-template-columns:1fr}.sidebar{display:none}.app-body{margin-left:0}.form-grid{grid-template-columns:1fr}.brief-kv-grid{grid-template-columns:1fr}.res-kv-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:1500px){.stat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.app-shell{grid-template-columns:1fr}.sidebar{display:none}.app-body{grid-column:auto}.form-grid{grid-template-columns:1fr}.brief-kv-grid{grid-template-columns:1fr}.res-kv-grid{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.status-dot-indicator,.spinner{animation:none}}
 
 /* ── LOGIN OVERLAY ── */
