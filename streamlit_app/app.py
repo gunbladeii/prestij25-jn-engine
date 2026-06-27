@@ -503,133 +503,352 @@ def role_label(role_code: str) -> str:
 def inject_css():
     st.markdown("""
     <style>
-    /* ── Global ──────────────────────────────────── */
-    .main .block-container { padding-top: 1.5rem !important; padding-bottom: 2rem !important; }
-    [data-testid="stAppViewContainer"] > .main { background: #0A0F1E; }
+    /* ═══════════════════════════════════════════════════════════════
+       NEURAL AUDIT GRID — JN Resolusi Design System v2
+       Professional · Educational · Statistical · Technology
+    ═══════════════════════════════════════════════════════════════ */
 
-    /* ── Sidebar ─────────────────────────────────── */
-    section[data-testid="stSidebar"] > div:first-child { padding: 1rem 0.6rem !important; }
+    /* ── Base & deep-space background ───────────────────────────── */
+    [data-testid="stAppViewContainer"] {
+        background: #020817 !important;
+        background-image:
+            linear-gradient(rgba(56,189,248,0.028) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(56,189,248,0.028) 1px, transparent 1px),
+            radial-gradient(ellipse 80% 50% at 50% -5%, rgba(59,130,246,0.09) 0%, transparent 70%);
+        background-size: 52px 52px, 52px 52px, 100% 100%;
+    }
+    [data-testid="stAppViewContainer"] > .main { background: transparent !important; }
+    .main .block-container { padding-top: 1.8rem !important; padding-bottom: 3rem !important; }
 
-    /* Nav group headers */
-    .nav-group {
-        font-size: 9px; font-weight: 800; letter-spacing: 0.18em;
-        color: #3B4A63; padding: 14px 8px 5px; text-transform: uppercase;
+    /* ── Sidebar shell ───────────────────────────────────────────── */
+    section[data-testid="stSidebar"] > div:first-child {
+        background: rgba(2,8,23,0.97) !important;
+        border-right: 1px solid rgba(56,189,248,0.07) !important;
+        padding: 1rem 0.7rem !important;
     }
 
-    /* All sidebar buttons — base */
+    /* Nav group labels */
+    .nav-group {
+        font-size: 9px; font-weight: 800; letter-spacing: 0.2em;
+        color: rgba(56,189,248,0.35); padding: 16px 10px 5px;
+        text-transform: uppercase;
+    }
+
+    /* Inactive nav buttons — glassmorphism */
     section[data-testid="stSidebar"] [data-testid="baseButton-secondary"] {
         background: transparent !important;
-        border: none !important; border-left: 3px solid transparent !important;
-        color: #6B7C93 !important; text-align: left !important;
-        font-size: 13px !important; font-weight: 500 !important;
-        padding: 8px 10px !important; border-radius: 0 6px 6px 0 !important;
-        box-shadow: none !important; margin-bottom: 1px !important;
-        transition: background 0.15s, color 0.15s !important;
+        border: 1px solid transparent !important;
+        border-radius: 10px !important;
+        color: #475569 !important;
+        text-align: left !important; font-size: 13px !important;
+        font-weight: 500 !important; padding: 8px 12px !important;
+        transition: all 0.18s ease !important;
+        box-shadow: none !important; margin-bottom: 2px !important;
     }
     section[data-testid="stSidebar"] [data-testid="baseButton-secondary"]:hover {
-        background: rgba(255,255,255,0.04) !important;
-        color: #cbd5e1 !important;
+        background: rgba(56,189,248,0.05) !important;
+        border-color: rgba(56,189,248,0.18) !important;
+        color: #94A3B8 !important;
+        box-shadow: 0 0 14px rgba(56,189,248,0.07) !important;
     }
 
-    /* Active nav item */
+    /* Active nav button — glowing glass */
     section[data-testid="stSidebar"] [data-testid="baseButton-primary"] {
-        background: rgba(196,30,58,0.12) !important;
-        border: none !important; border-left: 3px solid #C41E3A !important;
-        color: #fff !important; text-align: left !important;
-        font-size: 13px !important; font-weight: 700 !important;
-        padding: 8px 10px !important; border-radius: 0 6px 6px 0 !important;
-        box-shadow: none !important; margin-bottom: 1px !important;
+        background: linear-gradient(135deg,
+            rgba(37,99,235,0.22) 0%,
+            rgba(8,145,178,0.14) 100%) !important;
+        border: 1px solid rgba(56,189,248,0.38) !important;
+        border-radius: 10px !important;
+        color: #93C5FD !important;
+        text-align: left !important; font-size: 13px !important;
+        font-weight: 700 !important; padding: 8px 12px !important;
+        box-shadow: 0 0 20px rgba(37,99,235,0.14),
+                    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+        margin-bottom: 2px !important;
     }
 
-    /* ── Login page ──────────────────────────────── */
-    .login-hero {
-        background: linear-gradient(160deg, #0D1829 0%, #111C35 60%, #0D1829 100%);
-        border-radius: 16px; padding: 48px 40px;
-        border: 1px solid rgba(255,255,255,0.06);
-        height: 100%;
+    /* ── Main-area primary buttons — gradient + glow ─────────────── */
+    .main [data-testid="baseButton-primary"],
+    [data-testid="stForm"] [data-testid="baseButton-primary"] {
+        background: linear-gradient(135deg, #2563EB 0%, #0891B2 100%) !important;
+        border: none !important; border-radius: 10px !important;
+        color: #fff !important; font-weight: 700 !important;
+        letter-spacing: 0.02em !important;
+        box-shadow: 0 4px 18px rgba(37,99,235,0.38),
+                    0 0 30px rgba(37,99,235,0.12),
+                    inset 0 1px 0 rgba(255,255,255,0.16) !important;
+        transition: all 0.2s ease !important;
     }
-    .login-form-card {
-        background: rgba(17,28,53,0.85);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 16px; padding: 40px 36px;
+    .main [data-testid="baseButton-primary"]:hover,
+    [data-testid="stForm"] [data-testid="baseButton-primary"]:hover {
+        box-shadow: 0 6px 28px rgba(37,99,235,0.55),
+                    0 0 40px rgba(37,99,235,0.2),
+                    inset 0 1px 0 rgba(255,255,255,0.2) !important;
+        transform: translateY(-1px) !important;
     }
-    .feat-item {
-        display: flex; align-items: center; gap: 10px;
-        padding: 10px 14px; border-radius: 8px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.05);
-        margin-bottom: 8px;
-        font-size: 13px; color: #9CA3AF;
-    }
-    .feat-dot { width: 6px; height: 6px; border-radius: 50%; background: #C41E3A; flex-shrink: 0; }
 
-    /* ── Section header ──────────────────────────── */
+    /* ── Secondary buttons — glassmorphism ───────────────────────── */
+    .main [data-testid="baseButton-secondary"] {
+        background: rgba(8,15,35,0.7) !important;
+        border: 1px solid rgba(56,189,248,0.14) !important;
+        border-radius: 10px !important; color: #64748B !important;
+        backdrop-filter: blur(10px) !important;
+        transition: all 0.18s ease !important;
+    }
+    .main [data-testid="baseButton-secondary"]:hover {
+        background: rgba(56,189,248,0.06) !important;
+        border-color: rgba(56,189,248,0.3) !important;
+        color: #94A3B8 !important;
+        box-shadow: 0 0 16px rgba(56,189,248,0.08) !important;
+    }
+
+    /* ── Metric cards — glass panels ─────────────────────────────── */
+    [data-testid="metric-container"] {
+        background: rgba(6,12,30,0.88) !important;
+        border: 1px solid rgba(56,189,248,0.12) !important;
+        border-radius: 14px !important; padding: 20px 18px !important;
+        backdrop-filter: blur(20px) !important;
+        box-shadow: 0 0 28px rgba(59,130,246,0.04),
+                    inset 0 1px 0 rgba(255,255,255,0.04) !important;
+        transition: border-color 0.2s, box-shadow 0.2s !important;
+    }
+    [data-testid="metric-container"]:hover {
+        border-color: rgba(56,189,248,0.25) !important;
+        box-shadow: 0 0 22px rgba(56,189,248,0.09) !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #475569 !important; font-size: 10px !important;
+        font-weight: 700 !important; letter-spacing: 0.1em !important;
+        text-transform: uppercase !important;
+    }
+    [data-testid="stMetricValue"] {
+        color: #E2E8F0 !important; font-weight: 800 !important;
+    }
+
+    /* ── Form inputs — glass fields ──────────────────────────────── */
+    .stTextInput input, .stTextArea textarea, .stNumberInput input {
+        background: rgba(6,12,30,0.85) !important;
+        border: 1px solid rgba(56,189,248,0.14) !important;
+        border-radius: 10px !important; color: #E2E8F0 !important;
+        transition: all 0.18s !important;
+    }
+    .stTextInput input:focus, .stTextArea textarea:focus {
+        border-color: rgba(59,130,246,0.5) !important;
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.08),
+                    0 0 18px rgba(59,130,246,0.07) !important;
+        outline: none !important;
+    }
+    .stSelectbox [data-baseweb="select"] > div,
+    .stSelectbox > div > div {
+        background: rgba(6,12,30,0.85) !important;
+        border-color: rgba(56,189,248,0.14) !important;
+        border-radius: 10px !important;
+        color: #E2E8F0 !important;
+    }
+
+    /* ── Slider ──────────────────────────────────────────────────── */
+    .stSlider [role="slider"] {
+        background: #3B82F6 !important; border-color: #60A5FA !important;
+        box-shadow: 0 0 12px rgba(59,130,246,0.5) !important;
+    }
+    .stSlider [data-baseweb="slider"] div[role="progressbar"] {
+        background: linear-gradient(90deg, #3B82F6, #06B6D4) !important;
+    }
+
+    /* ── Section tag header ──────────────────────────────────────── */
     .section-tag {
-        display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+        display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
     }
     .section-tag .dot {
-        width: 8px; height: 8px; border-radius: 50%; background: #C41E3A;
+        width: 4px; height: 22px; border-radius: 2px; flex-shrink: 0;
+        background: linear-gradient(180deg, #3B82F6 0%, #06B6D4 100%);
+        box-shadow: 0 0 10px rgba(59,130,246,0.55);
     }
     .section-tag .label {
-        font-size: 11px; font-weight: 800; color: #C41E3A; letter-spacing: 0.14em;
+        font-size: 11px; font-weight: 800; letter-spacing: 0.18em;
+        background: linear-gradient(90deg, #60A5FA, #22D3EE);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
-    /* ── Metric cards ────────────────────────────── */
-    [data-testid="metric-container"] {
-        background: #111C35 !important;
-        border: 1px solid #1E2A45 !important;
-        border-radius: 10px !important; padding: 16px !important;
+    /* ── Case row cards ──────────────────────────────────────────── */
+    .case-row {
+        background: rgba(6,12,30,0.75);
+        border: 1px solid rgba(56,189,248,0.08);
+        border-radius: 12px; padding: 14px 18px; margin-bottom: 8px;
+        backdrop-filter: blur(10px);
+        transition: all 0.18s ease;
     }
-    [data-testid="stMetricLabel"] { color: #6B7C93 !important; }
-    [data-testid="stMetricValue"] { color: #fff !important; }
+    .case-row:hover {
+        border-color: rgba(56,189,248,0.22);
+        box-shadow: 0 0 22px rgba(56,189,248,0.06);
+        transform: translateX(2px);
+    }
 
-    /* ── Tab-style radio ─────────────────────────── */
+    /* ── DI badge ────────────────────────────────────────────────── */
+    .di-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 12px; border-radius: 20px;
+        font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+    }
+
+    /* ── Brief header ────────────────────────────────────────────── */
+    .brief-header {
+        background: rgba(6,12,30,0.88);
+        border: 1px solid rgba(56,189,248,0.1);
+        border-radius: 14px; padding: 20px 24px; margin-bottom: 20px;
+        backdrop-filter: blur(20px);
+    }
+
+    /* ── Login hero ──────────────────────────────────────────────── */
+    .login-hero {
+        border-radius: 20px; padding: 52px 44px; height: 100%;
+        background:
+            linear-gradient(rgba(56,189,248,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(56,189,248,0.02) 1px, transparent 1px),
+            linear-gradient(160deg, rgba(5,10,28,0.98) 0%, rgba(8,16,38,0.98) 100%);
+        background-size: 44px 44px, 44px 44px, 100% 100%;
+        border: 1px solid rgba(56,189,248,0.1);
+        box-shadow: 0 0 60px rgba(37,99,235,0.06),
+                    inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .login-form-card {
+        background: rgba(5,10,28,0.95);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(56,189,248,0.12);
+        border-radius: 20px; padding: 44px 40px;
+        box-shadow: 0 0 60px rgba(37,99,235,0.06),
+                    inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .feat-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 11px 14px; border-radius: 10px;
+        background: rgba(56,189,248,0.03);
+        border: 1px solid rgba(56,189,248,0.08);
+        margin-bottom: 10px; font-size: 13px; color: #64748B;
+        transition: all 0.18s;
+    }
+    .feat-item:hover {
+        background: rgba(56,189,248,0.07);
+        border-color: rgba(56,189,248,0.18); color: #94A3B8;
+    }
+    .feat-dot {
+        width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        background: linear-gradient(135deg, #3B82F6, #06B6D4);
+        box-shadow: 0 0 8px rgba(59,130,246,0.6);
+    }
+
+    /* ── Tab radio ───────────────────────────────────────────────── */
     .tab-radio div[role="radiogroup"] {
-        display: flex; gap: 4px; background: #111C35;
-        padding: 4px; border-radius: 8px; border: 1px solid #1E2A45;
+        display: flex; gap: 4px;
+        background: rgba(6,12,30,0.85); padding: 4px; border-radius: 12px;
+        border: 1px solid rgba(56,189,248,0.1);
     }
     .tab-radio div[role="radiogroup"] label {
-        flex: 1; text-align: center; padding: 8px 16px;
-        border-radius: 6px; cursor: pointer; font-size: 13px;
-        color: #6B7C93; transition: all 0.15s;
+        flex: 1; text-align: center; padding: 9px 18px; border-radius: 9px;
+        cursor: pointer; font-size: 13px; color: #475569;
+        transition: all 0.18s; font-weight: 500;
     }
     .tab-radio div[role="radiogroup"] label:has(input:checked) {
-        background: #C41E3A; color: #fff; font-weight: 700;
+        background: linear-gradient(135deg, #2563EB, #0891B2);
+        color: #fff; font-weight: 700;
+        box-shadow: 0 0 18px rgba(37,99,235,0.32);
     }
     .tab-radio div[role="radiogroup"] input { display: none; }
 
-    /* ── Case row cards ──────────────────────────── */
-    .case-row {
-        background: #111C35; border: 1px solid #1E2A45;
-        border-radius: 8px; padding: 12px 16px; margin-bottom: 6px;
+    /* ── Sidebar brand block ─────────────────────────────────────── */
+    .brand-block {
+        background: linear-gradient(135deg,
+            rgba(37,99,235,0.16) 0%, rgba(8,145,178,0.1) 100%);
+        border: 1px solid rgba(56,189,248,0.15);
+        border-radius: 14px; padding: 14px 12px; margin-bottom: 8px;
+        position: relative; overflow: hidden;
+    }
+    .brand-block::after {
+        content: '';
+        position: absolute; top: -20px; right: -20px;
+        width: 80px; height: 80px;
+        background: radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%);
+        border-radius: 50%; pointer-events: none;
     }
 
-    /* ── DI badge ────────────────────────────────── */
-    .di-badge {
-        display: inline-block; padding: 3px 10px; border-radius: 12px;
-        font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    /* ── Sidebar stats box ───────────────────────────────────────── */
+    .sidebar-stats {
+        background: rgba(56,189,248,0.03);
+        border: 1px solid rgba(56,189,248,0.08);
+        border-radius: 12px; padding: 12px 14px;
+    }
+    .stat-row {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 7px; color: #475569; font-size: 11px;
+    }
+    .stat-row:last-child { margin-bottom: 0; }
+    .stat-val { font-weight: 700; font-family: monospace; font-size: 12px; }
+
+    /* ── User pill ───────────────────────────────────────────────── */
+    .user-pill {
+        background: rgba(56,189,248,0.04);
+        border: 1px solid rgba(56,189,248,0.1);
+        border-radius: 10px; padding: 10px 12px;
+    }
+    .role-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(37,99,235,0.2), rgba(8,145,178,0.15));
+        border: 1px solid rgba(56,189,248,0.25);
+        color: #38BDF8; padding: 2px 10px; border-radius: 20px;
+        font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
     }
 
-    /* ── Brief header card ───────────────────────── */
-    .brief-header {
-        padding: 16px 20px; background: #111C35;
-        border-radius: 0 8px 8px 0; margin-bottom: 20px;
+    /* ── Expanders ───────────────────────────────────────────────── */
+    [data-testid="stExpander"] {
+        background: rgba(6,12,30,0.65) !important;
+        border: 1px solid rgba(56,189,248,0.08) !important;
+        border-radius: 12px !important;
+    }
+    [data-testid="stExpander"] summary {
+        color: #64748B !important; font-weight: 600 !important;
+    }
+    [data-testid="stExpander"] summary:hover { color: #94A3B8 !important; }
+
+    /* ── Alerts ──────────────────────────────────────────────────── */
+    [data-testid="stAlert"] { border-radius: 12px !important; }
+
+    /* ── Dataframe ───────────────────────────────────────────────── */
+    [data-testid="stDataFrame"] {
+        border: 1px solid rgba(56,189,248,0.1) !important;
+        border-radius: 12px !important;
     }
 
-    /* ── Sidebar divider ─────────────────────────── */
-    section[data-testid="stSidebar"] hr { border-color: #1E2A45; margin: 8px 0; }
-
-    /* ── Dataframe ───────────────────────────────── */
-    [data-testid="stDataFrame"] { border: 1px solid #1E2A45 !important; border-radius: 8px !important; }
-
-    /* ── Form inputs ─────────────────────────────── */
-    .stTextInput input, .stTextArea textarea, .stSelectbox > div > div {
-        background: #111C35 !important; border-color: #1E2A45 !important; color: #fff !important;
+    /* ── Progress bar ────────────────────────────────────────────── */
+    .stProgress > div > div {
+        background: linear-gradient(90deg, #3B82F6, #06B6D4) !important;
+        border-radius: 4px !important;
     }
 
-    /* ── Progress bar ────────────────────────────── */
-    .stProgress > div > div { background: #C41E3A !important; }
+    /* ── Dividers ────────────────────────────────────────────────── */
+    hr { border-color: rgba(56,189,248,0.08) !important; }
+    section[data-testid="stSidebar"] hr { border-color: rgba(56,189,248,0.07); margin: 10px 0; }
+
+    /* ── Headings ────────────────────────────────────────────────── */
+    h1 { color: #F1F5F9 !important; font-weight: 900 !important; letter-spacing: -0.02em !important; }
+    h2 { color: #E2E8F0 !important; font-weight: 800 !important; }
+    h3 { color: #CBD5E1 !important; font-weight: 700 !important; }
+
+    /* ── Code blocks ─────────────────────────────────────────────── */
+    [data-testid="stCode"],
+    .stCodeBlock pre {
+        background: rgba(6,12,30,0.9) !important;
+        border: 1px solid rgba(56,189,248,0.1) !important;
+        border-radius: 10px !important;
+    }
+
+    /* ── Scrollbar ───────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(56,189,248,0.18); border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(56,189,248,0.38); }
     </style>
     """, unsafe_allow_html=True)
 
@@ -932,8 +1151,11 @@ def render_login():
             <h1 style="font-size:34px;font-weight:900;color:#fff;margin:0;line-height:1.1;letter-spacing:-0.02em">
                 JN RESOLUSI
             </h1>
-            <p style="color:#C41E3A;font-weight:700;letter-spacing:0.12em;font-size:12px;margin:10px 0 20px;text-transform:uppercase">
-                Sistem Audit Pintar MOE
+            <p style="background:linear-gradient(90deg,#60A5FA,#22D3EE);
+                      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                      background-clip:text;
+                      font-weight:800;letter-spacing:0.14em;font-size:12px;margin:10px 0 20px;text-transform:uppercase">
+                Sistem Audit Pintar MOE · PRESTIJ-25
             </p>
             <p style="color:#6B7C93;font-size:13px;line-height:1.8;margin-bottom:28px">
                 {t("login_brand_desc")}
@@ -978,13 +1200,22 @@ def render_sidebar() -> None:
     with st.sidebar:
         # ── Brand ──────────────────────────────────
         st.markdown(f"""
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 4px 16px">
-            <div style="background:#C41E3A;width:36px;height:36px;border-radius:8px;
-                        display:flex;align-items:center;justify-content:center;font-size:18px">🛡️</div>
-            <div>
-                <div style="font-weight:800;font-size:14px;color:#fff;line-height:1.2">JN RESOLUSI</div>
-                <div style="font-size:9px;color:#3B4A63;letter-spacing:0.1em;text-transform:uppercase">
-                    Sistem Audit Pintar MOE
+        <div class="brand-block">
+            <div style="display:flex;align-items:center;gap:10px">
+                <div style="background:linear-gradient(135deg,#2563EB,#0891B2);
+                            width:38px;height:38px;border-radius:10px;
+                            display:flex;align-items:center;justify-content:center;
+                            font-size:19px;box-shadow:0 0 14px rgba(37,99,235,0.45);
+                            flex-shrink:0">🛡️</div>
+                <div>
+                    <div style="font-weight:900;font-size:14px;color:#F1F5F9;
+                                line-height:1.2;letter-spacing:0.02em">JN RESOLUSI</div>
+                    <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;
+                                background:linear-gradient(90deg,#60A5FA,#22D3EE);
+                                -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                                background-clip:text;margin-top:2px">
+                        Sistem Audit Pintar MOE
+                    </div>
                 </div>
             </div>
         </div>
@@ -1036,16 +1267,22 @@ def render_sidebar() -> None:
         total    = db.execute("SELECT COUNT(*) FROM discrepancy_log").fetchone()[0]
         anomalies= db.execute("SELECT COUNT(*) FROM discrepancy_log WHERE anomaly_detected=1").fetchone()[0]
         st.markdown(f"""
-        <div style="font-size:11px;color:#4A5568;padding:4px 8px">
-            <div style="font-weight:700;color:#6B7C93;margin-bottom:6px">{t('stat_title')}</div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-                <span>{t('stat_agents')}</span><span style="color:#0F6B3C;font-weight:700">3 ✓</span>
+        <div class="sidebar-stats">
+            <div style="font-weight:800;font-size:9px;letter-spacing:0.16em;
+                        color:rgba(56,189,248,0.4);text-transform:uppercase;margin-bottom:10px">
+                {t('stat_title')}
             </div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-                <span>{t('stat_cases')}</span><span style="color:#fff;font-weight:700">{total}</span>
+            <div class="stat-row">
+                <span>{t('stat_agents')}</span>
+                <span class="stat-val" style="color:#10B981">3 ✓</span>
             </div>
-            <div style="display:flex;justify-content:space-between">
-                <span>{t('stat_anomalies')}</span><span style="color:#C41E3A;font-weight:700">{anomalies}</span>
+            <div class="stat-row">
+                <span>{t('stat_cases')}</span>
+                <span class="stat-val" style="color:#E2E8F0">{total}</span>
+            </div>
+            <div class="stat-row">
+                <span>{t('stat_anomalies')}</span>
+                <span class="stat-val" style="color:#EF4444">{anomalies}</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1054,10 +1291,10 @@ def render_sidebar() -> None:
 
         # ── User info + logout ──────────────────────
         st.markdown(f"""
-        <div style="font-size:11px;color:#6B7C93;padding:4px 8px;margin-bottom:8px">
-            <div style="font-family:monospace;color:#9CA3AF;margin-bottom:4px">{user['email']}</div>
-            <span style="background:#1E2A45;color:#4338CA;padding:2px 8px;border-radius:10px;
-                         font-size:10px;font-weight:700">{role_label(user['role'])}</span>
+        <div class="user-pill" style="margin-bottom:8px">
+            <div style="font-family:monospace;font-size:11px;color:#64748B;
+                        margin-bottom:6px;word-break:break-all">{user['email']}</div>
+            <span class="role-badge">{role_label(user['role'])}</span>
         </div>
         """, unsafe_allow_html=True)
 
