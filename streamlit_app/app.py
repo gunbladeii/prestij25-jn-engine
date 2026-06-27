@@ -1270,13 +1270,21 @@ def _tab_radio_n(opt_keys: list, values: list, state_key: str) -> str:
 # ---------------------------------------------------------------------------
 # GOOGLE DRIVE HELPERS
 # ---------------------------------------------------------------------------
+def _parse_gdrive_secrets() -> dict:
+    """Parse GDRIVE_SERVICE_ACCOUNT from Streamlit secrets, fixing private_key newlines."""
+    raw = st.secrets.get("GDRIVE_SERVICE_ACCOUNT", {})
+    info = {k: v for k, v in raw.items()} if raw else {}
+    if "private_key" in info:
+        # Streamlit secrets TOML stores \n as literal \\n — unescape it
+        info["private_key"] = info["private_key"].replace("\\n", "\n")
+    return info
+
 def _get_gdrive_client():
     """Return authenticated gspread client, or None if not configured."""
     try:
         import gspread
         from google.oauth2.service_account import Credentials
-        raw = st.secrets.get("GDRIVE_SERVICE_ACCOUNT", {})
-        info = dict(raw) if raw else {}
+        info = _parse_gdrive_secrets()
         if not info.get("private_key"):
             return None
         creds = Credentials.from_service_account_info(info, scopes=GDRIVE_SCOPES)
@@ -1289,8 +1297,7 @@ def _list_gdrive_sheets(folder_id: str) -> list:
     try:
         from googleapiclient.discovery import build
         from google.oauth2.service_account import Credentials
-        raw  = st.secrets.get("GDRIVE_SERVICE_ACCOUNT", {})
-        info = dict(raw) if raw else {}
+        info = _parse_gdrive_secrets()
         creds = Credentials.from_service_account_info(
             info, scopes=["https://www.googleapis.com/auth/drive.readonly"]
         )
