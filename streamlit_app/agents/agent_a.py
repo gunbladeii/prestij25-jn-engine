@@ -4,9 +4,12 @@ PRESTIJ-25 | Jemaah Nazir Smart Check & Balance Engine
 
 Performs NER-style entity extraction and semantic category mapping on
 unstructured text payloads received from 24 external matrix systems.
+When an Anthropic API key is provided, Claude Haiku performs deep semantic
+analysis and estimates the operational score from document content.
 """
 
 import re
+import json
 import hashlib
 from dataclasses import dataclass, field
 from typing import Optional
@@ -81,34 +84,25 @@ class AgentAResult:
     severity_confidence: float
     extracted_entities: dict = field(default_factory=dict)
     processing_notes: list[str] = field(default_factory=list)
+    ai_estimated_operational_score: Optional[float] = None
+    ai_category_summary: Optional[str] = None
 
 
 def _score_categories(text: str) -> tuple[str, float]:
-    """
-    Weighted keyword scan across taxonomy.
-    Returns best-matching category and a normalised confidence score [0,1].
-    """
     scores: dict[str, float] = {cat: 0.0 for cat in CATEGORY_TAXONOMY}
-
     for category, kw_pairs in CATEGORY_TAXONOMY.items():
         for keyword, weight in kw_pairs:
             if keyword in text:
                 scores[category] += weight
-
     total = sum(scores.values())
     if total == 0:
         return "Uncategorised", 0.0
-
     best_cat = max(scores, key=lambda c: scores[c])
     confidence = round(scores[best_cat] / total, 4)
     return best_cat, confidence
 
 
 def _score_severity(text: str) -> tuple[str, float]:
-    """
-    Precedence-ordered severity detection with confidence.
-    CRITICAL signals override lower-tier matches.
-    """
     for level in ("CRITICAL", "HIGH", "MEDIUM", "LOW"):
         hits = [kw for kw in SEVERITY_SIGNALS[level] if kw in text]
         if hits:
@@ -117,7 +111,121 @@ def _score_severity(text: str) -> tuple[str, float]:
     return "UNKNOWN", 0.0
 
 
-def run(school_id: str, raw_text: str, source_system_id: str) -> AgentAResult:
+def _parse_ai_json(text: str) -> dict:
+    """Extract JSON from a Claude response that may include markdown fences."""
+    text = text.strip()
+    if "```" in text:
+        for block in text.split("```"):
+            block = block.strip()
+            if block.startswith("json"):
+                block = block[4:].strip()
+            try:
+                return json.loads(block)
+            except (json.JSONDecodeError, ValueError):
+                continue
+        return {}
+    try:
+        return json.loads(text)
+    except (json.JSONDecodeError, ValueError):
+        return {}
+
+
+def _run_with_ai(
+    api_key: str, school_id: str, raw_text: str, source_system_id: str
+) -> AgentAResult:
+    """
+    Claude Haiku semantic analysis path.
+    Extracts category, severity, entities AND estimates operational score.
+    """
+    import anthropic
+
+    client = anthropic.Anthropic(api_key=api_key)
+
+    prompt = (
+        "Anda adalah sistem analisis audit PRESTIJ-25 untuk Jemaah Nazir Malaysia.\n\n"
+        "Analisa dokumen berikut dan kembalikan HANYA objek JSON yang sah (tiada teks lain):\n\n"
+        "{\n"
+        '  "mapped_category": "<Facilities|Academic Quality|Discipline|Administrative Misconduct|Uncategorised>",\n'
+        '  "category_confidence": <0.0 hingga 1.0>,\n'
+        '  "severity": "<CRITICAL|HIGH|MEDIUM|LOW|UNKNOWN>",\n'
+        '  "severity_confidence": <0.0 hingga 1.0>,\n'
+        '  "ai_estimated_operational_score": <0 hingga 100>,\n'
+        '  "detected_school_code": "<kod sekolah atau null>",\n'
+        '  "summary_bm": "<ringkasan 1 ayat Bahasa Malaysia>"\n'
+        "}\n\n"
+        "Panduan ai_estimated_operational_score (skor prestasi operasi sekolah):\n"
+        "85-100: cemerlang, tiada isu material\n"
+        "70-84: baik, isu minor sahaja\n"
+        "50-69: sederhana, perlu perhatian\n"
+        "30-49: lemah, isu serius\n"
+        "0-29: sangat lemah atau salah laku/rasuah/kecemasan\n\n"
+        f"Dokumen (maks 4000 aksara):\n---\n{raw_text[:4000]}\n---\n"
+        f"Kod Sekolah: {school_id} | Sistem Sumber: {source_system_id}"
+    )
+
+    response = client.messages.create(
+        model="claude-haiku-4-5",
+        max_tokens=512,
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    data = _parse_ai_json(response.content[0].text)
+
+    mapped_category = data.get("mapped_category", "Uncategorised")
+    if mapped_category not in CATEGORY_TAXONOMY:
+        mapped_category = "Uncategorised"
+
+    severity = data.get("severity", "UNKNOWN")
+    if severity not in ("CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"):
+        severity = "UNKNOWN"
+
+    ai_score: Optional[float] = None
+    raw_score = data.get("ai_estimated_operational_score")
+    if raw_score is not None:
+        try:
+            ai_score = float(max(0.0, min(100.0, float(raw_score))))
+        except (TypeError, ValueError):
+            ai_score = None
+
+    detected_code = data.get("detected_school_code") or None
+    notes: list[str] = []
+    if detected_code and detected_code.upper() != school_id.upper():
+        notes.append(
+            f"SCHOOL_CODE_MISMATCH: declared={school_id}, detected={detected_code}"
+        )
+
+    summary = data.get("summary_bm", "")
+
+    return AgentAResult(
+        school_id=school_id,
+        detected_school_code=detected_code,
+        mapped_category=mapped_category,
+        category_confidence=float(data.get("category_confidence", 0.80)),
+        severity=severity,
+        severity_confidence=float(data.get("severity_confidence", 0.80)),
+        extracted_entities={
+            "source_system_id": source_system_id,
+            "detected_school_code": detected_code,
+            "declared_school_id": school_id,
+            "text_char_count": len(raw_text),
+            "text_word_count": len(raw_text.split()),
+            "payload_checksum": hashlib.sha256(raw_text.encode()).hexdigest()[:16],
+            "category_scores_summary": mapped_category,
+            "severity_keywords_found": [],
+            "ai_summary": summary,
+        },
+        processing_notes=notes,
+        ai_estimated_operational_score=ai_score,
+        ai_category_summary=summary,
+    )
+
+
+def run(
+    school_id: str,
+    raw_text: str,
+    source_system_id: str,
+    api_key: str = "",
+) -> AgentAResult:
     """
     Entry point for Agent A.
 
@@ -125,14 +233,24 @@ def run(school_id: str, raw_text: str, source_system_id: str) -> AgentAResult:
         school_id:        Declared school identifier from the incoming payload.
         raw_text:         Unstructured text content to analyse.
         source_system_id: Origin system identifier for provenance tracking.
+        api_key:          Anthropic API key. If set, Claude Haiku is used.
 
     Returns:
         AgentAResult with all extracted fields populated.
+        ai_estimated_operational_score is populated when Claude path is active.
     """
-    normalised = raw_text.lower().strip()
-    notes: list[str] = []
+    if api_key:
+        try:
+            return _run_with_ai(api_key, school_id, raw_text, source_system_id)
+        except Exception as e:
+            notes_prefix = [f"AI_FALLBACK: {type(e).__name__}: {str(e)[:120]}"]
+    else:
+        notes_prefix = []
 
-    # Entity: school code detection via regex NER
+    # Static keyword-based fallback
+    normalised = raw_text.lower().strip()
+    notes: list[str] = notes_prefix
+
     code_match = SCHOOL_CODE_PATTERN.search(raw_text)
     detected_code = code_match.group(0).strip() if code_match else None
     if detected_code and detected_code.upper() != school_id.upper():
@@ -140,13 +258,9 @@ def run(school_id: str, raw_text: str, source_system_id: str) -> AgentAResult:
             f"SCHOOL_CODE_MISMATCH: declared={school_id}, detected={detected_code}"
         )
 
-    # Semantic category mapping
     mapped_category, cat_confidence = _score_categories(normalised)
-
-    # Severity assessment
     severity, sev_confidence = _score_severity(normalised)
 
-    # Ancillary entity extraction
     extracted_entities = {
         "source_system_id": source_system_id,
         "detected_school_code": detected_code,

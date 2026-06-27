@@ -190,6 +190,7 @@ _TR = {
         "file_doc_score":     "Skor Operasi",
         "file_doc_src":       "ID Sistem Sumber",
         "file_doc_btn":       "🚀 Hantar sebagai 1 Kes",
+        "file_doc_ai_notice": "🤖 Skor operasi akan dianggar secara automatik oleh AI berdasarkan kandungan dokumen.",
         "file_doc_no_text":   "⚠️ Fail tidak mengandungi teks yang boleh diekstrak.",
         "file_doc_chars":     "aksara diekstrak",
         "file_doc_preview":   "Pratonton Teks",
@@ -382,6 +383,7 @@ _TR = {
         "file_doc_score":     "Operational Score",
         "file_doc_src":       "Source System ID",
         "file_doc_btn":       "🚀 Submit as 1 Case",
+        "file_doc_ai_notice": "🤖 Operational score will be estimated automatically by AI from document content.",
         "file_doc_no_text":   "⚠️ File contains no extractable text.",
         "file_doc_chars":     "characters extracted",
         "file_doc_preview":   "Text Preview",
@@ -771,13 +773,36 @@ def require_role(*roles: str) -> bool:
 # ---------------------------------------------------------------------------
 # AGENT PIPELINE
 # ---------------------------------------------------------------------------
-def run_agent_pipeline(school_id, source_system_id, source_system_name, raw_text, operational_score) -> dict:
+def _get_api_key() -> str:
+    """Read Anthropic API key from Streamlit secrets or environment variable."""
+    import os
+    try:
+        return st.secrets.get("ANTHROPIC_API_KEY", "")
+    except Exception:
+        return os.environ.get("ANTHROPIC_API_KEY", "")
+
+
+def run_agent_pipeline(
+    school_id,
+    source_system_id,
+    source_system_name,
+    raw_text,
+    operational_score=None,
+) -> dict:
     import json as _json
     db = get_db()
+    api_key = _get_api_key()
 
-    result_a = agent_a_run(school_id, raw_text, source_system_id)
+    result_a = agent_a_run(school_id, raw_text, source_system_id, api_key=api_key)
     result_b = agent_b_run(school_id, operational_score, result_a, source_system_id)
-    result_c = agent_c_run(school_id, source_system_name, result_a, result_b)
+    result_c = agent_c_run(school_id, source_system_name, result_a, result_b, api_key=api_key)
+
+    # Resolve the operational score actually used (AI-estimated or manual)
+    resolved_op_score = (
+        operational_score
+        if operational_score is not None
+        else (result_a.ai_estimated_operational_score or 50.0)
+    )
 
     payload_id = str(uuid.uuid4())
     db.execute("""INSERT INTO matrix_payloads
@@ -785,17 +810,22 @@ def run_agent_pipeline(school_id, source_system_id, source_system_name, raw_text
          raw_text_extracted, operational_score, mapped_category, severity_level, extracted_entities)
         VALUES (?,?,?,?,?,?,?,?,?)""",
         (payload_id, source_system_id, source_system_name, school_id,
-         raw_text, operational_score, result_a.mapped_category,
+         raw_text, resolved_op_score, result_a.mapped_category,
          result_a.severity, _json.dumps(result_a.extracted_entities)))
 
     flags_json   = _json.dumps(result_b.flags)
     agent_a_json = _json.dumps({"mapped_category": result_a.mapped_category,
                                  "severity": result_a.severity,
                                  "entities": result_a.extracted_entities})
-    agent_c_json = _json.dumps({"alert_status":  result_c.alert_status_label,
-                                 "enforcement":   result_c.enforcement_actions,
-                                 "policy":        result_c.policy_recommendations,
-                                 "directive":     result_c.executive_directive_text})
+    agent_c_json = _json.dumps({
+        "alert_status":  result_c.alert_status_label,
+        "enforcement":   result_c.enforcement_actions,
+        "policy":        [
+            {"flag": p.flag_trigger, "legal_reference": p.legal_reference, "recommended_action": p.recommended_action}
+            for p in result_c.policy_recommendations
+        ],
+        "directive":     result_c.executive_directive_text,
+    })
 
     db.execute("""INSERT INTO discrepancy_log
         (id, case_id, school_id, school_name, state, source_system_name,
@@ -806,7 +836,7 @@ def run_agent_pipeline(school_id, source_system_id, source_system_name, raw_text
         (str(uuid.uuid4()), result_b.case_id, school_id,
          result_c.school_name, result_c.state, source_system_name,
          result_b.audit_data_snapshot.get("skpmg2_score", 0),
-         operational_score, result_b.score_delta, result_b.discrepancy_index,
+         resolved_op_score, result_b.score_delta, result_b.discrepancy_index,
          result_b.di_classification, flags_json, result_b.anomaly_detected,
          result_b.confidence_score, agent_a_json, agent_c_json))
     db.commit()
@@ -829,7 +859,7 @@ def run_agent_pipeline(school_id, source_system_id, source_system_name, raw_text
         "severity":                  result_a.severity,
         "confidence_score":          result_b.confidence_score,
         "audit_score_reference":     result_b.audit_data_snapshot.get("skpmg2_score", 0),
-        "operational_score_reported":operational_score,
+        "operational_score_reported":resolved_op_score,
         "agent_a":                   agent_a_json,
         "agent_c":                   agent_c_json,
         "enforcement_actions":       result_c.enforcement_actions,
@@ -1356,16 +1386,16 @@ def _render_csv_body():
                     sch_opts = {f"{s['school_id']} — {s['school_name']}": s["school_id"] for s in schools}
                     sch_opts["UNKNOWN99 — Sekolah Tidak Dikenali"] = "UNKNOWN99"
 
+                    st.info(t("file_doc_ai_notice"))
                     with st.form("doc_ingest_form"):
                         src_id   = st.text_input(t("file_doc_src"), value=f"DOC-{uploaded.name[:20].upper()}")
                         sel_lbl  = st.selectbox(t("file_doc_school"), list(sch_opts.keys()))
                         school   = sch_opts[sel_lbl]
-                        op_score = st.slider(t("file_doc_score"), 0.0, 100.0, 70.0, 0.5)
                         submitted = st.form_submit_button(t("file_doc_btn"), type="primary", use_container_width=True)
 
                     if submitted:
                         with st.spinner(t("csv_processing")):
-                            result = run_agent_pipeline(school, src_id, uploaded.name, raw_text, op_score)
+                            result = run_agent_pipeline(school, src_id, uploaded.name, raw_text)
                         st.success(f"✅ {t('csv_ok')}: **{result['case_id']}**")
                         if result["anomaly_detected"]:
                             st.warning(f"⚠️ ANOMALI — DI: {result['discrepancy_index']:.4f}")

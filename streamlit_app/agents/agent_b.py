@@ -170,7 +170,7 @@ def _generate_flags(
 
 def run(
     school_id: str,
-    operational_score: float,
+    operational_score: Optional[float],
     agent_a_result: AgentAResult,
     source_system_id: str,
 ) -> AgentBResult:
@@ -180,6 +180,7 @@ def run(
     Args:
         school_id:          Target school identifier.
         operational_score:  Score reported by the external matrix system.
+                            Pass None to use Agent A's AI-estimated score.
         agent_a_result:     Output from Agent A for this payload.
         source_system_id:   Source system identifier for the case ID namespace.
 
@@ -194,7 +195,14 @@ def run(
         audit_record = _DEFAULT_AUDIT_RECORD.copy()
 
     audit_score = float(audit_record["skpmg2_score"])
-    op_score = float(operational_score)
+
+    # Resolve operational score: explicit > AI-estimated > default
+    if operational_score is not None:
+        op_score = float(operational_score)
+    elif agent_a_result.ai_estimated_operational_score is not None:
+        op_score = float(agent_a_result.ai_estimated_operational_score)
+    else:
+        op_score = 50.0
 
     # Core DI computation — formula as specified
     di = abs(audit_score - op_score) / 100.0
