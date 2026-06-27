@@ -57,7 +57,7 @@ def init_db():
     _os.makedirs(db_dir, exist_ok=True)
     db_path = _os.path.join(db_dir, "jn_engine.db")
 
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
