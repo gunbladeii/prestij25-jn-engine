@@ -204,7 +204,7 @@ Base URL: `https://prestij25-jn-engine.streamlit.app`
 
 | Page | Icon | Role | Description |
 |------|------|------|-------------|
-| Papan Pemuka | 📊 | All | Dashboard with stat cards + DI chart |
+| Dashboard | 📊 | All | Dashboard with stat cards + DI chart |
 | Hantar Payload | 📤 | admin, penyelaras_jn | Submit payload → Agent A→B→C pipeline |
 | Log Kes | 📋 | All | All processed cases table |
 | Ringkasan Eksekutif | 📄 | All | Full executive brief for selected case |

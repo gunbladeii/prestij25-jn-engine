@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(artifact-design)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\HP\\\\Documents\\\\prestijProject\\\\jemaah-nazir-engine\\\\backend\\\\agents\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\HP\\\\Documents\\\\prestijProject\\\\jemaah-nazir-engine\\\\database\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\HP\\\\Documents\\\\prestijProject\\\\jemaah-nazir-engine\\\\docs\")",
+      "Artifact",
+      "Bash(python -c ' *)",
+      "Bash(curl -s https://ai-agentic-complaint.netlify.app/)",
+      "Bash(curl *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
+    ]
+  }
+}

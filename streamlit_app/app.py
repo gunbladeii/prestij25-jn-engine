@@ -130,7 +130,7 @@ _TR = {
         "nav_monitoring":     "PEMANTAUAN",
         "nav_data_input":     "INPUT DATA",
         "nav_system":         "SISTEM",
-        "nav_dashboard":      "📊  Papan Pemuka",
+        "nav_dashboard":      "📊  Dashboard",
         "nav_cases":          "📋  Log & Kes",
         "nav_data_sub":       "📤  Penghantaran Data",
         "nav_users":          "👥  Pengurusan Pengguna",
@@ -144,7 +144,7 @@ _TR = {
         "lang_toggle":        "EN",
         # Dashboard
         "dash_section":       "PEMANTAUAN LANGSUNG",
-        "dash_title":         "Papan Pemuka Enjin",
+        "dash_title":         "Dashboard Utama",
         "dash_caption":       "Pemantauan masa nyata ekosistem matrix 25×25.",
         "dash_total":         "Jumlah Kes",
         "dash_anomaly":       "Anomali Dikesan",
@@ -300,7 +300,7 @@ _TR = {
         "tip_agent_b":        "Ejen B: Cross-Examination — mengira DI, menjana bendera risiko, dan mengesan anomali statistik.",
         "tip_agent_c":        "Ejen C: Ringkasan Eksekutif — menjana perintah, tindakan penguatkuasaan, dan cadangan polisi.",
         # Nav tooltips
-        "tip_nav_dashboard":  "Papan pemuka utama — statistik enjin, kes terkini dan taburan DI.",
+        "tip_nav_dashboard":  "Dashboard utama — statistik enjin, kes terkini dan taburan DI.",
         "tip_nav_cases":      "Log semua kes yang telah diproses beserta ringkasan eksekutif.",
         "tip_nav_data":       "Hantar payload baharu atau muat naik fail CSV / DOCX / PDF untuk dianalisis.",
         "tip_nav_users":      "Urus akaun pengguna sistem (hanya Admin).",
