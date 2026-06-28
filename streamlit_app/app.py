@@ -1261,25 +1261,26 @@ def init_db() -> JNDatabase:
             CREATE INDEX IF NOT EXISTS idx_skpk_school ON jn_skpk(school_id);
         """)
 
-        audit_data = [
-            ("SKB001","SK Bandar Baru Nilai","SK","Seremban","Negeri Sembilan","2023-03-15",85.50,"A",88.00,0.120),
-            ("SKB002","SK Bukit Jelutong","SK","Shah Alam","Selangor","2022-11-20",72.00,"B",65.00,0.350),
-            ("SMK001","SMK Tun Hussein Onn","SMK","Kuala Lumpur","W.P. Kuala Lumpur","2024-01-10",91.20,"A",92.00,0.080),
-            ("SMK002","SMK Pendang","SMK","Pendang","Kedah","2022-08-05",58.00,"C",45.00,0.680),
-            ("SBP001","Sekolah Berasrama Penuh Integrasi Gombak","SBP","Gombak","Selangor","2023-09-22",94.80,"A",95.50,0.040),
-            ("MRSM001","MRSM Kuala Klawang","MRSM","Jelebu","Negeri Sembilan","2023-06-14",88.30,"A",87.00,0.095),
-            ("SKK001","SK Kluang Utama","SK","Kluang","Johor","2022-05-30",63.50,"C",58.00,0.420),
-        ]
-        db.executemany(
-            "INSERT OR IGNORE INTO jn_audit_records VALUES (?,?,?,?,?,?,?,?,?,?,datetime('now'))",
-            audit_data
-        )
-        hashed = pwd_context.hash(DEFAULT_ADMIN_PASSWORD)
-        db.execute(
-            "INSERT OR IGNORE INTO users (id, email, password_hash, role) VALUES (?,?,?,?)",
-            (str(uuid.uuid4()), DEFAULT_ADMIN_EMAIL, hashed, "admin")
-        )
-        db.commit()
+    # Seed reference data — runs for both SQLite and PostgreSQL (idempotent)
+    audit_data = [
+        ("SKB001","SK Bandar Baru Nilai","SK","Seremban","Negeri Sembilan","2023-03-15",85.50,"A",88.00,0.120),
+        ("SKB002","SK Bukit Jelutong","SK","Shah Alam","Selangor","2022-11-20",72.00,"B",65.00,0.350),
+        ("SMK001","SMK Tun Hussein Onn","SMK","Kuala Lumpur","W.P. Kuala Lumpur","2024-01-10",91.20,"A",92.00,0.080),
+        ("SMK002","SMK Pendang","SMK","Pendang","Kedah","2022-08-05",58.00,"C",45.00,0.680),
+        ("SBP001","Sekolah Berasrama Penuh Integrasi Gombak","SBP","Gombak","Selangor","2023-09-22",94.80,"A",95.50,0.040),
+        ("MRSM001","MRSM Kuala Klawang","MRSM","Jelebu","Negeri Sembilan","2023-06-14",88.30,"A",87.00,0.095),
+        ("SKK001","SK Kluang Utama","SK","Kluang","Johor","2022-05-30",63.50,"C",58.00,0.420),
+    ]
+    db.executemany(
+        "INSERT OR IGNORE INTO jn_audit_records VALUES (?,?,?,?,?,?,?,?,?,?,datetime('now'))",
+        audit_data
+    )
+    hashed = pwd_context.hash(DEFAULT_ADMIN_PASSWORD)
+    db.execute(
+        "INSERT OR IGNORE INTO users (id, email, password_hash, role) VALUES (?,?,?,?)",
+        (str(uuid.uuid4()), DEFAULT_ADMIN_EMAIL, hashed, "admin")
+    )
+    db.commit()
 
     # Migrate existing discrepancy_log — add JN reference columns if not present
     for _col_sql in [
@@ -1415,7 +1416,7 @@ def run_agent_pipeline(
          result_c.school_name, result_c.state, source_system_name,
          result_b.audit_data_snapshot.get("skpmg2_score", 0),
          resolved_op_score, result_b.score_delta, result_b.discrepancy_index,
-         result_b.di_classification, flags_json, result_b.anomaly_detected,
+         result_b.di_classification, flags_json, int(result_b.anomaly_detected),
          result_b.confidence_score, agent_a_json, agent_c_json,
          jn_ref_type, jn_ref_id))
     db.commit()
