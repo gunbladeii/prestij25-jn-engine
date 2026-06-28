@@ -119,7 +119,8 @@ class JNDatabase:
         try:
             cur = conn.cursor()
             cur.execute(self._fix_insert(sql), params or ())
-            rows     = [_Row(r) for r in (cur.fetchall() or [])]
+            # cur.description is None for INSERT/UPDATE/DELETE — only fetch for SELECT
+            rows     = [_Row(r) for r in cur.fetchall()] if cur.description else []
             rowcount = cur.rowcount
         finally:
             try:
