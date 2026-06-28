@@ -2,6 +2,11 @@
 JN Engine — Database abstraction layer.
 SQLite for dev/local; PostgreSQL (Neon/Supabase) for prod.
 Set DATABASE_URL in Streamlit secrets to activate PostgreSQL mode.
+
+PostgreSQL strategy: open a fresh connection per query, fetch all rows
+eagerly, then close immediately.  This is the correct pattern for
+serverless Postgres (Neon) — no persistent connections, no idle-timeout
+drops, no psycopg2 thread-safety issues with @st.cache_resource.
 """
 import os
 import sqlite3
@@ -23,30 +28,34 @@ class _Row(dict):
         return super().__getitem__(key)
 
 
-class _PgCursor:
-    """Wraps a psycopg2 cursor to return _Row objects, matching the sqlite3.Row API."""
-    def __init__(self, cur):
-        self._c = cur
+class _EagerResult:
+    """
+    Holds rows fetched before the connection was closed.
+    Behaves like a sqlite3 cursor for the patterns we use.
+    """
+    def __init__(self, rows: list, rowcount: int):
+        self._rows     = rows   # already list[_Row]
+        self._rowcount = rowcount
 
     def fetchone(self):
-        row = self._c.fetchone()
-        return _Row(row) if row is not None else None
+        return self._rows[0] if self._rows else None
 
     def fetchall(self):
-        return [_Row(r) for r in self._c.fetchall()]
+        return self._rows
 
     def __iter__(self):
-        return iter(self.fetchall())
+        return iter(self._rows)
 
     @property
     def rowcount(self):
-        return self._c.rowcount
+        return self._rowcount
 
 
 class JNDatabase:
     """
-    Unified DB wrapper — API-compatible with sqlite3.Connection.
-    Set DATABASE_URL in Streamlit secrets for PostgreSQL; otherwise SQLite.
+    Unified DB wrapper.
+    - SQLite : single persistent connection (dev / local).
+    - PostgreSQL : new connection per query (serverless-safe).
     """
 
     def __init__(self):
@@ -54,8 +63,7 @@ class JNDatabase:
         if url:
             self._url     = url
             self._backend = "postgres"
-            self._conn    = None
-            self._pg_connect()
+            self._conn    = None          # no persistent pg connection
         else:
             self._url     = ""
             self._backend = "sqlite"
@@ -67,26 +75,13 @@ class JNDatabase:
             self._conn.execute("PRAGMA journal_mode=WAL")
             self._conn.execute("PRAGMA foreign_keys=ON")
 
-    def _pg_connect(self):
-        import psycopg2
-        import psycopg2.extras
-        self._conn = psycopg2.connect(
-            self._url,
-            cursor_factory=psycopg2.extras.RealDictCursor,
-        )
-        self._conn.autocommit = True
-
-    def _pg_reconnect(self):
-        """Close stale connection and open a fresh one."""
-        try:
-            self._conn.close()
-        except Exception:
-            pass
-        self._pg_connect()
-
     @property
     def backend(self) -> str:
         return self._backend
+
+    # ------------------------------------------------------------------
+    # SQL translation helpers
+    # ------------------------------------------------------------------
 
     def _fix(self, sql: str) -> str:
         if self._backend == "sqlite":
@@ -103,36 +98,71 @@ class JNDatabase:
             sql = sql.rstrip(" ;") + " ON CONFLICT DO NOTHING"
         return sql
 
-    def _pg_execute(self, sql: str, params=()):
-        """
-        Execute one SQL statement on PostgreSQL.
-        On InterfaceError / OperationalError (Neon idle-timeout drop),
-        reconnect once and retry before giving up.
-        """
+    # ------------------------------------------------------------------
+    # PostgreSQL: fresh-connection helpers
+    # ------------------------------------------------------------------
+
+    def _pg_conn(self):
+        """Open and return a fresh psycopg2 connection."""
         import psycopg2
-        fixed = self._fix_insert(sql)
+        import psycopg2.extras
+        conn = psycopg2.connect(
+            self._url,
+            cursor_factory=psycopg2.extras.RealDictCursor,
+        )
+        conn.autocommit = True
+        return conn
+
+    def _pg_execute(self, sql: str, params=()):
+        """Run a single statement on a fresh connection; fetch all rows eagerly."""
+        conn = self._pg_conn()
         try:
-            cur = self._conn.cursor()
-            cur.execute(fixed, params or ())
-            return _PgCursor(cur)
-        except (psycopg2.InterfaceError, psycopg2.OperationalError):
-            self._pg_reconnect()
-            cur = self._conn.cursor()
-            cur.execute(fixed, params or ())
-            return _PgCursor(cur)
+            cur = conn.cursor()
+            cur.execute(self._fix_insert(sql), params or ())
+            rows     = [_Row(r) for r in (cur.fetchall() or [])]
+            rowcount = cur.rowcount
+        finally:
+            try:
+                conn.close()
+            except Exception:
+                pass
+        return _EagerResult(rows, rowcount)
 
     def _pg_executemany(self, sql: str, params_list):
-        import psycopg2
-        fixed = self._fix_insert(sql)
+        """Run executemany on a fresh connection."""
+        conn = self._pg_conn()
         try:
-            cur = self._conn.cursor()
-            cur.executemany(fixed, params_list)
-            return _PgCursor(cur)
-        except (psycopg2.InterfaceError, psycopg2.OperationalError):
-            self._pg_reconnect()
-            cur = self._conn.cursor()
-            cur.executemany(fixed, params_list)
-            return _PgCursor(cur)
+            cur = conn.cursor()
+            cur.executemany(self._fix_insert(sql), params_list)
+            rowcount = cur.rowcount
+        finally:
+            try:
+                conn.close()
+            except Exception:
+                pass
+        return _EagerResult([], rowcount)
+
+    def _pg_executescript(self, script: str):
+        """Run a DDL script on a fresh connection; ignore per-statement errors."""
+        conn = self._pg_conn()
+        try:
+            cur = conn.cursor()
+            for stmt in script.split(";"):
+                stmt = self._fix(stmt).strip()
+                if stmt:
+                    try:
+                        cur.execute(stmt)
+                    except Exception:
+                        pass   # table / index already exists
+        finally:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
 
     def execute(self, sql: str, params=()):
         if self._backend == "postgres":
@@ -146,22 +176,19 @@ class JNDatabase:
 
     def executescript(self, script: str):
         if self._backend == "postgres":
-            for stmt in script.split(";"):
-                stmt = self._fix(stmt).strip()
-                if stmt:
-                    try:
-                        self._pg_execute(stmt)
-                    except Exception:
-                        pass
+            self._pg_executescript(script)
         else:
             self._conn.executescript(script)
 
     def commit(self):
         if self._backend == "sqlite":
             self._conn.commit()
+        # postgres: autocommit=True on every connection — no-op
 
     def close(self):
-        try:
-            self._conn.close()
-        except Exception:
-            pass
+        if self._backend == "sqlite":
+            try:
+                self._conn.close()
+            except Exception:
+                pass
+        # postgres: no persistent connection to close
