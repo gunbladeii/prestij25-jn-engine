@@ -1355,42 +1355,87 @@ def run_agent_pipeline(
     source_system_name,
     raw_text,
     operational_score=None,
+    jn_ref=None,
 ) -> dict:
+    """
+    jn_ref: {"type": "skas"|"skpk"|"audit"|"default"|None, "record": {...}}
+    When provided by the UI, used directly.  When None, falls back to the
+    legacy priority chain: jn_pemeriksaan → jn_audit_records → hardcoded dict.
+    """
     import json as _json
     db = get_db()
     api_key = _get_api_key()
 
     result_a = agent_a_run(school_id, raw_text, source_system_id, api_key=api_key)
 
-    # Priority 1: live jn_pemeriksaan (user-entered via Dapatan JN page)
-    _jn_row = db.execute(
-        "SELECT * FROM jn_pemeriksaan WHERE school_id=? ORDER BY tarikh_pemeriksaan DESC LIMIT 1",
-        (school_id.upper(),)
-    ).fetchone()
-
     _jn_record    = None
     _audit_source = "default"
+    jn_ref_type   = ""
+    jn_ref_id     = ""
 
-    if _jn_row:
-        _jn_record    = dict(_jn_row)
-        _audit_source = "live_pemeriksaan"
+    if jn_ref and jn_ref.get("type") in ("skas", "skpk"):
+        # User explicitly selected a SK@S or SKPK record — primary quantitative reference
+        _rec      = jn_ref["record"]
+        _skor     = float(_rec.get("skor_keseluruhan") or 70.0)
+        _date_key = "tarikh_skas" if jn_ref["type"] == "skas" else "tarikh_skpk"
+        _jn_record = {
+            "skpmg2_score":          _skor,
+            "facility_gred":         _rec.get("band", "B"),
+            "canteen_hygiene_score": _skor,
+            "integrity_risk_index":  0.3,
+            "school_name":           _rec.get("school_name", ""),
+            "state":                 _rec.get("state", ""),
+            "last_audit_date":       _rec.get(_date_key, ""),
+        }
+        _audit_source = jn_ref["type"]   # "skas" or "skpk"
+        jn_ref_type   = jn_ref["type"]
+        jn_ref_id     = _rec.get("id", "")
+
+    elif jn_ref and jn_ref.get("type") == "audit":
+        # User explicitly selected seeded audit_records reference
+        _rec = jn_ref["record"]
+        _jn_record = {
+            "skpmg2_score":          float(_rec.get("skpmg2_score") or 70.0),
+            "facility_gred":         _rec.get("facility_gred", "B"),
+            "canteen_hygiene_score": float(_rec.get("canteen_hygiene_score") or 70.0),
+            "integrity_risk_index":  float(_rec.get("integrity_risk_index") or 0.3),
+            "school_name":           _rec.get("school_name", ""),
+            "state":                 _rec.get("state", ""),
+            "last_audit_date":       _rec.get("last_audit_date", ""),
+        }
+        _audit_source = "audit_records"
+        jn_ref_type   = "audit"
+
     else:
-        # Priority 2: jn_audit_records table (seeded reference data)
-        _ar = db.execute(
-            "SELECT * FROM jn_audit_records WHERE school_id=?", (school_id.upper(),)
+        # Fallback priority chain — used for CSV/batch processing without explicit ref
+        # Priority 1: live jn_pemeriksaan
+        _jn_row = db.execute(
+            "SELECT * FROM jn_pemeriksaan WHERE school_id=? ORDER BY tarikh_pemeriksaan DESC LIMIT 1",
+            (school_id.upper(),)
         ).fetchone()
-        if _ar:
-            _jn_record = {
-                "skpmg2_score":          float(_ar["skpmg2_score"]),
-                "facility_gred":         _ar["facility_gred"],
-                "canteen_hygiene_score": float(_ar["canteen_hygiene_score"]),
-                "integrity_risk_index":  float(_ar["integrity_risk_index"]),
-                "school_name":           _ar["school_name"],
-                "state":                 _ar["state"],
-                "last_audit_date":       _ar["last_audit_date"],
-            }
-            _audit_source = "audit_records"
-        # else: agent_b falls back to its hardcoded JN_AUDIT_DATABASE dict
+        if _jn_row:
+            _jn_record    = dict(_jn_row)
+            _audit_source = "live_pemeriksaan"
+            jn_ref_type   = "pemeriksaan"
+            jn_ref_id     = _jn_row.get("id", "")
+        else:
+            # Priority 2: seeded jn_audit_records
+            _ar = db.execute(
+                "SELECT * FROM jn_audit_records WHERE school_id=?", (school_id.upper(),)
+            ).fetchone()
+            if _ar:
+                _jn_record = {
+                    "skpmg2_score":          float(_ar["skpmg2_score"]),
+                    "facility_gred":         _ar["facility_gred"],
+                    "canteen_hygiene_score": float(_ar["canteen_hygiene_score"]),
+                    "integrity_risk_index":  float(_ar["integrity_risk_index"]),
+                    "school_name":           _ar["school_name"],
+                    "state":                 _ar["state"],
+                    "last_audit_date":       _ar["last_audit_date"],
+                }
+                _audit_source = "audit_records"
+                jn_ref_type   = "audit"
+            # else: agent_b falls back to its hardcoded JN_AUDIT_DATABASE dict
 
     result_b = agent_b_run(school_id, operational_score, result_a, source_system_id, jn_record=_jn_record)
     result_c = agent_c_run(school_id, source_system_name, result_a, result_b, api_key=api_key)
@@ -1424,9 +1469,6 @@ def run_agent_pipeline(
         ],
         "directive":     result_c.executive_directive_text,
     })
-
-    jn_ref_type = "pemeriksaan" if _jn_record else ""
-    jn_ref_id   = _jn_record.get("id", "") if _jn_record else ""
 
     db.execute("""INSERT INTO discrepancy_log
         (id, case_id, school_id, school_name, state, source_system_name,
@@ -1990,90 +2032,184 @@ def _render_ingest_body():
         st.warning(t("sub_no_access"))
         return
 
-    demo = st.session_state.pop("demo_payload", None)
-    col_form, col_ref = st.columns([2, 1])
+    db = get_db()
 
-    with col_form:
-        with st.form("ingest_form"):
-            source_id = st.text_input(t("sub_src_id"),
-                                      value=demo["source_system_id"] if demo else "PRESTIJ-BULLY-03",
-                                      help=t("tip_src_id"))
-            source_name = st.text_input(t("sub_src_name"),
-                                        value=demo["source_system_name"] if demo else "AI-Powered Bully Detection Agent")
+    # Pre-compute school list so demo pre-population can reference it
+    schools  = db.execute("SELECT school_id, school_name FROM jn_audit_records ORDER BY school_id").fetchall()
+    sch_opts = {f"{s['school_id']} — {s['school_name']}": s["school_id"] for s in schools}
+    sch_opts["UNKNOWN99 — Sekolah Tidak Dikenali"] = "UNKNOWN99"
+    sch_keys = list(sch_opts.keys())
 
-            db_audit  = get_db()
-            schools   = db_audit.execute("SELECT school_id, school_name FROM jn_audit_records ORDER BY school_id").fetchall()
-            sch_opts  = {f"{s['school_id']} — {s['school_name']}": s["school_id"] for s in schools}
-            sch_opts["UNKNOWN99 — Sekolah Tidak Dikenali"] = "UNKNOWN99"
+    # Apply demo payload to session state before any widget renders
+    _demo = st.session_state.pop("demo_payload", None)
+    if _demo:
+        st.session_state["_ii_src_id"]          = _demo["source_system_id"]
+        st.session_state["_ii_src_name"]        = _demo["source_system_name"]
+        _demo_lbl = next((k for k, v in sch_opts.items() if v == _demo["school_id"]), sch_keys[0])
+        st.session_state["_ii_school_lbl"]      = _demo_lbl
+        st.session_state["_ii_op_score_slider"] = float(_demo["operational_score"])
+        st.session_state["_ii_raw_text"]        = _demo["raw_text"]
+        st.session_state["_ii_op_mode"]         = "📊 Skor Terus"
 
-            target_school = demo["school_id"] if demo else "SMK002"
-            default_lbl   = next((k for k, v in sch_opts.items() if v == target_school), list(sch_opts.keys())[0])
-            selected_lbl  = st.selectbox(t("sub_school"), list(sch_opts.keys()),
-                                         index=list(sch_opts.keys()).index(default_lbl))
-            school_id     = sch_opts[selected_lbl]
+    # ── Langkah 1: Maklumat Sumber ─────────────────────────────────────────
+    st.markdown("#### 1 · Maklumat Sumber")
+    col_s1, col_s2 = st.columns(2)
+    source_id   = col_s1.text_input(t("sub_src_id"),   key="_ii_src_id",   help=t("tip_src_id"))
+    source_name = col_s2.text_input(t("sub_src_name"), key="_ii_src_name")
 
-            op_score = st.slider(t("sub_score"), 0.0, 100.0,
-                                 demo["operational_score"] if demo else 92.0, 0.5,
-                                 help=t("tip_op_score"))
-            raw_text = st.text_area(t("sub_text"),
-                                    value=demo["raw_text"] if demo else "Terdapat laporan kritikal berhubung salah guna kuasa...",
-                                    height=120, help=t("tip_raw_text"))
+    st.divider()
 
-            submitted = st.form_submit_button(t("sub_btn"), type="primary", use_container_width=True)
-            if submitted:
-                with st.spinner(t("sub_spin")):
-                    result = run_agent_pipeline(school_id, source_id, source_name, raw_text, op_score)
-                st.session_state.last_ingest = result
-                st.success(f"{t('sub_ok')}: **{result['case_id']}**")
-                if result["anomaly_detected"]:
-                    st.warning(f"{t('sub_anomaly')}: {result['discrepancy_index']:.4f}")
-                st.rerun()
+    # ── Langkah 2: Pilih Sekolah & Rujukan JN ─────────────────────────────
+    st.markdown("#### 2 · Pilih Sekolah & Rujukan JN")
 
-    with col_ref:
-        st.markdown(f"**{t('sub_formula')}**")
-        st.latex(r"DI = \frac{|Audit - Op|}{100}")
-        st.caption(t("sub_di_range"))
+    _def_lbl     = st.session_state.get("_ii_school_lbl", sch_keys[0])
+    _def_idx     = sch_keys.index(_def_lbl) if _def_lbl in sch_keys else 0
+    selected_lbl = st.selectbox(t("sub_school"), sch_keys, index=_def_idx, key="_ii_school_lbl")
+    school_id    = sch_opts[selected_lbl]
 
-        st.markdown(f"**{t('sub_classify')}**")
-        for th, lbl in [("🔴 ≥ 0.75", "EKSTREM"), ("🟠 ≥ 0.50", "TERUK"),
-                        ("🟡 ≥ 0.25", "SEDERHANA"), ("🔵 ≥ 0.10", "MINOR"), ("🟢 < 0.10", "SELARAS")]:
-            st.markdown(f"`{th}` **{lbl}**")
+    # Query all available JN references for the selected school
+    skas_rows = db.execute(
+        "SELECT * FROM jn_skas WHERE school_id=? ORDER BY tarikh_skas DESC LIMIT 5",
+        (school_id.upper(),)
+    ).fetchall()
+    skpk_rows = db.execute(
+        "SELECT * FROM jn_skpk WHERE school_id=? ORDER BY tarikh_skpk DESC LIMIT 5",
+        (school_id.upper(),)
+    ).fetchall()
+    pem_row   = db.execute(
+        "SELECT * FROM jn_pemeriksaan WHERE school_id=? ORDER BY tarikh_pemeriksaan DESC LIMIT 1",
+        (school_id.upper(),)
+    ).fetchone()
+    audit_row = db.execute(
+        "SELECT * FROM jn_audit_records WHERE school_id=?", (school_id.upper(),)
+    ).fetchone()
 
-        st.markdown(f"**{t('sub_audit_ref')}**")
-        _live_pem = get_db().execute(
-            "SELECT * FROM jn_pemeriksaan WHERE school_id=? ORDER BY tarikh_pemeriksaan DESC LIMIT 1",
-            (school_id,)
-        ).fetchone()
-        audit_row = get_db().execute("SELECT * FROM jn_audit_records WHERE school_id=?", (school_id,)).fetchone()
+    # Build reference option dict — SK@S and SKPK are primary (quantitative)
+    ref_opts = {}
+    for r in skas_rows:
+        lbl = f"⭐ SK@S — {r['tarikh_skas']}  ·  Skor: {r['skor_keseluruhan']:.1f}  ·  {r['band']}"
+        ref_opts[lbl] = {"type": "skas", "record": dict(r)}
+    for r in skpk_rows:
+        lbl = f"🏆 SKPK Prasekolah — {r['tarikh_skpk']}  ·  Skor: {r['skor_keseluruhan']:.1f}  ·  {r['band']}"
+        ref_opts[lbl] = {"type": "skpk", "record": dict(r)}
 
-        if _live_pem:
-            st.success("📊 Live Dapatan JN (Pemeriksaan)")
-            ref = _live_pem
-            st.markdown(f"""
-            **{ref['school_name']}** ({ref['state']})
-            - SKPMG2: `{ref['skpmg2_score']}`
-            - Gred: `{ref['facility_gred']}`
-            - Kantin: `{ref['canteen_hygiene_score']}`
-            - Risiko: `{ref['integrity_risk_index']:.3f}`
-            - Tarikh: `{ref['tarikh_pemeriksaan']}`
-            """)
-        elif audit_row:
-            st.info("📁 Rekod Audit Rujukan (tiada Dapatan JN live)")
-            st.markdown(f"""
-            **{audit_row['school_name']}** ({audit_row['state']})
-            - SKPMG2: `{audit_row['skpmg2_score']}`
-            - Gred: `{audit_row['facility_gred']}`
-            - Kantin: `{audit_row['canteen_hygiene_score']}`
-            - Risiko: `{audit_row['integrity_risk_index']:.3f}`
-            """)
+    has_quantitative = bool(ref_opts)
+
+    if not has_quantitative:
+        if audit_row:
+            lbl = f"📁 Rekod Audit — SKPMG2: {audit_row['skpmg2_score']:.1f}"
+            ref_opts[lbl] = {"type": "audit", "record": dict(audit_row)}
         else:
-            st.warning("⚠️ Tiada rekod JN — guna nilai default (skor 70.0)")
+            ref_opts["⚙️ Nilai Default (Skor: 70.0)"] = {"type": "default", "record": {}}
 
+    col_ref_sel, col_pem = st.columns([3, 2])
+
+    with col_ref_sel:
+        if has_quantitative:
+            st.markdown("**Rujukan JN untuk pengiraan DI:**")
+            st.caption(
+                "SK@S = sekolah rendah / menengah (pengisian standard dimensi) · "
+                "SKPK = prasekolah dalam sekolah yang sama (pengurusan berasingan)"
+            )
+        else:
+            st.markdown("**Rujukan JN (DI):**")
+            st.caption("⚠️ Tiada rekod SK@S / SKPK — guna rekod audit sebagai rujukan sementara.")
+
+        sel_ref_lbl  = st.radio(
+            "Pilih rujukan JN",
+            list(ref_opts.keys()),
+            key=f"_ii_jn_ref_{school_id}",
+            label_visibility="collapsed",
+        )
+        selected_ref = ref_opts[sel_ref_lbl]
+
+    with col_pem:
+        st.markdown("**📋 Dapatan Pemeriksaan JN** _(konteks sahaja)_")
+        if pem_row:
+            st.info(
+                f"🗓️ {pem_row['tarikh_pemeriksaan']}\n\n"
+                f"SKPMG2: **{pem_row['skpmg2_score']:.1f}** | Gred: **{pem_row['facility_gred']}**\n\n"
+                f"🏫 {pem_row['school_name']} · {pem_row.get('state','')}"
+            )
+            st.caption("Pemeriksaan tidak digunakan untuk kira DI — dipapar sebagai rujukan konteks.")
+        else:
+            st.caption("Tiada rekod Pemeriksaan JN untuk sekolah ini.")
+
+    st.divider()
+
+    # ── Langkah 3: Data Operasi ────────────────────────────────────────────
+    st.markdown("#### 3 · Data Operasi")
+
+    col_op, col_formula = st.columns([2, 1])
+
+    with col_op:
+        op_mode = st.radio(
+            "Mod Input",
+            ["📊 Skor Terus", "📝 Teks Laporan (NLP → Skor)"],
+            horizontal=True,
+            key="_ii_op_mode",
+        )
+        is_score_mode = op_mode.startswith("📊")
+
+        if is_score_mode:
+            op_score = st.slider(
+                t("sub_score"), 0.0, 100.0, 92.0, 0.5,
+                key="_ii_op_score_slider", help=t("tip_op_score"),
+            )
+        else:
+            op_score = None
+
+        raw_text = st.text_area(
+            t("sub_text") if is_score_mode else "Laporan Kualitatif (AI akan anggar skor dari teks)",
+            key="_ii_raw_text",
+            height=120,
+            help=t("tip_raw_text"),
+        )
+
+    with col_formula:
+        _ref_score = float(
+            selected_ref["record"].get("skor_keseluruhan")
+            or selected_ref["record"].get("skpmg2_score")
+            or 70.0
+        )
+        _ref_type_lbl = {
+            "skas": "SK@S", "skpk": "SKPK (Prasekolah)",
+            "audit": "Rekod Audit", "default": "Default",
+        }.get(selected_ref["type"], "—")
+
+        st.markdown("**Formula DI**")
+        st.latex(r"DI = \frac{|Audit - Op|}{100}")
+        st.caption(f"Audit = **{_ref_score:.1f}** ({_ref_type_lbl})")
+
+        st.markdown("**Klasifikasi:**")
+        for _th, _lb in [
+            ("🔴 ≥ 0.75", "EKSTREM"), ("🟠 ≥ 0.50", "TERUK"),
+            ("🟡 ≥ 0.25", "SEDERHANA"), ("🔵 ≥ 0.10", "MINOR"),
+            ("🟢 < 0.10", "SELARAS"),
+        ]:
+            st.markdown(f"`{_th}` **{_lb}**")
+
+    st.markdown("")
+    if st.button(t("sub_btn"), type="primary", key="_ii_submit"):
+        _raw = raw_text or f"Laporan operasi sekolah {school_id}"
+        _op  = op_score if is_score_mode else None
+        with st.spinner(t("sub_spin")):
+            result = run_agent_pipeline(
+                school_id, source_id, source_name, _raw, _op,
+                jn_ref=selected_ref,
+            )
+        st.session_state.last_ingest = result
+        st.success(f"{t('sub_ok')}: **{result['case_id']}**")
+        if result["anomaly_detected"]:
+            st.warning(f"{t('sub_anomaly')}: {result['discrepancy_index']:.4f}")
+        st.rerun()
+
+    # ── Keputusan ──────────────────────────────────────────────────────────
     if "last_ingest" in st.session_state:
         r     = st.session_state.last_ingest
-        color = DI_COLORS.get(r["di_classification"], "#6B7C93")
         st.divider()
         st.subheader(t("sub_result"))
+
         _cls_short = {
             "EXTREME_DISCREPANCY":  "EKSTREM",
             "SEVERE_DISCREPANCY":   "TERUK",
@@ -2082,14 +2218,44 @@ def _render_ingest_body():
             "DATA_ALIGNED":         "SELARAS",
         }
         _alert_short = r["alert_level"].split("—")[0].strip() if "—" in r["alert_level"] else r["alert_level"]
-        _src_label = {"live_pemeriksaan": "📊 Live JN", "audit_records": "📁 Rekod Audit", "default": "⚙️ Default"}.get(r.get("audit_source","default"), "⚙️ Default")
+        _src_lbl_map = {
+            "skas":             "⭐ SK@S",
+            "skpk":             "🏆 SKPK",
+            "audit":            "📁 Rekod Audit",
+            "default":          "⚙️ Default",
+            "live_pemeriksaan": "📊 Live Pemeriksaan",
+            "audit_records":    "📁 Rekod Audit",
+        }
+        _src_label = _src_lbl_map.get(r.get("audit_source", "default"), "⚙️ Default")
+
         c1, c2, c3, c4 = st.columns(4)
         c1.metric(t("sub_di"),    f"{r['discrepancy_index']:.4f}", help=t("tip_di"))
-        c2.metric(t("sub_class"), _cls_short.get(r["di_classification"], r["di_classification"]), help=r["di_classification"])
-        c3.metric(t("sub_flags"), str(r["flags_count"]),            help=t("tip_flags"))
-        c4.metric(t("sub_alert"), _alert_short,                     help=r["alert_level"])
-        st.caption(f"Rujukan DI: {_src_label} · Skor Audit: `{r['audit_score_reference']:.1f}` vs Dilaporkan: `{r['operational_score_reported']:.1f}`")
-        if st.button(t("sub_view_brief"), type="primary"):
+        c2.metric(t("sub_class"), _cls_short.get(r["di_classification"], r["di_classification"]),
+                  help=r["di_classification"])
+        c3.metric(t("sub_flags"), str(r["flags_count"]), help=t("tip_flags"))
+        c4.metric(t("sub_alert"), _alert_short,          help=r["alert_level"])
+
+        st.caption(
+            f"Rujukan DI: {_src_label} · "
+            f"Skor Audit: `{r['audit_score_reference']:.1f}` vs "
+            f"Dilaporkan: `{r['operational_score_reported']:.1f}`"
+        )
+
+        # Pemeriksaan context panel shown alongside result
+        _pem_ctx = db.execute(
+            "SELECT * FROM jn_pemeriksaan WHERE school_id=? ORDER BY tarikh_pemeriksaan DESC LIMIT 1",
+            (r.get("school_id", "").upper(),)
+        ).fetchone()
+        if _pem_ctx:
+            with st.expander("📋 Dapatan Pemeriksaan JN — Konteks", expanded=False):
+                rc1, rc2, rc3 = st.columns(3)
+                rc1.metric("SKPMG2",  f"{_pem_ctx['skpmg2_score']:.1f}")
+                rc2.metric("Gred",    _pem_ctx["facility_gred"])
+                rc3.metric("Tarikh",  _pem_ctx["tarikh_pemeriksaan"])
+                st.caption(f"🏫 {_pem_ctx['school_name']} · {_pem_ctx.get('state','')}")
+                st.caption("Pemeriksaan tidak digunakan untuk kira DI — dipapar sebagai konteks sahaja.")
+
+        if st.button(t("sub_view_brief"), type="primary", key="_ii_view_brief"):
             st.session_state.view_case_id = r["case_id"]
             st.session_state.current_page = "cases"
             st.session_state.cases_tab    = "b"
