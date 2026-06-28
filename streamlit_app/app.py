@@ -1878,37 +1878,63 @@ def render_dashboard():
     # DI Distribution chart
     st.divider()
     st.subheader(t("dash_di_dist"))
-    labels = t("dash_di_labels")
-    dist   = {
-        labels[0]: sum(1 for c in cases if c["di_classification"] == "DATA_ALIGNED"),
-        labels[1]: sum(1 for c in cases if c["di_classification"] == "MINOR_DISCREPANCY"),
-        labels[2]: sum(1 for c in cases if c["di_classification"] == "MODERATE_DISCREPANCY"),
-        labels[3]: sum(1 for c in cases if c["di_classification"] == "SEVERE_DISCREPANCY"),
-        labels[4]: sum(1 for c in cases if c["di_classification"] == "EXTREME_DISCREPANCY"),
-    }
-    if sum(dist.values()) > 0:
-        st.bar_chart(pd.DataFrame({"n": dist}), use_container_width=True)
+    _di_keys   = ["DATA_ALIGNED","MINOR_DISCREPANCY","MODERATE_DISCREPANCY","SEVERE_DISCREPANCY","EXTREME_DISCREPANCY"]
+    _di_labels = t("dash_di_labels")   # ["Selaras","Minor","Sederhana","Teruk","Ekstrem"]
+    _di_colors = ["#16A34A","#1D4ED8","#CA8A04","#C2410C","#B91C1C"]
+    _di_counts = [sum(1 for c in cases if c["di_classification"] == k) for k in _di_keys]
+
+    if sum(_di_counts) > 0:
+        import plotly.graph_objects as _go
+        _fig = _go.Figure()
+        for lbl, cnt, col in zip(_di_labels, _di_counts, _di_colors):
+            _fig.add_trace(_go.Bar(
+                x=[lbl], y=[cnt],
+                marker_color=col,
+                text=[str(cnt)] if cnt > 0 else [""],
+                textposition="outside",
+                showlegend=False,
+                hovertemplate=f"<b>{lbl}</b><br>Kes: %{{y}}<extra></extra>",
+            ))
+        _fig.update_layout(
+            height=280,
+            margin=dict(l=20, r=20, t=20, b=20),
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            font=dict(color="#94A3B8", size=12),
+            xaxis=dict(showgrid=False, tickfont=dict(size=12, color="#CBD5E1")),
+            yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.06)", tickformat="d", title="Bilangan Kes"),
+            bargap=0.35,
+        )
+        st.plotly_chart(
+            _fig,
+            use_container_width=True,
+            config={"scrollZoom": False, "displayModeBar": False},
+        )
 
     # ── Per-School Cross-Reference Section ────────────────────────────────
     st.divider()
     st.subheader(t("dash_sekolah_title"))
     st.caption(t("dash_sekolah_caption"))
 
-    # Latest JN record per school
+    # Latest JN record per school — subquery avoids PostgreSQL GROUP BY strictness
     jn_rows = db.execute(
-        "SELECT school_id, school_name, MAX(tarikh_pemeriksaan) as tarikh, skpmg2_score "
-        "FROM jn_pemeriksaan GROUP BY school_id"
+        "SELECT jp.school_id, jp.school_name, jp.tarikh_pemeriksaan AS tarikh, jp.skpmg2_score "
+        "FROM jn_pemeriksaan jp "
+        "INNER JOIN (SELECT school_id, MAX(tarikh_pemeriksaan) AS mx FROM jn_pemeriksaan GROUP BY school_id) latest "
+        "ON jp.school_id = latest.school_id AND jp.tarikh_pemeriksaan = latest.mx"
     ).fetchall()
 
     if not jn_rows:
         st.info(t("dash_no_jn_data"))
     else:
-        # Latest discrepancy case per school
+        # Latest discrepancy case per school — subquery for PostgreSQL compatibility
         case_map = {}
         for cr in db.execute(
-            "SELECT school_id, operational_score_reported, discrepancy_index, "
-            "di_classification, anomaly_detected, case_id, jn_reference_type, MAX(timestamp) "
-            "FROM discrepancy_log GROUP BY school_id"
+            "SELECT dl.school_id, dl.operational_score_reported, dl.discrepancy_index, "
+            "dl.di_classification, dl.anomaly_detected, dl.case_id, dl.jn_reference_type "
+            "FROM discrepancy_log dl "
+            "INNER JOIN (SELECT school_id, MAX(timestamp) AS mx FROM discrepancy_log GROUP BY school_id) latest "
+            "ON dl.school_id = latest.school_id AND dl.timestamp = latest.mx"
         ).fetchall():
             case_map[cr["school_id"]] = cr
 
