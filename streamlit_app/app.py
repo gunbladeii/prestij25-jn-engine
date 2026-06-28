@@ -1362,12 +1362,35 @@ def run_agent_pipeline(
 
     result_a = agent_a_run(school_id, raw_text, source_system_id, api_key=api_key)
 
-    # Fetch live JN dapatan from DB (most recent pemeriksaan record for this school)
+    # Priority 1: live jn_pemeriksaan (user-entered via Dapatan JN page)
     _jn_row = db.execute(
         "SELECT * FROM jn_pemeriksaan WHERE school_id=? ORDER BY tarikh_pemeriksaan DESC LIMIT 1",
         (school_id.upper(),)
     ).fetchone()
-    _jn_record = dict(_jn_row) if _jn_row else None
+
+    _jn_record    = None
+    _audit_source = "default"
+
+    if _jn_row:
+        _jn_record    = dict(_jn_row)
+        _audit_source = "live_pemeriksaan"
+    else:
+        # Priority 2: jn_audit_records table (seeded reference data)
+        _ar = db.execute(
+            "SELECT * FROM jn_audit_records WHERE school_id=?", (school_id.upper(),)
+        ).fetchone()
+        if _ar:
+            _jn_record = {
+                "skpmg2_score":          float(_ar["skpmg2_score"]),
+                "facility_gred":         _ar["facility_gred"],
+                "canteen_hygiene_score": float(_ar["canteen_hygiene_score"]),
+                "integrity_risk_index":  float(_ar["integrity_risk_index"]),
+                "school_name":           _ar["school_name"],
+                "state":                 _ar["state"],
+                "last_audit_date":       _ar["last_audit_date"],
+            }
+            _audit_source = "audit_records"
+        # else: agent_b falls back to its hardcoded JN_AUDIT_DATABASE dict
 
     result_b = agent_b_run(school_id, operational_score, result_a, source_system_id, jn_record=_jn_record)
     result_c = agent_c_run(school_id, source_system_name, result_a, result_b, api_key=api_key)
@@ -1446,6 +1469,7 @@ def run_agent_pipeline(
         "policy_recommendations":    result_c.policy_recommendations,
         "executive_directive_text":  result_c.executive_directive_text,
         "generated_at":              datetime.utcnow().isoformat(),
+        "audit_source":              _audit_source,
     }
 
 # ---------------------------------------------------------------------------
@@ -1990,8 +2014,25 @@ def _render_ingest_body():
             st.markdown(f"`{th}` **{lbl}**")
 
         st.markdown(f"**{t('sub_audit_ref')}**")
+        _live_pem = get_db().execute(
+            "SELECT * FROM jn_pemeriksaan WHERE school_id=? ORDER BY tarikh_pemeriksaan DESC LIMIT 1",
+            (school_id,)
+        ).fetchone()
         audit_row = get_db().execute("SELECT * FROM jn_audit_records WHERE school_id=?", (school_id,)).fetchone()
-        if audit_row:
+
+        if _live_pem:
+            st.success("📊 Live Dapatan JN (Pemeriksaan)")
+            ref = _live_pem
+            st.markdown(f"""
+            **{ref['school_name']}** ({ref['state']})
+            - SKPMG2: `{ref['skpmg2_score']}`
+            - Gred: `{ref['facility_gred']}`
+            - Kantin: `{ref['canteen_hygiene_score']}`
+            - Risiko: `{ref['integrity_risk_index']:.3f}`
+            - Tarikh: `{ref['tarikh_pemeriksaan']}`
+            """)
+        elif audit_row:
+            st.info("📁 Rekod Audit Rujukan (tiada Dapatan JN live)")
             st.markdown(f"""
             **{audit_row['school_name']}** ({audit_row['state']})
             - SKPMG2: `{audit_row['skpmg2_score']}`
@@ -1999,17 +2040,29 @@ def _render_ingest_body():
             - Kantin: `{audit_row['canteen_hygiene_score']}`
             - Risiko: `{audit_row['integrity_risk_index']:.3f}`
             """)
+        else:
+            st.warning("⚠️ Tiada rekod JN — guna nilai default (skor 70.0)")
 
     if "last_ingest" in st.session_state:
         r     = st.session_state.last_ingest
         color = DI_COLORS.get(r["di_classification"], "#6B7C93")
         st.divider()
         st.subheader(t("sub_result"))
+        _cls_short = {
+            "EXTREME_DISCREPANCY":  "EKSTREM",
+            "SEVERE_DISCREPANCY":   "TERUK",
+            "MODERATE_DISCREPANCY": "SEDERHANA",
+            "MINOR_DISCREPANCY":    "MINOR",
+            "DATA_ALIGNED":         "SELARAS",
+        }
+        _alert_short = r["alert_level"].split("—")[0].strip() if "—" in r["alert_level"] else r["alert_level"]
+        _src_label = {"live_pemeriksaan": "📊 Live JN", "audit_records": "📁 Rekod Audit", "default": "⚙️ Default"}.get(r.get("audit_source","default"), "⚙️ Default")
         c1, c2, c3, c4 = st.columns(4)
         c1.metric(t("sub_di"),    f"{r['discrepancy_index']:.4f}", help=t("tip_di"))
-        c2.metric(t("sub_class"), r["di_classification"].replace("_"," "))
+        c2.metric(t("sub_class"), _cls_short.get(r["di_classification"], r["di_classification"]), help=r["di_classification"])
         c3.metric(t("sub_flags"), str(r["flags_count"]),            help=t("tip_flags"))
-        c4.metric(t("sub_alert"), r["alert_level"])
+        c4.metric(t("sub_alert"), _alert_short,                     help=r["alert_level"])
+        st.caption(f"Rujukan DI: {_src_label} · Skor Audit: `{r['audit_score_reference']:.1f}` vs Dilaporkan: `{r['operational_score_reported']:.1f}`")
         if st.button(t("sub_view_brief"), type="primary"):
             st.session_state.view_case_id = r["case_id"]
             st.session_state.current_page = "cases"
