@@ -45,8 +45,8 @@ class _PgCursor:
 
 class JNDatabase:
     """
-    Unified DB wrapper — API-compatible with sqlite3.Connection for the methods we use.
-    Switch backends by setting DATABASE_URL in Streamlit secrets.
+    Unified DB wrapper — API-compatible with sqlite3.Connection.
+    Set DATABASE_URL in Streamlit secrets for PostgreSQL; otherwise SQLite.
     """
 
     def __init__(self):
@@ -55,7 +55,7 @@ class JNDatabase:
             self._url     = url
             self._backend = "postgres"
             self._conn    = None
-            self._connect_pg()
+            self._pg_connect()
         else:
             self._url     = ""
             self._backend = "sqlite"
@@ -67,36 +67,28 @@ class JNDatabase:
             self._conn.execute("PRAGMA journal_mode=WAL")
             self._conn.execute("PRAGMA foreign_keys=ON")
 
-    def _connect_pg(self):
+    def _pg_connect(self):
         import psycopg2
         import psycopg2.extras
         self._conn = psycopg2.connect(
-            self._url, cursor_factory=psycopg2.extras.RealDictCursor
+            self._url,
+            cursor_factory=psycopg2.extras.RealDictCursor,
         )
         self._conn.autocommit = True
 
-    def _ensure_pg(self):
-        """Reconnect if the Neon idle-timeout has closed the cached connection."""
-        if self._backend != "postgres":
-            return
+    def _pg_reconnect(self):
+        """Close stale connection and open a fresh one."""
         try:
-            # Lightweight liveness check
-            cur = self._conn.cursor()
-            cur.execute("SELECT 1")
+            self._conn.close()
         except Exception:
-            try:
-                self._conn.close()
-            except Exception:
-                pass
-            self._connect_pg()
+            pass
+        self._pg_connect()
 
     @property
     def backend(self) -> str:
         return self._backend
 
-    # ------------------------------------------------------------------
     def _fix(self, sql: str) -> str:
-        """Translate SQLite-specific syntax to PostgreSQL-compatible SQL."""
         if self._backend == "sqlite":
             return sql
         sql = sql.replace("?", "%s")
@@ -104,7 +96,6 @@ class JNDatabase:
         return sql
 
     def _fix_insert(self, sql: str) -> str:
-        """Translate INSERT OR IGNORE → INSERT ... ON CONFLICT DO NOTHING."""
         has_ignore = "INSERT OR IGNORE INTO" in sql
         sql = sql.replace("INSERT OR IGNORE INTO", "INSERT INTO")
         sql = self._fix(sql)
@@ -112,42 +103,62 @@ class JNDatabase:
             sql = sql.rstrip(" ;") + " ON CONFLICT DO NOTHING"
         return sql
 
-    # ------------------------------------------------------------------
+    def _pg_execute(self, sql: str, params=()):
+        """
+        Execute one SQL statement on PostgreSQL.
+        On InterfaceError / OperationalError (Neon idle-timeout drop),
+        reconnect once and retry before giving up.
+        """
+        import psycopg2
+        fixed = self._fix_insert(sql)
+        try:
+            cur = self._conn.cursor()
+            cur.execute(fixed, params or ())
+            return _PgCursor(cur)
+        except (psycopg2.InterfaceError, psycopg2.OperationalError):
+            self._pg_reconnect()
+            cur = self._conn.cursor()
+            cur.execute(fixed, params or ())
+            return _PgCursor(cur)
+
+    def _pg_executemany(self, sql: str, params_list):
+        import psycopg2
+        fixed = self._fix_insert(sql)
+        try:
+            cur = self._conn.cursor()
+            cur.executemany(fixed, params_list)
+            return _PgCursor(cur)
+        except (psycopg2.InterfaceError, psycopg2.OperationalError):
+            self._pg_reconnect()
+            cur = self._conn.cursor()
+            cur.executemany(fixed, params_list)
+            return _PgCursor(cur)
+
     def execute(self, sql: str, params=()):
         if self._backend == "postgres":
-            self._ensure_pg()
-            cur = self._conn.cursor()
-            cur.execute(self._fix_insert(sql), params or ())
-            return _PgCursor(cur)
+            return self._pg_execute(sql, params)
         return self._conn.execute(sql, params)
 
     def executemany(self, sql: str, params_list):
         if self._backend == "postgres":
-            self._ensure_pg()
-            cur = self._conn.cursor()
-            cur.executemany(self._fix_insert(sql), params_list)
-            return _PgCursor(cur)
+            return self._pg_executemany(sql, params_list)
         return self._conn.executemany(sql, params_list)
 
     def executescript(self, script: str):
-        """Run DDL script. For PostgreSQL, tables are pre-created via supabase_schema.sql."""
         if self._backend == "postgres":
-            self._ensure_pg()
-            cur = self._conn.cursor()
             for stmt in script.split(";"):
                 stmt = self._fix(stmt).strip()
                 if stmt:
                     try:
-                        cur.execute(stmt)
+                        self._pg_execute(stmt)
                     except Exception:
-                        pass  # silently skip already-existing tables / indexes
+                        pass
         else:
             self._conn.executescript(script)
 
     def commit(self):
         if self._backend == "sqlite":
             self._conn.commit()
-        # postgres: autocommit=True — no-op
 
     def close(self):
         try:
