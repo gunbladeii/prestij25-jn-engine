@@ -3449,6 +3449,419 @@ f"<div style='display:flex;flex-direction:column;gap:8px'>{ew_pts_html}</div>"
         """)
 
 # ---------------------------------------------------------------------------
+# LAPORAN MENTERI — Surat Perintah helpers
+# ---------------------------------------------------------------------------
+
+def _build_directive_html(c, agent_c, jn_score, flags, color) -> str:
+    """Return a styled Malaysian government-letter HTML string for the executive directive."""
+    import html as _h
+
+    school_id   = c.get("school_id", "—")
+    school_name = c.get("school_name") or "—"
+    state       = c.get("state") or "—"
+    case_id     = c.get("case_id", "—")
+    di          = c.get("discrepancy_index") or 0
+    di_cls      = (c.get("di_classification") or "—").replace("_", " ")
+    audit_score = float(c.get("audit_score_reference") or 0)
+    op_score    = float(c.get("operational_score_reported") or 0)
+    delta       = abs(op_score - audit_score)
+    jn_ref      = (c.get("jn_reference_type") or "—").upper()
+    src_sys     = c.get("source_system_name") or "—"
+    timestamp   = c.get("timestamp") or ""
+    date_str    = timestamp[:10] if timestamp else "—"
+    time_str    = timestamp[11:16] if len(timestamp) > 10 else "—"
+
+    alert_status = agent_c.get("alert_status", "—")
+    enforcement  = agent_c.get("enforcement", []) or []
+    policy_items = agent_c.get("policy", []) or []
+
+    _ac = alert_status.upper()
+    alert_col = ("#DC2626" if any(k in _ac for k in ("MERAH","RED","EXTREME"))
+                 else "#D97706" if any(k in _ac for k in ("KUNING","YELLOW","MODERATE","MINOR","SEVERE"))
+                 else "#059669")
+
+    _dc = di_cls.upper()
+    di_col = ("#991B1B" if "EXTREME" in _dc else "#C2410C" if "SEVERE" in _dc
+              else "#B45309" if "MODERATE" in _dc else "#1D4ED8" if "MINOR" in _dc else "#065F46")
+
+    sec = ("<div style='font-weight:800;text-transform:uppercase;border-bottom:2px solid #003399;"
+           "padding-bottom:4px;margin-bottom:12px;font-size:11px;letter-spacing:0.09em;"
+           "color:#003399;font-family:Arial,sans-serif'>")
+
+    flags_html = ""
+    if flags:
+        items = "".join(
+            f"<li style='margin:3px 0'><code style='background:#EFF6FF;padding:2px 7px;"
+            f"border-radius:3px;font-size:11px;color:#1E40AF;border:1px solid #BFDBFE'>"
+            f"{_h.escape(str(f))}</code></li>" for f in flags
+        )
+        flags_html = (f"<div style='margin-bottom:22px'>{sec}C.&nbsp;Bendera Risiko Dikesan</div>"
+                      f"<ul style='margin:8px 0 0;padding-left:20px;list-style:none'>{items}</ul></div>")
+
+    enf_html = ""
+    if enforcement:
+        items = "".join(
+            f"<li style='margin:6px 0;font-size:12px;line-height:1.6'>{_h.escape(str(e))}</li>"
+            for e in enforcement
+        )
+        enf_html = (f"<div style='margin-bottom:22px'>{sec}D.&nbsp;Tindakan Penguatkuasaan</div>"
+                    f"<ol style='margin:8px 0 0;padding-left:22px;line-height:1.8'>{items}</ol></div>")
+
+    pol_html = ""
+    if policy_items:
+        rows = "".join(
+            f"<tr style='border-bottom:1px solid #E5E7EB'>"
+            f"<td style='padding:7px 8px;font-size:11px;color:#1E40AF;font-family:monospace;white-space:nowrap'>{_h.escape(str(p.get('flag','')))}</td>"
+            f"<td style='padding:7px 8px;font-size:11px'>{_h.escape(str(p.get('recommended_action','')))}</td>"
+            f"<td style='padding:7px 8px;font-size:11px;color:#6B7280;font-style:italic'>{_h.escape(str(p.get('legal_reference','')))}</td>"
+            f"</tr>" for p in policy_items
+        )
+        pol_html = (
+            f"<div style='margin-bottom:22px'>{sec}E.&nbsp;Cadangan Pindaan Polisi</div>"
+            f"<div style='overflow-x:auto;margin-top:8px'>"
+            f"<table style='width:100%;border-collapse:collapse;min-width:480px'>"
+            f"<thead><tr style='background:#F3F4F6;border-bottom:2px solid #D1D5DB'>"
+            f"<th style='padding:7px 8px;text-align:left;font-size:11px;color:#374151;white-space:nowrap'>Bendera</th>"
+            f"<th style='padding:7px 8px;text-align:left;font-size:11px;color:#374151'>Tindakan Disyorkan</th>"
+            f"<th style='padding:7px 8px;text-align:left;font-size:11px;color:#374151'>Rujukan Undang-undang</th>"
+            f"</tr></thead><tbody>{rows}</tbody></table></div></div>"
+        )
+
+    return f"""
+<div style='background:#FFFFFF;color:#111827;font-family:Arial,sans-serif;
+     padding:44px 52px;border-radius:8px;border:1px solid #D1D5DB;
+     box-shadow:0 4px 20px rgba(0,0,0,0.10);margin:4px 0'>
+
+  <div style='text-align:center;border-bottom:3px double #003399;
+              padding-bottom:18px;margin-bottom:26px'>
+    <div style='font-size:10px;color:#6B7280;letter-spacing:0.16em;
+                text-transform:uppercase;margin-bottom:6px'>
+      Kementerian Pendidikan Malaysia
+    </div>
+    <div style='font-size:18px;font-weight:900;color:#003399;letter-spacing:0.04em;line-height:1.25'>
+      PERINTAH EKSEKUTIF SISTEM PRESTIJ-25
+    </div>
+    <div style='font-size:9px;color:#9CA3AF;letter-spacing:0.13em;
+                text-transform:uppercase;margin-top:5px'>
+      AI-Powered JN Resolution Agent &nbsp;·&nbsp; Smart Check &amp; Balance Engine
+    </div>
+  </div>
+
+  <table style='width:100%;margin-bottom:22px;font-size:12px'>
+    <tr>
+      <td style='vertical-align:top;line-height:2.1'>
+        <span style='color:#6B7280'>Rujukan Kes&nbsp;&nbsp;:</span>
+        <strong style='font-family:monospace'>&nbsp;{_h.escape(case_id)}</strong><br>
+        <span style='color:#6B7280'>No. Sistem&nbsp;&nbsp;&nbsp;:</span>&nbsp;PRESTIJ-25/{_h.escape(school_id)}
+      </td>
+      <td style='text-align:right;vertical-align:top;line-height:2.1'>
+        <span style='color:#6B7280'>Tarikh&nbsp;:</span><strong>&nbsp;{_h.escape(date_str)}</strong><br>
+        <span style='color:#6B7280'>Masa Jana&nbsp;:</span>&nbsp;{_h.escape(time_str)} UTC
+      </td>
+    </tr>
+  </table>
+
+  <div style='margin-bottom:22px'>
+    <span style='background:{alert_col};color:#fff;padding:5px 18px;
+                 font-size:10px;font-weight:800;letter-spacing:0.14em;
+                 text-transform:uppercase;border-radius:3px'>
+      TAHAP: {_h.escape(alert_status)}
+    </span>
+  </div>
+
+  <div style='font-size:13px;line-height:2;margin-bottom:6px'>
+    <span style='color:#6B7280;font-size:10px'>KEPADA&nbsp;:</span><br>
+    <strong>YAB. MENTERI PENDIDIKAN MALAYSIA</strong><br>
+    <span style='font-size:12px'>(Melalui: Ketua Pengarah Pelajaran Malaysia)</span>
+  </div>
+  <div style='font-size:13px;line-height:2;margin-bottom:24px'>
+    <span style='color:#6B7280;font-size:10px'>DARIPADA&nbsp;:</span><br>
+    Nod Audit Agentik PRESTIJ-25<br>
+    <span style='font-size:12px'>Jemaah Nazir Smart Check &amp; Balance Engine, KPM</span>
+  </div>
+
+  <div style='text-align:center;margin-bottom:26px'>
+    <span style='font-size:12px;text-decoration:underline;font-weight:700;
+                 text-transform:uppercase;letter-spacing:0.05em'>
+      Perkara: Perintah Tindakan Susulan &mdash;
+      Anomali Dikesan Sistem Audit Pintar PRESTIJ-25
+    </span>
+  </div>
+
+  <div style='font-size:12.5px;line-height:2;margin-bottom:26px;text-align:justify'>
+    Merujuk kepada analisis automatik yang dijalankan oleh Sistem Audit Pintar
+    PRESTIJ-25, satu anomali ketidakakuran data telah dikesan bagi sekolah
+    <strong>{_h.escape(school_id)} &mdash; {_h.escape(school_name)}</strong>,
+    {_h.escape(state)}. Perintah ini dikeluarkan bagi tujuan makluman dan tindakan
+    susulan segera yang sewajarnya.
+  </div>
+
+  <div style='margin-bottom:22px'>
+    {sec}A.&nbsp;Maklumat Sekolah Yang Disiasat</div>
+    <table style='width:100%;font-size:12px;border-collapse:collapse'>
+      <tr><td style='padding:5px 0;width:36%;color:#6B7280'>Kod Sekolah</td>
+          <td style='padding:5px 0'><strong>{_h.escape(school_id)}</strong></td></tr>
+      <tr><td style='padding:5px 0;color:#6B7280'>Nama Sekolah</td>
+          <td style='padding:5px 0'><strong>{_h.escape(school_name)}</strong></td></tr>
+      <tr><td style='padding:5px 0;color:#6B7280'>Negeri</td>
+          <td style='padding:5px 0'>{_h.escape(state)}</td></tr>
+      <tr><td style='padding:5px 0;color:#6B7280'>Sistem Sumber</td>
+          <td style='padding:5px 0'>{_h.escape(src_sys)}</td></tr>
+      <tr><td style='padding:5px 0;color:#6B7280'>Jenis Rujukan JN</td>
+          <td style='padding:5px 0'>{_h.escape(jn_ref)}</td></tr>
+    </table>
+  </div>
+
+  <div style='margin-bottom:22px'>
+    {sec}B.&nbsp;Analisis Discrepancy Index (DI)</div>
+    <table style='width:100%;font-size:12px;border-collapse:collapse'>
+      <tr><td style='padding:5px 0;width:36%;color:#6B7280'>Formula DI</td>
+          <td>DI = |Skor Audit &minus; Skor Operasi| &divide; 100</td></tr>
+      <tr><td style='padding:5px 0;color:#6B7280'>Skor Audit JN</td>
+          <td style='padding:5px 0'><strong>{audit_score:.1f}</strong>
+          <span style='color:#9CA3AF;font-size:10px'>&nbsp;[Rekod Rasmi Jemaah Nazir]</span></td></tr>
+      <tr><td style='padding:5px 0;color:#6B7280'>Skor Dilaporkan</td>
+          <td style='padding:5px 0'><strong>{op_score:.1f}</strong></td></tr>
+      <tr><td style='padding:5px 0;color:#6B7280'>Delta Mutlak</td>
+          <td style='padding:5px 0'><strong>{delta:.2f} mata</strong></td></tr>
+      <tr style='background:#F9FAFB'>
+        <td style='padding:7px 0;color:#6B7280;font-weight:700'>Indeks DI</td>
+        <td style='padding:7px 0'>
+          <strong style='font-size:15px;color:{di_col}'>{float(di):.4f}</strong>
+        </td>
+      </tr>
+      <tr style='background:#F9FAFB'>
+        <td style='padding:7px 0;color:#6B7280;font-weight:700'>Klasifikasi</td>
+        <td style='padding:7px 0'>
+          <strong style='color:{di_col}'>{_h.escape(di_cls)}</strong>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  {flags_html}
+  {enf_html}
+  {pol_html}
+
+  <div style='margin-top:44px;border-top:1px solid #D1D5DB;padding-top:22px'>
+    <table style='width:100%'>
+      <tr>
+        <td style='vertical-align:bottom;font-size:11.5px'>
+          <div style='border-bottom:1px solid #374151;width:210px;height:44px;margin-bottom:7px'></div>
+          <strong style='font-size:13px;text-transform:uppercase;color:#003399'>Sistem Prestij-25</strong><br>
+          <span style='color:#6B7280'>Nod Audit Agentik</span><br>
+          <span style='color:#6B7280'>Jemaah Nazir, Kementerian Pendidikan Malaysia</span><br>
+          <span style='font-size:9px;color:#9CA3AF;font-family:monospace;margin-top:6px;display:block'>
+            Cap Digital: {_h.escape(case_id)}
+          </span>
+        </td>
+        <td style='text-align:right;vertical-align:bottom;font-size:10px;color:#9CA3AF'>
+          <div style='font-size:8px;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:3px'>
+            Dijana Automatik Oleh
+          </div>
+          <div style='font-size:20px;font-weight:900;color:#003399;letter-spacing:0.05em;line-height:1'>
+            PRESTIJ-25
+          </div>
+          <div style='font-size:9px;margin-top:2px'>MoE Agentic AI Programme 2025</div>
+          <div style='font-size:8px;margin-top:6px;color:#D1D5DB'>
+            &#10022; Dokumen ini dijana secara automatik oleh AI
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</div>"""
+
+
+def _build_directive_docx(c, agent_c, jn_score, flags) -> bytes:
+    """Generate a government-style DOCX executive directive letter. Returns bytes or b'' on error."""
+    try:
+        from docx import Document
+        from docx.shared import Pt, RGBColor, Cm
+        from docx.enum.text import WD_ALIGN_PARAGRAPH
+        import io
+    except ImportError:
+        return b""
+
+    school_id   = c.get("school_id", "—")
+    school_name = c.get("school_name") or "—"
+    state       = c.get("state") or "—"
+    case_id     = c.get("case_id", "—")
+    di          = c.get("discrepancy_index") or 0
+    di_cls      = (c.get("di_classification") or "—").replace("_", " ")
+    audit_score = float(c.get("audit_score_reference") or 0)
+    op_score    = float(c.get("operational_score_reported") or 0)
+    delta       = abs(op_score - audit_score)
+    jn_ref      = (c.get("jn_reference_type") or "—").upper()
+    src_sys     = c.get("source_system_name") or "—"
+    timestamp   = c.get("timestamp") or ""
+    date_str    = timestamp[:10] if timestamp else "—"
+
+    alert_status = agent_c.get("alert_status", "—")
+    enforcement  = agent_c.get("enforcement", []) or []
+    policy_items = agent_c.get("policy", []) or []
+
+    doc = Document()
+    for section in doc.sections:
+        section.top_margin    = Cm(2.5)
+        section.bottom_margin = Cm(2.5)
+        section.left_margin   = Cm(3.2)
+        section.right_margin  = Cm(2.5)
+
+    BLUE = RGBColor(0, 51, 153)
+    GRAY = RGBColor(107, 114, 128)
+
+    def _p(text="", bold=False, italic=False, size=11,
+           align=WD_ALIGN_PARAGRAPH.LEFT, color=None, underline=False):
+        para = doc.add_paragraph()
+        para.alignment = align
+        if text:
+            run = para.add_run(text)
+            run.bold = bold; run.italic = italic; run.underline = underline
+            run.font.size = Pt(size)
+            if color:
+                run.font.color.rgb = color
+        return para
+
+    def _sec(label):
+        p = doc.add_paragraph()
+        p.paragraph_format.space_before = Pt(10)
+        r = p.add_run(label)
+        r.bold = True; r.font.size = Pt(11); r.font.color.rgb = BLUE
+        return p
+
+    def _tbl(header_row, data_rows):
+        tbl = doc.add_table(rows=1 + len(data_rows), cols=len(header_row))
+        tbl.style = "Table Grid"
+        for i, h in enumerate(header_row):
+            cell = tbl.rows[0].cells[i]
+            cell.text = h
+            cell.paragraphs[0].runs[0].bold = True
+            cell.paragraphs[0].runs[0].font.size = Pt(9)
+        for ri, row_vals in enumerate(data_rows, 1):
+            for ci, val in enumerate(row_vals):
+                tbl.rows[ri].cells[ci].text = str(val)
+                tbl.rows[ri].cells[ci].paragraphs[0].runs[0].font.size = Pt(10)
+        return tbl
+
+    # Letterhead
+    _p("KEMENTERIAN PENDIDIKAN MALAYSIA", bold=True, size=14,
+       align=WD_ALIGN_PARAGRAPH.CENTER, color=BLUE)
+    _p("PERINTAH EKSEKUTIF SISTEM PRESTIJ-25", bold=True, size=12,
+       align=WD_ALIGN_PARAGRAPH.CENTER, color=BLUE)
+    _p("AI-Powered JN Resolution Agent  ·  Smart Check & Balance Engine",
+       size=9, align=WD_ALIGN_PARAGRAPH.CENTER, color=GRAY)
+    _p()
+
+    # Reference / date / alert (two-column table)
+    ref_t = doc.add_table(rows=1, cols=2)
+    ref_t.style = "Table Grid"
+    ref_t.rows[0].cells[0].text = (
+        f"Rujukan Kes  : {case_id}\n"
+        f"No. Sistem   : PRESTIJ-25/{school_id}\n"
+        f"Tahap Amaran : {alert_status}"
+    )
+    ref_t.rows[0].cells[1].text = f"Tarikh   : {date_str}"
+    for cell in ref_t.rows[0].cells:
+        for para in cell.paragraphs:
+            for run in para.runs:
+                run.font.size = Pt(10)
+    _p()
+
+    # Addressee
+    _p("KEPADA:", bold=True)
+    _p("YAB. MENTERI PENDIDIKAN MALAYSIA")
+    _p("(Melalui: Ketua Pengarah Pelajaran Malaysia)")
+    _p()
+    _p("DARIPADA:", bold=True)
+    _p("Nod Audit Agentik PRESTIJ-25")
+    _p("Jemaah Nazir Smart Check & Balance Engine, KPM")
+    _p()
+
+    # Subject
+    _p("PERKARA: PERINTAH TINDAKAN SUSULAN — "
+       "ANOMALI DIKESAN SISTEM AUDIT PINTAR PRESTIJ-25",
+       bold=True, underline=True, align=WD_ALIGN_PARAGRAPH.CENTER)
+    _p()
+
+    # Opening
+    op_para = doc.add_paragraph()
+    op_para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    r = op_para.add_run(
+        f"Merujuk kepada analisis automatik yang dijalankan oleh Sistem Audit Pintar "
+        f"PRESTIJ-25 bertarikh {date_str}, satu anomali ketidakakuran data telah dikesan "
+        f"bagi sekolah {school_id} — {school_name}, {state}. Perintah ini dikeluarkan bagi "
+        f"tujuan makluman dan tindakan susulan segera yang sewajarnya."
+    )
+    r.font.size = Pt(11)
+    _p()
+
+    # Section A
+    _sec("A.  MAKLUMAT SEKOLAH YANG DISIASAT")
+    _tbl(["Perkara", "Maklumat"], [
+        ("Kod Sekolah",   school_id),
+        ("Nama Sekolah",  school_name),
+        ("Negeri",        state),
+        ("Sistem Sumber", src_sys),
+        ("Rujukan JN",    jn_ref),
+    ])
+    _p()
+
+    # Section B
+    _sec("B.  ANALISIS DISCREPANCY INDEX (DI)")
+    _tbl(["Parameter", "Nilai"], [
+        ("Skor Audit JN",   f"{audit_score:.1f}  [Rekod Rasmi Jemaah Nazir]"),
+        ("Skor Dilaporkan", f"{op_score:.1f}"),
+        ("Delta Mutlak",    f"{delta:.2f} mata"),
+        ("Indeks DI",       f"{float(di):.4f}"),
+        ("Klasifikasi",     di_cls),
+    ])
+    _p()
+
+    # Section C: Flags
+    if flags:
+        _sec("C.  BENDERA RISIKO DIKESAN")
+        for f in flags:
+            _p(f"•  {f}", size=10)
+        _p()
+
+    # Section D: Enforcement
+    if enforcement:
+        _sec("D.  TINDAKAN PENGUATKUASAAN")
+        for i, e in enumerate(enforcement, 1):
+            _p(f"{i}.  {e}", size=10)
+        _p()
+
+    # Section E: Policy
+    if policy_items:
+        _sec("E.  CADANGAN PINDAAN POLISI")
+        _tbl(
+            ["Bendera", "Tindakan Disyorkan", "Rujukan Undang-undang"],
+            [(p.get("flag",""), p.get("recommended_action",""), p.get("legal_reference",""))
+             for p in policy_items],
+        )
+        _p()
+
+    # Signature
+    _p("─" * 60, size=9, color=GRAY)
+    sig = doc.add_paragraph()
+    r1 = sig.add_run("\n\n\nSISTEM PRESTIJ-25\n")
+    r1.bold = True; r1.font.size = Pt(12); r1.font.color.rgb = BLUE
+    r2 = sig.add_run("Nod Audit Agentik\nJemaah Nazir, Kementerian Pendidikan Malaysia\n")
+    r2.font.size = Pt(10)
+    r3 = sig.add_run(f"\nCap Digital: {case_id}")
+    r3.font.size = Pt(9); r3.font.color.rgb = GRAY
+    _p("MoE Agentic AI Programme 2025  ·  Dijana automatik oleh AI",
+       size=8, align=WD_ALIGN_PARAGRAPH.CENTER, color=GRAY, italic=True)
+
+    buf = io.BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+    return buf.read()
+
+
+# ---------------------------------------------------------------------------
 # LAPORAN MENTERI PAGE (Phase 3)
 # ---------------------------------------------------------------------------
 def render_laporan_menteri():
@@ -3536,23 +3949,30 @@ def render_laporan_menteri():
             col_c.metric("DI", f"{c['discrepancy_index']:.4f}")
             col_d.metric(t("laporan_col_jn"), jn_ref.capitalize())
 
-            flags = _json.loads(c["flags"]) if c.get("flags") else []
-            if flags:
-                st.markdown("**" + t("laporan_col_flags") + ":**")
-                for f in flags:
-                    st.markdown(f"- `{f}`")
+            flags    = _json.loads(c["flags"]) if c.get("flags") else []
+            agent_c  = _json.loads(c["agent_c_result"]) if c.get("agent_c_result") else {}
 
-            agent_c = _json.loads(c["agent_c_result"]) if c.get("agent_c_result") else {}
-            directive = agent_c.get("directive","")
-            if directive:
-                st.markdown(f"**{t('laporan_col_syor')}:**")
-                st.info(directive)
+            # ── Surat Perintah Eksekutif ──────────────────────────────
+            st.markdown(f"##### {t('laporan_col_syor')}")
 
-            policy = agent_c.get("policy", [])
-            if policy:
-                st.markdown("**Cadangan Polisi:**")
-                for p in policy:
-                    st.markdown(f"- **{p.get('flag','')}** — {p.get('recommended_action','')}  \n  _{p.get('legal_reference','')}_")
+            letter_html = _build_directive_html(c, agent_c, jn_score, flags, color)
+            st.markdown(letter_html, unsafe_allow_html=True)
+
+            # ── Download controls ─────────────────────────────────────
+            st.markdown("")
+            dl_col, hint_col = st.columns([2, 3])
+            docx_bytes = _build_directive_docx(c, agent_c, jn_score, flags)
+            if docx_bytes:
+                dl_col.download_button(
+                    label="⬇ Muat Turun DOCX",
+                    data=docx_bytes,
+                    file_name=f"Syor_PRESTIJ25_{c['case_id']}.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    key=f"dl_docx_{c['case_id']}",
+                    use_container_width=True,
+                )
+            hint_col.caption("💡 Untuk simpan sebagai PDF: buka fail DOCX → cetak → pilih *Save as PDF*, "
+                             "atau guna Ctrl+P pada halaman ini.")
 
         st.markdown("---")
 
