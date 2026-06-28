@@ -1,6 +1,6 @@
 """
 JN Engine — Database abstraction layer.
-SQLite for dev/local; PostgreSQL (Supabase/Railway) for prod.
+SQLite for dev/local; PostgreSQL (Neon/Supabase) for prod.
 Set DATABASE_URL in Streamlit secrets to activate PostgreSQL mode.
 """
 import os
@@ -52,22 +52,43 @@ class JNDatabase:
     def __init__(self):
         url = _db_url()
         if url:
-            import psycopg2
-            import psycopg2.extras
-            self._conn = psycopg2.connect(
-                url, cursor_factory=psycopg2.extras.RealDictCursor
-            )
-            self._conn.autocommit = True
+            self._url     = url
             self._backend = "postgres"
+            self._conn    = None
+            self._connect_pg()
         else:
-            db_dir = os.path.join(os.path.expanduser("~"), ".jn_engine")
+            self._url     = ""
+            self._backend = "sqlite"
+            db_dir  = os.path.join(os.path.expanduser("~"), ".jn_engine")
             os.makedirs(db_dir, exist_ok=True)
             db_path = os.path.join(db_dir, "jn_engine.db")
             self._conn = sqlite3.connect(db_path, check_same_thread=False)
             self._conn.row_factory = sqlite3.Row
             self._conn.execute("PRAGMA journal_mode=WAL")
             self._conn.execute("PRAGMA foreign_keys=ON")
-            self._backend = "sqlite"
+
+    def _connect_pg(self):
+        import psycopg2
+        import psycopg2.extras
+        self._conn = psycopg2.connect(
+            self._url, cursor_factory=psycopg2.extras.RealDictCursor
+        )
+        self._conn.autocommit = True
+
+    def _ensure_pg(self):
+        """Reconnect if the Neon idle-timeout has closed the cached connection."""
+        if self._backend != "postgres":
+            return
+        try:
+            # Lightweight liveness check
+            cur = self._conn.cursor()
+            cur.execute("SELECT 1")
+        except Exception:
+            try:
+                self._conn.close()
+            except Exception:
+                pass
+            self._connect_pg()
 
     @property
     def backend(self) -> str:
@@ -94,6 +115,7 @@ class JNDatabase:
     # ------------------------------------------------------------------
     def execute(self, sql: str, params=()):
         if self._backend == "postgres":
+            self._ensure_pg()
             cur = self._conn.cursor()
             cur.execute(self._fix_insert(sql), params or ())
             return _PgCursor(cur)
@@ -101,6 +123,7 @@ class JNDatabase:
 
     def executemany(self, sql: str, params_list):
         if self._backend == "postgres":
+            self._ensure_pg()
             cur = self._conn.cursor()
             cur.executemany(self._fix_insert(sql), params_list)
             return _PgCursor(cur)
@@ -109,6 +132,7 @@ class JNDatabase:
     def executescript(self, script: str):
         """Run DDL script. For PostgreSQL, tables are pre-created via supabase_schema.sql."""
         if self._backend == "postgres":
+            self._ensure_pg()
             cur = self._conn.cursor()
             for stmt in script.split(";"):
                 stmt = self._fix(stmt).strip()
@@ -126,4 +150,7 @@ class JNDatabase:
         # postgres: autocommit=True — no-op
 
     def close(self):
-        self._conn.close()
+        try:
+            self._conn.close()
+        except Exception:
+            pass

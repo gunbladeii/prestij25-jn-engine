@@ -1391,6 +1391,23 @@ def run_agent_pipeline(
         jn_ref_type   = jn_ref["type"]
         jn_ref_id     = _rec.get("id", "")
 
+    elif jn_ref and jn_ref.get("type") == "pemeriksaan":
+        # Pemeriksaan JN — uses skpmg2_score as audit reference
+        # Future: NLP converts qualitative dapatan text → estimated score when skpmg2_score absent
+        _rec = jn_ref["record"]
+        _jn_record = {
+            "skpmg2_score":          float(_rec.get("skpmg2_score") or 70.0),
+            "facility_gred":         _rec.get("facility_gred", "B"),
+            "canteen_hygiene_score": float(_rec.get("canteen_hygiene_score") or 70.0),
+            "integrity_risk_index":  float(_rec.get("integrity_risk_index") or 0.3),
+            "school_name":           _rec.get("school_name", ""),
+            "state":                 _rec.get("state", ""),
+            "last_audit_date":       _rec.get("tarikh_pemeriksaan", ""),
+        }
+        _audit_source = "live_pemeriksaan"
+        jn_ref_type   = "pemeriksaan"
+        jn_ref_id     = _rec.get("id", "")
+
     elif jn_ref and jn_ref.get("type") == "audit":
         # User explicitly selected seeded audit_records reference
         _rec = jn_ref["record"]
@@ -2084,7 +2101,8 @@ def _render_ingest_body():
         "SELECT * FROM jn_audit_records WHERE school_id=?", (school_id.upper(),)
     ).fetchone()
 
-    # Build reference option dict — SK@S and SKPK are primary (quantitative)
+    # Build reference option dict
+    # Priority display: SK@S → SKPK → Pemeriksaan → Rekod Audit → Default
     ref_opts = {}
     for r in skas_rows:
         lbl = f"⭐ SK@S — {r['tarikh_skas']}  ·  Skor: {r['skor_keseluruhan']:.1f}  ·  {r['band']}"
@@ -2092,48 +2110,48 @@ def _render_ingest_body():
     for r in skpk_rows:
         lbl = f"🏆 SKPK Prasekolah — {r['tarikh_skpk']}  ·  Skor: {r['skor_keseluruhan']:.1f}  ·  {r['band']}"
         ref_opts[lbl] = {"type": "skpk", "record": dict(r)}
+    if pem_row:
+        lbl = (
+            f"📋 Pemeriksaan JN — {pem_row['tarikh_pemeriksaan']}"
+            f"  ·  SKPMG2: {pem_row['skpmg2_score']:.1f}"
+            f"  ·  Gred: {pem_row['facility_gred']}"
+        )
+        ref_opts[lbl] = {"type": "pemeriksaan", "record": dict(pem_row)}
 
-    has_quantitative = bool(ref_opts)
+    has_jn_data = bool(ref_opts)
 
-    if not has_quantitative:
+    if not has_jn_data:
         if audit_row:
             lbl = f"📁 Rekod Audit — SKPMG2: {audit_row['skpmg2_score']:.1f}"
             ref_opts[lbl] = {"type": "audit", "record": dict(audit_row)}
         else:
             ref_opts["⚙️ Nilai Default (Skor: 70.0)"] = {"type": "default", "record": {}}
 
-    col_ref_sel, col_pem = st.columns([3, 2])
-
-    with col_ref_sel:
-        if has_quantitative:
-            st.markdown("**Rujukan JN untuk pengiraan DI:**")
-            st.caption(
-                "SK@S = sekolah rendah / menengah (pengisian standard dimensi) · "
-                "SKPK = prasekolah dalam sekolah yang sama (pengurusan berasingan)"
-            )
-        else:
-            st.markdown("**Rujukan JN (DI):**")
-            st.caption("⚠️ Tiada rekod SK@S / SKPK — guna rekod audit sebagai rujukan sementara.")
-
-        sel_ref_lbl  = st.radio(
-            "Pilih rujukan JN",
-            list(ref_opts.keys()),
-            key=f"_ii_jn_ref_{school_id}",
-            label_visibility="collapsed",
+    st.markdown("**Pilih Rujukan JN untuk pengiraan DI:**")
+    if has_jn_data:
+        st.caption(
+            "SK@S / SKPK = skor standard dimensi (kuantitatif) · "
+            "Pemeriksaan = skor SKPMG2 dapatan JN (kualitatif → numerik via NLP pada masa hadapan) · "
+            "SKPK = prasekolah dalam sekolah yang sama, pengurusan berasingan"
         )
-        selected_ref = ref_opts[sel_ref_lbl]
+    else:
+        st.caption("⚠️ Tiada rekod SK@S / SKPK / Pemeriksaan — guna rekod audit sebagai rujukan sementara.")
 
-    with col_pem:
-        st.markdown("**📋 Dapatan Pemeriksaan JN** _(konteks sahaja)_")
-        if pem_row:
-            st.info(
-                f"🗓️ {pem_row['tarikh_pemeriksaan']}\n\n"
-                f"SKPMG2: **{pem_row['skpmg2_score']:.1f}** | Gred: **{pem_row['facility_gred']}**\n\n"
-                f"🏫 {pem_row['school_name']} · {pem_row.get('state','')}"
-            )
-            st.caption("Pemeriksaan tidak digunakan untuk kira DI — dipapar sebagai rujukan konteks.")
-        else:
-            st.caption("Tiada rekod Pemeriksaan JN untuk sekolah ini.")
+    sel_ref_lbl  = st.radio(
+        "Pilih rujukan JN",
+        list(ref_opts.keys()),
+        key=f"_ii_jn_ref_{school_id}",
+        label_visibility="collapsed",
+    )
+    selected_ref = ref_opts[sel_ref_lbl]
+
+    # Show Pemeriksaan info note when it is selected as DI reference
+    if selected_ref["type"] == "pemeriksaan":
+        st.info(
+            "📋 Rujukan Pemeriksaan menggunakan **skor SKPMG2** daripada rekod dapatan JN sebagai nilai Audit. "
+            "Pelan masa hadapan: NLP akan digunapakai untuk tukar dapatan kualitatif (teks) kepada skor numerik "
+            "secara automatik apabila skor SKPMG2 tidak tersedia."
+        )
 
     st.divider()
 
@@ -2220,10 +2238,11 @@ def _render_ingest_body():
         _alert_short = r["alert_level"].split("—")[0].strip() if "—" in r["alert_level"] else r["alert_level"]
         _src_lbl_map = {
             "skas":             "⭐ SK@S",
-            "skpk":             "🏆 SKPK",
+            "skpk":             "🏆 SKPK (Prasekolah)",
+            "pemeriksaan":      "📋 Pemeriksaan JN",
             "audit":            "📁 Rekod Audit",
             "default":          "⚙️ Default",
-            "live_pemeriksaan": "📊 Live Pemeriksaan",
+            "live_pemeriksaan": "📋 Pemeriksaan JN",
             "audit_records":    "📁 Rekod Audit",
         }
         _src_label = _src_lbl_map.get(r.get("audit_source", "default"), "⚙️ Default")
@@ -2240,20 +2259,6 @@ def _render_ingest_body():
             f"Skor Audit: `{r['audit_score_reference']:.1f}` vs "
             f"Dilaporkan: `{r['operational_score_reported']:.1f}`"
         )
-
-        # Pemeriksaan context panel shown alongside result
-        _pem_ctx = db.execute(
-            "SELECT * FROM jn_pemeriksaan WHERE school_id=? ORDER BY tarikh_pemeriksaan DESC LIMIT 1",
-            (r.get("school_id", "").upper(),)
-        ).fetchone()
-        if _pem_ctx:
-            with st.expander("📋 Dapatan Pemeriksaan JN — Konteks", expanded=False):
-                rc1, rc2, rc3 = st.columns(3)
-                rc1.metric("SKPMG2",  f"{_pem_ctx['skpmg2_score']:.1f}")
-                rc2.metric("Gred",    _pem_ctx["facility_gred"])
-                rc3.metric("Tarikh",  _pem_ctx["tarikh_pemeriksaan"])
-                st.caption(f"🏫 {_pem_ctx['school_name']} · {_pem_ctx.get('state','')}")
-                st.caption("Pemeriksaan tidak digunakan untuk kira DI — dipapar sebagai konteks sahaja.")
 
         if st.button(t("sub_view_brief"), type="primary", key="_ii_view_brief"):
             st.session_state.view_case_id = r["case_id"]
