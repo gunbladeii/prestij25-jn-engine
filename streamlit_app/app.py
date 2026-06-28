@@ -3539,7 +3539,7 @@ def _build_directive_html(c, agent_c, jn_score, flags, color) -> str:
       Kementerian Pendidikan Malaysia
     </div>
     <div style='font-size:18px;font-weight:900;color:#003399;letter-spacing:0.04em;line-height:1.25'>
-      PERINTAH EKSEKUTIF SISTEM PRESTIJ-25
+      MEMO ARAHAN YB MENTERI PENDIDIKAN
     </div>
     <div style='font-size:9px;color:#9CA3AF;letter-spacing:0.13em;
                 text-transform:uppercase;margin-top:5px'>
@@ -3748,7 +3748,7 @@ def _build_directive_docx(c, agent_c, jn_score, flags) -> bytes:
     # Letterhead
     _p("KEMENTERIAN PENDIDIKAN MALAYSIA", bold=True, size=14,
        align=WD_ALIGN_PARAGRAPH.CENTER, color=BLUE)
-    _p("PERINTAH EKSEKUTIF SISTEM PRESTIJ-25", bold=True, size=12,
+    _p("MEMO ARAHAN YB MENTERI PENDIDIKAN", bold=True, size=12,
        align=WD_ALIGN_PARAGRAPH.CENTER, color=BLUE)
     _p("AI-Powered JN Resolution Agent  ·  Smart Check & Balance Engine",
        size=9, align=WD_ALIGN_PARAGRAPH.CENTER, color=GRAY)
