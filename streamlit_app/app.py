@@ -3504,7 +3504,12 @@ def render_laporan_menteri():
 
     # Lookup JN scores for display
     jn_score_map = {}
-    for jr in db.execute("SELECT school_id, skpmg2_score, MAX(tarikh_pemeriksaan) FROM jn_pemeriksaan GROUP BY school_id").fetchall():
+    for jr in db.execute(
+        "SELECT jp.school_id, jp.skpmg2_score, jp.tarikh_pemeriksaan "
+        "FROM jn_pemeriksaan jp "
+        "INNER JOIN (SELECT school_id, MAX(tarikh_pemeriksaan) AS mx FROM jn_pemeriksaan GROUP BY school_id) latest "
+        "ON jp.school_id = latest.school_id AND jp.tarikh_pemeriksaan = latest.mx"
+    ).fetchall():
         jn_score_map[jr["school_id"]] = jr["skpmg2_score"]
 
     for idx, c in enumerate(filtered):
