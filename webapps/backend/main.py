@@ -1,5 +1,5 @@
 """
-JN Resolusi — Smart Cross-Reference & Audit Engine
+AI Powered JN Resolution System — Smart Cross-Reference & Audit Engine
 MoE Agentic AI — PRESTIJ Programme 2025
 
 v2.0: JWT authentication, RBAC (3 roles), CSV bulk ingest.
@@ -189,7 +189,7 @@ async def lifespan(app: FastAPI):
 # App
 # ---------------------------------------------------------------------------
 app = FastAPI(
-    title="JN Resolusi — Smart Cross-Reference & Audit Engine",
+    title="AI Powered JN Resolution System — Smart Cross-Reference & Audit Engine",
     description="Supreme Truth & Audit Node — MoE PRESTIJ-25",
     version="2.0.0",
     lifespan=lifespan,
@@ -346,7 +346,7 @@ async def health_check():
             case_count = row["c"] if row else 0
     return {
         "status": "OPERATIONAL",
-        "engine": "JN Resolusi — Smart Cross-Reference & Audit Engine",
+        "engine": "AI Powered JN Resolution System — Smart Cross-Reference & Audit Engine",
         "version": "2.0.0",
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "agents_online": ["Agent_A", "Agent_B", "Agent_C"],

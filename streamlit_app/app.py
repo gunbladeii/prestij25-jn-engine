@@ -1,5 +1,5 @@
 """
-JN Resolusi — Smart Cross-Reference & Audit Engine (Streamlit Edition)
+AI Powered JN Resolution System — Smart Cross-Reference & Audit Engine (Streamlit Edition)
 MoE Agentic AI — PRESTIJ Programme 2025
 """
 
@@ -37,7 +37,7 @@ from database import JNDatabase
 # PAGE CONFIG
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="JN Resolusi — Sistem Audit Pintar MOE",
+    page_title="AI Powered JN Resolution System — Sistem Audit Pintar MOE",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -693,7 +693,7 @@ def inject_css():
     st.markdown("""
     <style>
     /* ═══════════════════════════════════════════════════════════════
-       NEURAL AUDIT GRID — JN Resolusi Design System v2
+       NEURAL AUDIT GRID — AI Powered JN Resolution System Design System v2
        Professional · Educational · Statistical · Technology
     ═══════════════════════════════════════════════════════════════ */
 
@@ -1676,7 +1676,7 @@ def render_login():
                 </svg>
             </div>
             <h1 style="font-size:34px;font-weight:900;color:#fff;margin:0;line-height:1.1;letter-spacing:-0.02em">
-                JN RESOLUSI
+                AI Powered JN Resolution System
             </h1>
             <p style="background:linear-gradient(90deg,#60A5FA,#22D3EE);
                       -webkit-background-clip:text;-webkit-text-fill-color:transparent;
@@ -1758,7 +1758,7 @@ def render_sidebar() -> None:
             + _logo_svg +
             '<div>'
             '<div style="font-weight:900;font-size:15px;color:#F8FAFC;letter-spacing:0.06em;'
-            'text-shadow:0 0 20px rgba(37,99,235,0.4)">JN RESOLUSI</div>'
+            'text-shadow:0 0 20px rgba(37,99,235,0.4)">AI Powered JN Resolution System</div>'
             '<div style="font-size:9px;letter-spacing:0.16em;text-transform:uppercase;'
             'background:linear-gradient(90deg,#60A5FA,#22D3EE);'
             '-webkit-background-clip:text;-webkit-text-fill-color:transparent;'
@@ -2994,7 +2994,7 @@ def _render_brief_body():
                 f' &nbsp;(DI = {_di_val:.4f})</span></div>'
             )
             _footer_note = (
-                f'Arahan ini dijana secara automatik oleh Ejen C &mdash; JN Resolusi Enjin pada {_date_formal}. '
+                f'Arahan ini dijana secara automatik oleh Ejen C &mdash; AI Powered JN Resolution System pada {_date_formal}. '
                 'Dokumen ini hendaklah dibaca bersama laporan audit penuh dan tidak menggantikan keputusan rasmi Jemaah Nazir.'
             )
             _doc = (
@@ -3003,7 +3003,7 @@ def _render_brief_body():
                 '<div class="directive-doc-agency">Kementerian Pendidikan Malaysia</div>'
                 '<div class="directive-doc-dept">Jemaah Nazir dan Jaminan Kualiti</div>'
                 '<div class="directive-doc-dept" style="font-size:11px;color:#64748B;margin-top:2px">'
-                'PRESTIJ-25 &middot; Agentic AI Programme &middot; JN Resolusi Enjin</div>'
+                'PRESTIJ-25 &middot; Agentic AI Programme &middot; AI Powered JN Resolution System</div>'
                 '<div class="directive-doc-title">Arahan Eksekutif Audit</div>'
                 '</div>'
                 + _meta +
@@ -3015,7 +3015,7 @@ def _render_brief_body():
                 '<div class="directive-sig-line"></div>'
                 '<div class="directive-sig-name">Ketua Nazir Sekolah</div>'
                 '<div class="directive-sig-title">Kementerian Pendidikan Malaysia</div>'
-                '<div class="directive-sig-title" style="margin-top:4px">JN Resolusi AI Engine</div>'
+                '<div class="directive-sig-title" style="margin-top:4px">AI Powered JN Resolution System</div>'
                 '</div></div></div>'
             )
             st.markdown(_doc, unsafe_allow_html=True)
@@ -3165,7 +3165,7 @@ def render_system():
             "caption":       "Platform Kecerdasan Buatan untuk mengesahkan keputusan pemeriksaan Jemaah Nazir sebelum sebarang tindakan disyorkan kepada YB Menteri Pendidikan.",
             "why_label":     "Kenapa Sistem Ini Diperlukan",
             "why_body":      "Sebelum ini, tiada mekanisme untuk mengesahkan sama ada laporan dari luar — aduan, data sistem KPM, laporan lapangan — selari dengan apa yang Jemaah Nazir sendiri telah dapati semasa pemeriksaan sebenar. Keputusan kepada YB Menteri boleh dibuat berdasarkan maklumat yang tidak tepat atau telah dimanipulasi.",
-            "why_bold":      "JN Resolusi menyelesaikan masalah ini",
+            "why_bold":      "AI Powered JN Resolution System menyelesaikan masalah ini",
             "why_bold2":     "dengan membandingkan kedua-dua sumber secara automatik menggunakan AI, dan hanya mengeluarkan syor apabila perbezaan dapat dibuktikan dengan data.",
             "two_title":     "Dua Sumber Data, Satu Keputusan",
             "two_caption":   "Sistem membandingkan apa yang JN dapati (Sisi A) berbanding apa yang dilaporkan oleh sumber luar (Sisi B).",
@@ -3198,7 +3198,7 @@ def render_system():
                  ["→ Arahan eksekutif", "→ Cadangan polisi", "→ Asas undang-undang"]),
             ],
             "imp_title":     "Impak kepada Kementerian",
-            "imp_caption":   "Bukan sekadar sistem laporan — JN Resolusi mengubah cara keputusan dibuat di peringkat kementerian.",
+            "imp_caption":   "Bukan sekadar sistem laporan — AI Powered JN Resolution System mengubah cara keputusan dibuat di peringkat kementerian.",
             "impacts": [
                 ("✓", "Keputusan Berasaskan Bukti, Bukan Andaian",
                  "Setiap syor disertakan dengan nombor DI, dapatan JN yang dirujuk, dan sumber data yang dibandingkan. Tiada keputusan dibuat secara buta.", "#0C9980"),
@@ -3209,7 +3209,7 @@ def render_system():
             ],
             "ew_badge":      "Keupayaan Baharu",
             "ew_title":      "Sistem Amaran Awal Sebelum Pemeriksaan JN Dirancang",
-            "ew_lead":       "JN Resolusi bukan hanya bertindak balas — ia",
+            "ew_lead":       "AI Powered JN Resolution System bukan hanya bertindak balas — ia",
             "ew_lead_bold":  "membantu JN merancang ke mana perlu pergi seterusnya.",
             "ew_sub":        "Berdasarkan pola DI yang terkumpul, sistem dapat mengenal pasti sekolah yang menunjukkan tanda-tanda ketidakselarasan data <em>sebelum</em> mana-mana pemeriksaan fizikal dijadualkan.",
             "ew_pts": [
@@ -3232,7 +3232,7 @@ def render_system():
             "caption":       "AI Platform to verify Jemaah Nazir inspection findings before any recommendation is made to the YB Minister of Education.",
             "why_label":     "Why This System is Needed",
             "why_body":      "Previously, there was no mechanism to verify whether external reports — complaints, KPM system data, field reports — were consistent with what Jemaah Nazir itself found during actual inspections. Decisions to the YB Minister could be made based on inaccurate or manipulated information.",
-            "why_bold":      "JN Resolusi solves this",
+            "why_bold":      "AI Powered JN Resolution System solves this",
             "why_bold2":     "by automatically cross-referencing both sources using AI, and only issuing recommendations when discrepancies can be proven with data.",
             "two_title":     "Two Data Sources, One Evidence-Based Decision",
             "two_caption":   "The system compares what JN found (Side A) against what external sources report (Side B).",
@@ -3265,7 +3265,7 @@ def render_system():
                  ["→ Executive directive", "→ Policy recommendations", "→ Legal basis"]),
             ],
             "imp_title":     "Impact on the Ministry",
-            "imp_caption":   "More than a reporting system — JN Resolusi changes how decisions are made at the ministerial level.",
+            "imp_caption":   "More than a reporting system — AI Powered JN Resolution System changes how decisions are made at the ministerial level.",
             "impacts": [
                 ("✓", "Decisions Based on Evidence, Not Assumptions",
                  "Every recommendation is accompanied by a DI score, the JN finding referenced, and the data source compared. No decision is made blindly.", "#0C9980"),
@@ -3276,7 +3276,7 @@ def render_system():
             ],
             "ew_badge":      "New Capability",
             "ew_title":      "Early Warning System Before JN Inspection Planning",
-            "ew_lead":       "JN Resolusi doesn't just react — it",
+            "ew_lead":       "AI Powered JN Resolution System doesn't just react — it",
             "ew_lead_bold":  "helps JN plan where to go next.",
             "ew_sub":        "Based on accumulated DI patterns, the system can identify schools showing signs of data misalignment <em>before</em> any physical inspection is scheduled.",
             "ew_pts": [
@@ -3300,7 +3300,7 @@ def render_system():
     c = _C.get(lang, _C["BM"])
 
     section_header(t("sys_section"))
-    st.title("JN Resolusi")
+    st.title("AI Powered JN Resolution System")
     st.caption(c["caption"])
 
     # ── OBJEKTIF ─────────────────────────────────────────────────────────
